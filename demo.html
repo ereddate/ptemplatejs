@@ -22,7 +22,7 @@
 	</head>
 	<body>
 		<div p-template="test">
-			<h1 p-custom:title="{{title}}" p-custom:data-custom="{{title | custom : 123}}">{{title}}</h1>
+			<h1 p-custom:title="{{title}}" p-custom:data-custom="{{title | custom : 123}}">{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
 		</div>

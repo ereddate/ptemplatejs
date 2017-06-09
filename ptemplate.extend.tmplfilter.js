@@ -281,7 +281,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						if (i == filterCondition) {
 							list.push(str.toUpperCase())
 						} else {
-							list.push(str);
+							list.push(str.toLowerCase());
 						}
 					});
 					return list.length > 0 ? list.join('') : val;
