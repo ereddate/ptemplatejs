@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<script src="ptemplate.js"></script>
+		<script src="ptemplate.extend.tmplattrs.js"></script>
+		<script src="ptemplate.extend.tmplfilter.js"></script>
+		<script src="ptemplate.extend.jsonp.js"></script>
+		<script src="ptemplate.extend.ajax.js"></script>
+		<style>
+			body {
+				background: #f4f5f7;
+				font-family: 微软雅黑;
+			}
+			body, ul, p {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div p-template="test">
+			<h1 p-custom:title="{{title}}" p-custom:data-custom="{{title | custom : 123}}">{{title}}</h1>
+			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn">{{title | lowercase}}</a><br />
+			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
+		</div>
+		<script>
+		$.ready(function(){
+			$.extend($.__mod__.tmplThesaurus, {
+				custom: function(val, filterCondition){
+					console.log(val, filterCondition)
+					return val;
+				}
+			});
+			$.router({
+				"/test":{
+					path: "/",
+					params: {
+						a:1
+					}
+				}
+			}).render("test", {
+				title: "test",
+				handle: {
+					handleWatchFn(e){
+						console.log(e.type)
+					},
+					handleClickFn(e) {
+						e.preventDefault();
+						console.log(e.type);
+					},
+					handleChangeFn(e){
+						console.log(e.type);
+						this._set("test", {
+							title: this.value
+						})
+					}
+				}
+			}, function(elem) {
+				console.log(elem)
+			});
+		});
+		</script>
+	</body>
+</html>
