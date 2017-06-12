@@ -90,6 +90,23 @@
 					handleClickFn(e) {
 						e.preventDefault();
 						console.log(e.type,3);
+						this.parentNode._append($.createDom("span", {
+							title: "kkk",
+							css: {
+								display: "block"
+							}
+						}, $.createDom("a", {
+							href: "/bbb",
+							text: "baba",
+							handle: {
+								click: function(e){
+									e.preventDefault();
+									console.log(e)
+								}
+							}
+						}, $.createDom("i", {
+							class: "bi bf"
+						}))))
 					},
 					handleChangeFn(e){
 						console.log(e.type);

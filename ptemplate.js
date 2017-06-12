@@ -10,6 +10,51 @@
 			tmplAttributes: {},
 			routes: {},
 			eventData: [],
+			toStyle(val) {
+				let style = [];
+				for (let name in val) style.push(name + ":'" + val[name] + "'");
+				var a = [];
+				style.forEach((e) => {
+					e = e.split(':');
+					a.push(e[0].replace(/\"/gi, "").replace(/\'/gi, "").replace(/[a-zA-Z]/gim, ((a) => {
+						return /[A-Z]/.test(a) ? "-" + a.toLowerCase() : a;
+					})) + ":" + e[1].replace(/\"/gi, "").replace(/\'/gi, ""));
+				});
+				return a.join(';') + ";"
+			},
+			setAttrs: function(elem, name, value) {
+				switch (name) {
+					case "text":
+						if (mod.is(typeof value, "function")) {
+							var r = value.call(elem, name);
+							mod.setAttrs(elem, name, r);
+						} else if (mod.is(typeof value, "string") && elem.nodeType != 11) {
+							elem._text(value)
+						} else {
+							var textnode = doc.createTextNode(value);
+							elem.appendChild(textnode);
+						}
+						break;
+					case "html":
+						value = mod.is(typeof value, "function") ? value.call(elem, name) : value;
+						elem._html(value);
+						break;
+					case "class":
+						elem._addClass(value);
+						break;
+					case "handle":
+						for (var n in value) {
+							elem._on(n, value[n]);
+						}
+						break;
+					case "css":
+						elem.style.cssText = mod.isPlainObject(value) ? mod.toStyle(value) : value;
+						break;
+					default:
+						elem._attr(name, value);
+						break;
+				}
+			},
 			watch: function(obj, key, val, callback) {
 				mod.createObject(obj, key, val, callback);
 				return this;
@@ -34,7 +79,7 @@
 					case "number":
 					case "string":
 					case "object":
-						return Object.is(typeof a, b);
+						return a == b;
 						break;
 					case "array":
 						var len = typeof a != "string" && ("length" in a) && a.length,
@@ -753,6 +798,39 @@
 			mod.templates[to] = toTmpl;
 			return this;
 		},
+		createDom: function( /*name, attrs, children, ...*/ ) {
+			var args = arguments,
+				len = args.length,
+				tagName, attrs, tag, arr = mod.extend([], args);
+			if (len < 2) return;
+			tagName = args[0];
+			attrs = args[1];
+			var childrens = [],
+				i = 0;
+			arr.forEach((r) => {
+				i += 1;
+				if (i > 2) childrens.push(r);
+			});
+			tag = /textnode/.test(tagName.toLowerCase()) ? doc.createTextNode("") : /textnode/.test(tagName.toLowerCase()) ? doc.createDocumentFragment() : doc.createElement(tagName);
+			if (!/textnode|docmentfragment/.test(tagName.toLowerCase())) {
+				mod.mixElement(tag);
+				for (var name in attrs) {
+					var value = attrs[name];
+					mod.setAttrs(tag, name, value);
+				}
+			} else {
+				mod.mixElement(tag);
+			}
+			childrens.forEach(function(e) {
+				if (mod.is(typeof e, "function")) {
+					var items = e();
+					tag.appendChild(items);
+				} else {
+					tag.appendChild(e);
+				}
+			});
+			return tag;
+		},
 		createTemplate: function(name, args) {
 			!mod.templates[name] && (mod.templates[name] = mod.extend({
 				parent: undefined,
@@ -765,10 +843,10 @@
 			var that = this,
 				template = mod.findNode("template:" + name) || mod.templates[name].content;
 
-			if (typeof parent == "function"){
+			if (typeof parent == "function") {
 				callback = parent;
 				parent = template || mod.templates[name] && [mod.templates[name].parent] || [];
-			}else if (!parent || parent.length === 0) {
+			} else if (!parent || parent.length === 0) {
 				parent = template || mod.templates[name] && [mod.templates[name].parent] || [];
 			}
 			if (parent && parent.length > 0) {
@@ -780,7 +858,7 @@
 					parent: parent[0],
 					data: data
 				});
-				var fn = function(){
+				var fn = function() {
 					that.render(name, data, parent, callback);
 				};
 				mod.each(mod.templates[name].data, function(n, val) {
