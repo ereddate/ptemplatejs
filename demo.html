@@ -26,6 +26,8 @@
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
 		</div>
+		<div id="main"></div>
+		<div id="mainA"></div>
 		<script>
 		$.ready(function(){
 			$.extend($.__mod__.tmplThesaurus, {
@@ -49,7 +51,7 @@
 					},
 					handleClickFn(e) {
 						e.preventDefault();
-						console.log(e.type);
+						console.log(e.type,1);
 					},
 					handleChangeFn(e){
 						console.log(e.type);
@@ -59,6 +61,44 @@
 					}
 				}
 			}, function(elem) {
+				console.log(elem)
+			}).clone("test", "test1").render("test1", {
+				title: "test1",
+				handle: {
+					handleWatchFn(e){
+						console.log(e.type)
+					},
+					handleClickFn(e) {
+						e.preventDefault();
+						console.log(e.type,2);
+					},
+					handleChangeFn(e){
+						console.log(e.type);
+						this._set("test1", {
+							title: this.value
+						})
+					}
+				}
+			}, $.query("#main"), function(elem) {
+				console.log(elem)
+			}).clone("test1", "test2").render("test2", {
+				title: "test2",
+				handle: {
+					handleWatchFn(e){
+						console.log(e.type)
+					},
+					handleClickFn(e) {
+						e.preventDefault();
+						console.log(e.type,3);
+					},
+					handleChangeFn(e){
+						console.log(e.type);
+						this._set("test2", {
+							title: this.value
+						})
+					}
+				}
+			}, $.query("#mainA"), function(elem) {
 				console.log(elem)
 			});
 		});

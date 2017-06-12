@@ -75,7 +75,7 @@
 			},
 			mixElement(element) {
 				mod.extend(element, pSubClass);
-				element.children && [...element.children].forEach(function(e){
+				element.children && [...element.children].forEach(function(e) {
 					mod.mixElement(e);
 				});
 				return element;
@@ -718,7 +718,7 @@
 			mod.mixElement(elems);
 			return elems;
 		},
-		each: function(a, callback){
+		each: function(a, callback) {
 			mod.each(a, callback);
 			return this;
 		},
@@ -748,41 +748,50 @@
 			mod.extend(mod.routes, params);
 			return this;
 		},
-		render: function(name, data, callback) {
+		clone: function(from, to) {
+			var toTmpl = mod.extend({}, mod.templates[from]);
+			mod.templates[to] = toTmpl;
+			return this;
+		},
+		createTemplate: function(name, args) {
+			!mod.templates[name] && (mod.templates[name] = mod.extend({
+				parent: undefined,
+				content: "",
+				data: undefined
+			}, args));
+			return this;
+		},
+		render: function(name, data, parent, callback) {
 			var that = this,
-				parent = mod.findNode("template:" + name);
-			if (!parent || parent.length === 0) {
-				parent = mod.templates[name] && [mod.templates[name].parent] || [];
+				template = mod.findNode("template:" + name) || mod.templates[name].content;
+
+			if (typeof parent == "function"){
+				callback = parent;
+				parent = template || mod.templates[name] && [mod.templates[name].parent] || [];
+			}else if (!parent || parent.length === 0) {
+				parent = template || mod.templates[name] && [mod.templates[name].parent] || [];
 			}
 			if (parent && parent.length > 0) {
-				!mod.templates[name] && (mod.templates[name] = {
+				!mod.templates[name] && that.createTemplate(name, {
 					parent: parent[0],
-					content: parent[0].innerHTML,
+					content: template[0].innerHTML,
 					data: data
-				}, mod.each(mod.templates[name].data, function(n, val) {
+				}) || mod.extend(mod.templates[name], {
+					parent: parent[0],
+					data: data
+				});
+				var fn = function(){
+					that.render(name, data, parent, callback);
+				};
+				mod.each(mod.templates[name].data, function(n, val) {
 					mod.createObject(mod.templates[name].data, n, val, function(a, b) {
-						that.render(name, data, callback);
+						fn();
 					})
-				}));
-				var html = mod.tmpl(mod.templates[name].content, mod.templates[name].data || {});
+				});
+				var html = mod.tmpl(mod.templates[name].content, data || {});
 				parent[0].innerHTML = html;
 				mod.tmpl(parent[0], data);
 				callback && callback(parent[0]);
-				/*parent[0].addEventListener("DOMSubtreeModified", function(e) {
-					if (e.target.nodeType === 1) {
-						e.target._trigger && e.target._trigger("watch");
-					}
-				});
-				parent[0].addEventListener("DOMNodeInserted", function(e) {
-					if (e.target.nodeType === 1) {
-						e.target._trigger && e.target._trigger("domcontentloaded");
-					}
-				});
-				parent[0].addEventListener("DOMNodeRemoved", function(e) {
-					if (e.target.nodeType === 1) {
-						e.target._trigger && e.target._trigger("watch");
-					}
-				});*/
 			}
 			return this;
 		},
