@@ -873,6 +873,9 @@
 			}
 			return this;
 		},
+		tmpl: function(elem, data){
+			return mod.tmpl(elem, data);
+		},
 		set: function(name, data) {
 			mod.set(name, data);
 			return this;

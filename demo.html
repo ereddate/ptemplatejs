@@ -25,6 +25,11 @@
 			<h1 p-custom:title="{{title}}" p-custom:data-custom="{{title | custom : 123}}">{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
+			<ul>
+				<li p-express:for="i in data" p-express:if="index % 2">
+					<a p-custom:href="{{url}}" target="_blank" p-handle:click="handleForClick">{{newstitle}}</a>
+				</li>
+			</ul>
 		</div>
 		<div id="main"></div>
 		<div id="mainA"></div>
@@ -45,7 +50,27 @@
 				}
 			}).render("test", {
 				title: "test",
+				data:[{
+					newstitle: "1 news item title ...",
+					url: "/ccc"
+				},{
+					newstitle: "2 news item title ...",
+					url: "/ccc"
+				},{
+					newstitle: "3 news item title ...",
+					url: "/ccc"
+				},{
+					newstitle: "4 news item title ...",
+					url: "/ccc"
+				},{
+					newstitle: "5 news item title ...",
+					url: "/ccc"
+				}],
 				handle: {
+					handleForClick(e){
+						e.preventDefault();
+						console.log("forClick")
+					},
 					handleWatchFn(e){
 						console.log(e.type)
 					},
