@@ -21,6 +21,22 @@
 		</style>
 	</head>
 	<body>
+		<div p-template="my-component">
+			<article>
+				<header>
+					<h1>header</h1>
+					<p>header desc...</p>
+				</header>
+			</article>
+		</div>
+		<div p-template="my-component-1">
+			<article>
+				<header>
+					<h1>header1</h1>
+					<p>header1 desc...</p>
+				</header>
+			</article>
+		</div>
 		<div p-template="test">
 			<h1 p-custom:title="{{title}}" p-custom:data-custom="{{title | custom : 123}}">{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
@@ -32,6 +48,8 @@
 					<a p-custom:href="{{url}}" target="_blank" p-handle:click="handleForClick">{{newstitle}}</a>
 				</li>
 			</ul>
+			<my-component></my-component>
+			<my-component-1></my-component-1>
 		</div>
 		<div id="main"></div>
 		<div id="mainA"></div>
@@ -63,7 +81,7 @@
 								fontSize:(80/baseFontSize).toFixed(4)+"rem"
 							}
 						});
-					$.router({
+					$.createTemplate("my-component").createTemplate("my-component-1").router({
 						"/test":{
 							path: "/",
 							params: {

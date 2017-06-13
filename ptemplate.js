@@ -136,6 +136,39 @@
 					then(null)
 				}) : then(v);
 			},
+			createDom: function() {
+				var args = arguments,
+					len = args.length,
+					tagName, attrs, tag, arr = mod.extend([], args);
+				if (len < 2) return;
+				tagName = args[0];
+				attrs = args[1];
+				var childrens = [],
+					i = 0;
+				arr.forEach((r) => {
+					i += 1;
+					if (i > 2) childrens.push(r);
+				});
+				tag = /textnode/.test(tagName.toLowerCase()) ? doc.createTextNode("") : /docmentfragment/.test(tagName.toLowerCase()) ? doc.createDocumentFragment() : doc.createElement(tagName);
+				if (!/textnode|docmentfragment/.test(tagName.toLowerCase())) {
+					mod.mixElement(tag);
+					for (var name in attrs) {
+						var value = attrs[name];
+						mod.setAttrs(tag, name, value);
+					}
+				} else {
+					mod.mixElement(tag);
+				}
+				childrens.forEach(function(e) {
+					if (mod.is(typeof e, "function")) {
+						var items = e();
+						tag.appendChild(items);
+					} else {
+						tag.appendChild(e);
+					}
+				});
+				return tag;
+			},
 			tmpl: function(obj, data) {
 				var bindAttrElement = {
 					bind: {},
@@ -161,64 +194,72 @@
 						mod.promise(v, then);
 					});
 				} else if (obj.nodeType) {
-					//console.log(obj.parentNode)
-					mod.mixElement(obj);
-					var attrs = obj.attributes && obj.attributes.length > 0 && [...obj.attributes] || false;
-					if (attrs) {
-						attrs.forEach(function(a) {
-							(new Promise((resolve, reject) => {
-								mod.each(data, function(n, v) {
-									var reg = new RegExp("{{\\s*" + a.name + "\\s*(\\|\\s*([^<>,]+)\\s*)*}}", "gim"),
-										then = function(u) {
-											if (u) {
-												a.value = a.value.replace(reg, function(a, b) {
-													if (b) {
-														b = b.split(':');
-														a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "")](u, b[1]) || a;
-													} else {
-														a = u;
-													}
-													return a;
-												});
-											}
-											resolve();
-										};
-									mod.promise(v, then);
-								});
-							})).then(function() {
-								if (/^p-/.test(a.name.toLowerCase())) {
-									var name = a.name.replace(/p\-/gim, "").split(':');
-									if (mod.tmplAttributes[name[0]])
-										mod.tmplAttributes[name[0]](obj, name[1], {
-											name: a.name,
-											value: a.value
-										}, data, obj.parentNode);
-									else {
-										var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") == "for" ? "bind" : "for"],
-											vname = a.value.split(' ');
-										vname.forEach((n) => {
-											!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
-										});
-										obj._removeAttr(a.name);
+					//console.log(obj.tagName)
+					if (obj.tagName && mod.templates[obj.tagName.toLowerCase()]) {
+						console.log(mod.templates[obj.tagName.toLowerCase()])
+						var a = mod.createDom("div", {
+							html: mod.tmpl(mod.templates[obj.tagName.toLowerCase()].content, mod.templates[obj.tagName.toLowerCase()].data)							
+						});
+						obj.parentNode && obj.parentNode.replaceChild(a.children[0], obj);
+					} else {
+						mod.mixElement(obj);
+						var attrs = obj.attributes && obj.attributes.length > 0 && [...obj.attributes] || false;
+						if (attrs) {
+							attrs.forEach(function(a) {
+								(new Promise((resolve, reject) => {
+									mod.each(data, function(n, v) {
+										var reg = new RegExp("{{\\s*" + a.name + "\\s*(\\|\\s*([^<>,]+)\\s*)*}}", "gim"),
+											then = function(u) {
+												if (u) {
+													a.value = a.value.replace(reg, function(a, b) {
+														if (b) {
+															b = b.split(':');
+															a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "")](u, b[1]) || a;
+														} else {
+															a = u;
+														}
+														return a;
+													});
+												}
+												resolve();
+											};
+										mod.promise(v, then);
+									});
+								})).then(function() {
+									if (/^p-/.test(a.name.toLowerCase())) {
+										var name = a.name.replace(/p\-/gim, "").split(':');
+										if (mod.tmplAttributes[name[0]])
+											mod.tmplAttributes[name[0]](obj, name[1], {
+												name: a.name,
+												value: a.value
+											}, data, obj.parentNode);
+										else {
+											var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") == "for" ? "bind" : "for"],
+												vname = a.value.split(' ');
+											vname.forEach((n) => {
+												!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
+											});
+											obj._removeAttr(a.name);
+										}
 									}
-								}
+								});
 							});
+						}
+						for (var name in bindAttrElement.bind) {
+							var e = bindAttrElement.bind[name];
+							mod.each(e, (i, elem) => {
+								if (bindAttrElement.for[name]) {
+									var f = bindAttrElement.for[name];
+									mod.each(f, (n, felem) => {
+										!elem._bindElement ? elem._bindElement = [felem] : elem._bindElement.push(felem);
+									});
+								}
+							})
+						}
+						obj.children && mod.each([...obj.children], function(i, e) {
+							mod.tmpl(e, data);
 						});
 					}
-					for (var name in bindAttrElement.bind) {
-						var e = bindAttrElement.bind[name];
-						mod.each(e, (i, elem) => {
-							if (bindAttrElement.for[name]) {
-								var f = bindAttrElement.for[name];
-								mod.each(f, (n, felem) => {
-									!elem._bindElement ? elem._bindElement = [felem] : elem._bindElement.push(felem);
-								});
-							}
-						})
-					}
-					obj.children && mod.each([...obj.children], function(i, e) {
-						mod.tmpl(e, data);
-					});
 				}
 				return obj;
 			},
@@ -369,7 +410,7 @@
 				}
 				return hasIn;
 			},
-			setFontSize:function(num) {
+			setFontSize: function(num) {
 				var num = num || 16,
 					iWidth = document.documentElement.clientWidth,
 					iHeight = document.documentElement.clientHeight,
@@ -801,10 +842,10 @@
 			mod.each(a, callback);
 			return this;
 		},
-		getBaseFontSize:function(){
+		getBaseFontSize: function() {
 			return window.baseFontSize || mod.setFontSize(num);
 		},
-		setBaseFontSize: function(num){
+		setBaseFontSize: function(num) {
 			mod.setFontSize(num);
 			mod.on(win, "orientationchange resize", () => {
 				mod.setFontSize(num);
@@ -857,44 +898,16 @@
 			return !Object.is(mod.Styles[name], undefined) && mod.Styles[name];
 		},
 		createDom: function( /*name, attrs, children, ...*/ ) {
-			var args = arguments,
-				len = args.length,
-				tagName, attrs, tag, arr = mod.extend([], args);
-			if (len < 2) return;
-			tagName = args[0];
-			attrs = args[1];
-			var childrens = [],
-				i = 0;
-			arr.forEach((r) => {
-				i += 1;
-				if (i > 2) childrens.push(r);
-			});
-			tag = /textnode/.test(tagName.toLowerCase()) ? doc.createTextNode("") : /docmentfragment/.test(tagName.toLowerCase()) ? doc.createDocumentFragment() : doc.createElement(tagName);
-			if (!/textnode|docmentfragment/.test(tagName.toLowerCase())) {
-				mod.mixElement(tag);
-				for (var name in attrs) {
-					var value = attrs[name];
-					mod.setAttrs(tag, name, value);
-				}
-			} else {
-				mod.mixElement(tag);
-			}
-			childrens.forEach(function(e) {
-				if (mod.is(typeof e, "function")) {
-					var items = e();
-					tag.appendChild(items);
-				} else {
-					tag.appendChild(e);
-				}
-			});
-			return tag;
+			return mod.createDom.apply(mod, arguments);
 		},
 		createTemplate: function(name, args) {
-			!mod.templates[name] && (mod.templates[name] = mod.extend({
-				parent: undefined,
-				content: "",
-				data: undefined
-			}, args));
+			var template = mod.findNode("template:" + name),
+				ops = {
+					parent: undefined,
+					content: template.length > 0 ? template[0].innerHTML : "",
+					data: {}
+				};
+			!mod.templates[name] && (mod.templates[name] = args ? mod.extend(ops, args) : ops);
 			return this;
 		},
 		render: function(name, data, parent, callback) {
