@@ -25,7 +25,7 @@
 			<h1 p-custom:title="{{title}}" p-custom:data-custom="{{title | custom : 123}}">{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
-			<span><b p-express:if="'{{title | lowercase}}' == 'test'">1</b><b p-express:if="'{{title | lowercase}}' != 'test'">2</b></span>
+			<span><b p-express:if="'{{title | lowercase}}' == 'test'" style="{{style}}">1</b><b p-express:if="'{{title | lowercase}}' != 'test'">2</b></span>
 			<ul>
 				<li p-express:for="i in data" p-express:if="index % {{index}}">
 					<a p-custom:href="{{url}}" target="_blank" p-handle:click="handleForClick">{{newstitle}}</a>
@@ -47,7 +47,14 @@
 				styles = $.createStyle({
 					alink: {
 						fontWeight:400,
-						fontSize:(60/baseFontSize).toFixed(4)+"rem"
+						fontSize:(30/baseFontSize).toFixed(4)+"rem",
+						color:"rgb(255,255,255)",
+						width:(40/baseFontSize).toFixed(4)+"rem",
+						height:(40/baseFontSize).toFixed(4)+"rem",
+						textAlign:"center",
+						borderRadius:(30/baseFontSize).toFixed(4)+"rem",
+						display:"inline-block",
+						backgroundColor:"rgb(100,149,237)"
 					}
 				});
 			$.router({
@@ -60,6 +67,7 @@
 			}).render("test", {
 				title: "test",
 				index:2,
+				style: styles.alink,
 				data:[{
 					newstitle: "1 news item title ...",
 					url: "/ccc"
@@ -100,6 +108,7 @@
 			}).clone("test", "test1").render("test1", {
 				title: "test1",
 				index: 3,
+				style: styles.alink,
 				data: function(success, error){
 					success({data:[{
 						newstitle: "1 news item title ...",
@@ -138,6 +147,7 @@
 			}).clone("test1", "test2").render("test2", {
 				title: "test2",
 				index: 0,
+				style: styles.alink,
 				handle: {
 					handleWatchFn(e){
 						console.log(e.type)

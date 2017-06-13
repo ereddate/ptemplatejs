@@ -143,13 +143,14 @@
 				}
 				if (mod.is(typeof obj, "string")) {
 					mod.each(data, function(n, v) {
-						var reg = new RegExp("{{\\s*" + n + "\\s*(\\|\\s*([^<>,]+)\\s*)*}}", "gim"),
+						var reg = new RegExp("{{\\s*" + n + "\\s*(\\|\\s*([^<>,}]+)\\s*)*}}", "gim"),
 							then = function(u) {
 								obj = obj.replace(reg, function(a, b) {
 									//console.log(a, b, u)
 									if (b) {
 										b = b.split(':');
 										a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](u, b[1] && b[1].replace(/^\s+/gim, "") || undefined) || a;
+										//console.log(a);
 									} else {
 										a = u;
 									}

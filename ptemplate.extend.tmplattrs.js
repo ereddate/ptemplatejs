@@ -49,6 +49,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					}
 					break;
 				case "if":
+					//console.log(obj)
 					var index = parseInt(obj._attr("p-index")) || 0,
 						cmd = a.value.split(' '),
 						bool = true;
