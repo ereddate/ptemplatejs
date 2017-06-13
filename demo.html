@@ -42,6 +42,14 @@
 					return val;
 				}
 			});
+			$.setBaseFontSize(16);
+			var baseFontSize = window.baseFontSize || $.getBaseFontSize(),
+				styles = $.createStyle({
+					alink: {
+						fontWeight:400,
+						fontSize:(60/baseFontSize).toFixed(4)+"rem"
+					}
+				});
 			$.router({
 				"/test":{
 					path: "/",
@@ -145,6 +153,7 @@
 						}, $.createDom("a", {
 							href: "/bbb",
 							text: "baba",
+							style: $.getStyle("alink") || styles.alink,
 							handle: {
 								click: function(e){
 									e.preventDefault();

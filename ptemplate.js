@@ -10,6 +10,7 @@
 			tmplAttributes: {},
 			routes: {},
 			eventData: [],
+			Styles: {},
 			toStyle(val) {
 				let style = [];
 				for (let name in val) style.push(name + ":'" + val[name] + "'");
@@ -366,6 +367,15 @@
 					return hasIn;
 				}
 				return hasIn;
+			},
+			setFontSize:function(num) {
+				var num = num || 16,
+					iWidth = document.documentElement.clientWidth,
+					iHeight = document.documentElement.clientHeight,
+					fontSize = window.orientation && (window.orientation == 90 || window.orientation == -90) || iHeight < iWidth ? iHeight / num : iWidth / num;
+				window.baseFontSize = fontSize;
+				document.getElementsByTagName('html')[0].style.fontSize = fontSize.toFixed(2) + 'px';
+				return fontSize;
 			},
 			findNode: function(selector, element) {
 				element = element || doc;
@@ -790,6 +800,15 @@
 			mod.each(a, callback);
 			return this;
 		},
+		getBaseFontSize:function(){
+			return window.baseFontSize || mod.setFontSize(num);
+		},
+		setBaseFontSize: function(num){
+			mod.setFontSize(num);
+			mod.on(win, "orientationchange resize", () => {
+				mod.setFontSize(num);
+			});
+		},
 		ready: function(callback) {
 			var then = this,
 				completed = () => {
@@ -820,6 +839,20 @@
 			var toTmpl = mod.extend({}, mod.templates[from]);
 			mod.templates[to] = toTmpl;
 			return this;
+		},
+		createStyle: function(style) {
+			for (let name in style) {
+				if (!Reflect.has(mod.Styles, name))
+					style[name] = mod.toStyle(style[name]);
+				else {
+					Reflect.deleteProperty(style, name);
+					style[name] = mod.Styles[name];
+				}
+			}
+			return mod.extend(mod.Styles, style);
+		},
+		getStyle: function(name) {
+			return !Object.is(mod.Styles[name], undefined) && mod.Styles[name];
 		},
 		createDom: function( /*name, attrs, children, ...*/ ) {
 			var args = arguments,
