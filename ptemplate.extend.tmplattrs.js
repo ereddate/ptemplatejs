@@ -22,7 +22,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 								//parent = obj.parentNode,
 								f = pTemplate.createDom("docmentfragment", {}),
 								t = 'var html =[], len = ' + cmd[2] + '.length;for (var ' + cmd[0] + '=0;' + cmd[0] + '<len;' + cmd[0] + '++){html.push(pTemplate.createDom("div", {"p-index": ' + cmd[0] + '+1,html:pTemplate.tmpl(\'' + html.replace(/\r|\n/gim, "") + '\', ' + cmd[2] + '[' + cmd[0] + '])}))}return html;',
-								r = new Function('data', t)(result.data || {});
+								r = new Function(cmd[2], t)(result[cmd[2]] || {});
 							r.forEach(function(e) {
 								f.appendChild(pTemplate.__mod__.mixElement(e.children[0])._attr("p-index", e._attr("p-index")));
 							});

@@ -809,6 +809,7 @@
 			mod.on(win, "orientationchange resize", () => {
 				mod.setFontSize(num);
 			});
+			return this;
 		},
 		ready: function(callback) {
 			var then = this,
