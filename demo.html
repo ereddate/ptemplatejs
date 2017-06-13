@@ -23,8 +23,9 @@
 	<body>
 		<div p-template="test">
 			<h1 p-custom:title="{{title}}" p-custom:data-custom="{{title | custom : 123}}">{{title | lowercase}}</h1>
-			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn">{{title | lowercase}}</a><br />
+			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
+			<input type="button" value="{{buttonText}}" p-handle:click.prevent="handleButtonAlert : hello world!" />
 			<span><b p-express:if="'{{title | lowercase}}' == 'test'" style="{{style}}">1</b><b p-express:if="'{{title | lowercase}}' != 'test'">2</b></span>
 			<ul>
 				<li p-express:for="i in data" p-express:if="index % {{index}}">
@@ -73,6 +74,7 @@
 						title: "test",
 						index:2,
 						style: styles.alink,
+						buttonText: "alert",
 						data:[{
 							newstitle: "1 news item title ...",
 							url: "/ccc"
@@ -90,12 +92,15 @@
 							url: "/ccc"
 						}],
 						handle: {
+							handleButtonAlert(e, msg){
+								alert(msg)
+							},
 							handleForClick(e){
 								e.preventDefault();
 								console.log("forClick")
 							},
-							handleWatchFn(e){
-								console.log(e.type)
+							handleWatchFn(e, msg){
+								console.log(e.type, msg)
 							},
 							handleClickFn(e) {
 								e.preventDefault();

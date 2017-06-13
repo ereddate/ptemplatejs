@@ -69,16 +69,38 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			obj._removeAttr(a.name);
 		},
 		handle: function(obj, type, a, data, _parent) {
-			switch (type) {
+			var handle = a.value.split(/\s*\:\s*/),
+				type = type.split(/\./),
+				filter = function(t, e) {
+					switch (t[1]) {
+						case "prevent":
+							e.preventDefault();
+							break;
+						case "stop":
+							e.stopPropagation();
+							break;
+					}
+				}
+			switch (type[0]) {
 				case "watch":
 					data.handle && (obj._on("DOMSubtreeModified", function(e) {
 						if (e.target.nodeType === 1) {
 							e.target._trigger && e.target._trigger("watch");
 						}
-					})._on(type, data.handle[a.value]), obj._removeAttr(a.name));
+					})._on(type[0], function(e, args) {
+						if (type[1]) {
+							filter(type, e);
+						}
+						data.handle[handle[0]].call(this, e, args)
+					}, handle[1], type[1] == "capture" ? true : false, type[1] == "once" ? true : false), obj._removeAttr(a.name));
 					break;
 				default:
-					data.handle && (obj._on(type, data.handle[a.value]), obj._removeAttr(a.name));
+					data.handle && (obj._on(type[0], function(e, args) {
+						if (type[1]) {
+							filter(type, e);
+						}
+						data.handle[handle[0]].call(this, e, args)
+					}, handle[1], type[1] == "capture" ? true : false, type[1] == "once" ? true : false), obj._removeAttr(a.name));
 					break;
 			}
 		}

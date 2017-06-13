@@ -234,14 +234,14 @@
 				});
 				return ret;
 			},
-			on: function(then, eventName, callback, bool) {
+			on: function(then, eventName, callback, args, bool, onebool) {
 				eventName = eventName.split(' ');
 				eventName.forEach((ev) => {
 					var fn = (e) => {
-						bool && then._off(ev);
-						callback && callback.call(then, e);
+						//onebool && then._off(ev);
+						callback && callback.call(then, e, args);
 					};
-					then.addEventListener(ev, fn, false);
+					then.addEventListener(ev, fn, bool || false);
 					mod.eventData.push({
 						element: then,
 						eventName: ev,
@@ -265,7 +265,7 @@
 					mod.eventData.forEach((a) => {
 						i += 1;
 						if (mod.is(a.element, then) && mod.is(a.eventName, ev)) {
-							then.removeEventListener(ev, a.factory, false);
+							then.removeEventListener(ev, a.factory, a.bool || false);
 							mod.eventData.splice(i, 1);
 						}
 					})
@@ -550,8 +550,8 @@
 				var nE = this.cloneNode(!mod.is(typeof bool, "undefined") ? bool : true);
 				return nE;
 			},
-			_on(eventName, fn) {
-				mod.on(this, eventName, fn);
+			_on(eventName, fn, args, bool) {
+				mod.on(this, eventName, fn, args, bool, false);
 				return this;
 			},
 			_off(eventName) {
@@ -562,10 +562,10 @@
 				mod.trigger(this, eventName, args);
 				return this;
 			},
-			_one(eventName, fn) {
-				mod.on(this, eventName, fn, true);
+			/*_once(eventName, fn) {
+				mod.on(this, eventName, fn, undefined, false, true);
 				return this;
-			},
+			},*/
 			_remove(element) {
 				element && element.nodeType && this.removeChild(element) || this.parentNode && this.parentNode.removeChild(this);
 				return this;
