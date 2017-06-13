@@ -25,8 +25,9 @@
 			<h1 p-custom:title="{{title}}" p-custom:data-custom="{{title | custom : 123}}">{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
+			<span><b p-express:if="'{{title | lowercase}}' == 'test'">1</b><b p-express:if="'{{title | lowercase}}' != 'test'">2</b></span>
 			<ul>
-				<li p-express:for="i in data" p-express:if="index % 2">
+				<li p-express:for="i in data" p-express:if="index % {{index}}">
 					<a p-custom:href="{{url}}" target="_blank" p-handle:click="handleForClick">{{newstitle}}</a>
 				</li>
 			</ul>
@@ -50,6 +51,7 @@
 				}
 			}).render("test", {
 				title: "test",
+				index:2,
 				data:[{
 					newstitle: "1 news item title ...",
 					url: "/ccc"
@@ -89,6 +91,25 @@
 				console.log(elem)
 			}).clone("test", "test1").render("test1", {
 				title: "test1",
+				index: 3,
+				data: function(success, error){
+					success({data:[{
+						newstitle: "1 news item title ...",
+						url: "/ccc"
+					},{
+						newstitle: "2 news item title ...",
+						url: "/ccc"
+					},{
+						newstitle: "3 news item title ...",
+						url: "/ccc"
+					},{
+						newstitle: "4 news item title ...",
+						url: "/ccc"
+					},{
+						newstitle: "5 news item title ...",
+						url: "/ccc"
+					}]});
+				},
 				handle: {
 					handleWatchFn(e){
 						console.log(e.type)
@@ -108,6 +129,7 @@
 				console.log(elem)
 			}).clone("test1", "test2").render("test2", {
 				title: "test2",
+				index: 0,
 				handle: {
 					handleWatchFn(e){
 						console.log(e.type)

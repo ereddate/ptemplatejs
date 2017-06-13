@@ -125,6 +125,16 @@
 				});
 				return element;
 			},
+			promise: function(v, then) {
+				Object.is(typeof v, "function") ? (new Promise((resolve, reject) => {
+					v(resolve, reject)
+				})).then(function(r) {
+					then(r)
+				}, function(error) {
+					console.log("error." + error);
+					then(null)
+				}) : then(v);
+			},
 			tmpl: function(obj, data) {
 				var bindAttrElement = {
 					bind: {},
@@ -133,51 +143,64 @@
 				if (mod.is(typeof obj, "string")) {
 					mod.each(data, function(n, v) {
 						var reg = new RegExp("{{\\s*" + n + "\\s*(\\|\\s*([^<>,]+)\\s*)*}}", "gim"),
-							u = Object.is(typeof v, "function") ? v() : v;
-						obj = obj.replace(reg, function(a, b) {
-							if (b) {
-								b = b.split(':');
-								a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](u, b[1] && b[1].replace(/^\s+/gim, "") || undefined) || a;
-							} else {
-								a = u;
-							}
-							return a;
-						});
-					});
-				} else if (obj.nodeType) {
-					mod.mixElement(obj);
-					var attrs = obj.attributes && obj.attributes.length > 0 && [...obj.attributes] || false;
-					if (attrs) {
-						attrs.forEach(function(a) {
-							mod.each(data, function(n, v) {
-								var reg = new RegExp("{{\\s*" + a.name + "\\s*(\\|\\s*([^<>,]+)\\s*)*}}", "gim"),
-									u = Object.is(typeof v, "function") ? v() : v;
-								a.value = a.value.replace(reg, function(a, b) {
+							then = function(u) {
+								obj = obj.replace(reg, function(a, b) {
+									//console.log(a, b, u)
 									if (b) {
 										b = b.split(':');
-										a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "")](u, b[1]) || a;
+										a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](u, b[1] && b[1].replace(/^\s+/gim, "") || undefined) || a;
 									} else {
 										a = u;
 									}
 									return a;
 								});
-							});
-							if (/^p-/.test(a.name.toLowerCase())) {
-								var name = a.name.replace(/p\-/gim, "").split(':');
-								if (mod.tmplAttributes[name[0]])
-									mod.tmplAttributes[name[0]](obj, name[1], {
-										name: a.name,
-										value: a.value
-									}, data);
-								else {
-									var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") == "for" ? "bind" : "for"],
-										vname = a.value.split(' ');
-									vname.forEach((n) => {
-										!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
-									});
-									obj._removeAttr(a.name);
+								//console.log(obj)
+							};
+						mod.promise(v, then);
+					});
+				} else if (obj.nodeType) {
+					//console.log(obj.parentNode)
+					mod.mixElement(obj);
+					var attrs = obj.attributes && obj.attributes.length > 0 && [...obj.attributes] || false;
+					if (attrs) {
+						attrs.forEach(function(a) {
+							(new Promise((resolve, reject) => {
+								mod.each(data, function(n, v) {
+									var reg = new RegExp("{{\\s*" + a.name + "\\s*(\\|\\s*([^<>,]+)\\s*)*}}", "gim"),
+										then = function(u) {
+											if (u) {
+												a.value = a.value.replace(reg, function(a, b) {
+													if (b) {
+														b = b.split(':');
+														a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "")](u, b[1]) || a;
+													} else {
+														a = u;
+													}
+													return a;
+												});
+											}
+											resolve();
+										};
+									mod.promise(v, then);
+								});
+							})).then(function() {
+								if (/^p-/.test(a.name.toLowerCase())) {
+									var name = a.name.replace(/p\-/gim, "").split(':');
+									if (mod.tmplAttributes[name[0]])
+										mod.tmplAttributes[name[0]](obj, name[1], {
+											name: a.name,
+											value: a.value
+										}, data, obj.parentNode);
+									else {
+										var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") == "for" ? "bind" : "for"],
+											vname = a.value.split(' ');
+										vname.forEach((n) => {
+											!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
+										});
+										obj._removeAttr(a.name);
+									}
 								}
-							}
+							});
 						});
 					}
 					for (var name in bindAttrElement.bind) {
@@ -811,7 +834,7 @@
 				i += 1;
 				if (i > 2) childrens.push(r);
 			});
-			tag = /textnode/.test(tagName.toLowerCase()) ? doc.createTextNode("") : /textnode/.test(tagName.toLowerCase()) ? doc.createDocumentFragment() : doc.createElement(tagName);
+			tag = /textnode/.test(tagName.toLowerCase()) ? doc.createTextNode("") : /docmentfragment/.test(tagName.toLowerCase()) ? doc.createDocumentFragment() : doc.createElement(tagName);
 			if (!/textnode|docmentfragment/.test(tagName.toLowerCase())) {
 				mod.mixElement(tag);
 				for (var name in attrs) {
@@ -873,7 +896,7 @@
 			}
 			return this;
 		},
-		tmpl: function(elem, data){
+		tmpl: function(elem, data) {
 			return mod.tmpl(elem, data);
 		},
 		set: function(name, data) {
