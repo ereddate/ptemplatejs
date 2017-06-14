@@ -68,6 +68,13 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			obj._attr(type, a.value);
 			obj._removeAttr(a.name);
 		},
+		html: function(obj, type, a, data, _parent){
+			var html = "", b = pTemplate.createDom("div", {});
+			pTemplate.__mod__.templates[a.value] && (html = pTemplate.__mod__.templates[a.value].content);
+			b.innerHTML = html;
+			b.children[0] && obj._append(b.children[0]);
+			obj._removeAttr(a.name);
+		},
 		handle: function(obj, type, a, data, _parent) {
 			var handle = a.value.split(/\s*\:\s*/),
 				type = type.split(/\./),
