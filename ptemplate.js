@@ -91,6 +91,7 @@
 				return Object.is(a, b);
 			},
 			set: function(n, o) {
+				console.log(mod.templates[n].data)
 				mod.templates[n] && mod.extend(mod.templates[n].data, o || {});
 			},
 			each: function(a, b, c) {
@@ -196,11 +197,16 @@
 				} else if (obj.nodeType) {
 					//console.log(obj.tagName)
 					if (obj.tagName && mod.templates[obj.tagName.toLowerCase()]) {
-						console.log(mod.templates[obj.tagName.toLowerCase()])
-						var a = mod.createDom("div", {
-							html: mod.tmpl(mod.templates[obj.tagName.toLowerCase()].content, mod.templates[obj.tagName.toLowerCase()].data)							
+						var attr = obj.attributes,
+							newObj = {};
+						mod.each(attr, function(i, b) {
+							newObj[b.name] = b.value;
 						});
-						obj.parentNode && obj.parentNode.replaceChild(a.children[0], obj);
+						var mData = mod.extend(mod.templates[obj.tagName.toLowerCase()].data, newObj),
+							a = mod.createDom("div", {
+								html: mod.tmpl(mod.templates[obj.tagName.toLowerCase()].content, mData)
+							});
+						obj.parentNode && obj.parentNode.replaceChild(mod.tmpl(a.children[0], mData), obj);
 					} else {
 						mod.mixElement(obj);
 						var attrs = obj.attributes && obj.attributes.length > 0 && [...obj.attributes] || false;
@@ -900,14 +906,14 @@
 		createDom: function( /*name, attrs, children, ...*/ ) {
 			return mod.createDom.apply(mod, arguments);
 		},
-		createTemplate: function(name, args) {
+		createTemplate: function(name, args, bool) {
 			var template = mod.findNode("template:" + name),
 				ops = {
 					parent: undefined,
 					content: template.length > 0 ? template[0].innerHTML : "",
 					data: {}
 				};
-			!mod.templates[name] && (mod.templates[name] = args ? mod.extend(ops, args) : ops);
+			!mod.templates[name] && (mod.templates[name] = args ? mod.extend(bool ? ops : ops.data, args) && ops : ops);
 			return this;
 		},
 		render: function(name, data, parent, callback) {
@@ -925,7 +931,7 @@
 					parent: parent[0],
 					content: template[0].innerHTML,
 					data: data
-				}) || mod.extend(mod.templates[name], {
+				}, true) || mod.extend(mod.templates[name], {
 					parent: parent[0],
 					data: data
 				});
