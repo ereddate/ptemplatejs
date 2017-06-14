@@ -21,7 +21,7 @@
 		</style>
 	</head>
 	<body>
-		<div p-template="my-component">
+		<script type="text/html" p-template="my-component">
 			<article>
 				<header>
 					<h1>{{title}}</h1>
@@ -29,15 +29,15 @@
 				</header>
 				<my-component-1 title="click me!"></my-component-1>
 			</article>
-		</div>
-		<div p-template="my-component-1">
+		</script>
+		<script type="text/html" p-template="my-component-1">
 			<article>
 				<header>
 					<h1>header1 - <a p-custom:href="/bbb" p-handle:click.prevent="handleClickFnA">{{title}}</a></h1>
 					<p>header1 desc...</p>
 				</header>
 			</article>
-		</div>
+		</script>
 		<div p-template="test">
 			<h1 p-custom:title="{{title}}" p-custom:data-custom="{{title | custom : 123}}">{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
