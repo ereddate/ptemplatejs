@@ -4,6 +4,13 @@
 # 使用方法
 ```
 请查看 demo.html
+
+链式写法：pTemplate.createTemplate("name")
+                  .render("name",{}, parent, function(parent){...})
+                  .clone("name", "newName")
+                  ...
+使用pTemplate.set()或事件中的this._set()方法更新模板的数据，将使模板对应的DOM刷新。
+DOM将拥有类似jquery相同的私有dom操作方法，如this._append()、this._frist()、this._css()、this._attr()等等。
 ```
 
 # 模板语法
