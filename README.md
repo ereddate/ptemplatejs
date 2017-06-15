@@ -61,7 +61,6 @@ toRem: 转换px为rem
 hexToRgb: 16进制转rgb
 rgbToHex: rgb转16进制
 cssPrefix: css属性自动加前缀 -webkit- -o- -ms- -moz-
-base64: 转换为base64数据
 
 写法：
 {{ name | filter : 'a' }}
@@ -84,7 +83,6 @@ base64: 转换为base64数据
 {{ #efefef | hexToRgb }}
 {{ rgb(0,0,0) | rgbToHex }}
 {{ "backface-visibility:hidden" | cssPrefix }}
-{{ text | base64 : "text" }} 或 {{ text | base64 : "html" }}
 
 ```
 
