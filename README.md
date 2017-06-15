@@ -6,6 +6,39 @@
 请查看 demo.html
 ```
 
+# 模板语法
+```
+1）模板的属性
+p-template="模板名称"，指定模板并赋予名称
+p-router:属性名（href或src) = "路由别名"，路由
+p-custom:属性名 = "属性值"，属性
+p-handle:事件名.修饰符(prevent|stop|capture) = "方法名称"，事件控制
+p-express:逻辑名(for或if) = "条件"，逻辑
+p-html="模板名称"，插入模板的html代码，忽略数据渲染
+
+2）模板的嵌套，如下：
+<script type="text/html" p-template="my-template">
+  <header>
+    <h1>{{title | lowercase}}</h1>
+  </header>
+  ...
+</script>
+<div p-template="b">
+  ...
+  <my-template title="header name"></my-template>
+  ...
+</div>
+
+输出后：
+<div>
+  ...
+  <header>
+    <h1>header name</h1>
+  </header>
+  ...
+</div>
+```
+
 # 提供的方法：
 ```
 query(selector, parent)
