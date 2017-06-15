@@ -1,5 +1,17 @@
 'use strict';
 typeof window.pTemplate != "undefined" && (function(win, $) {
+	function isExpress(a, data) {
+		var isExpress = false,
+			fn;
+		try {
+			fn = new Function("data", "return " + a.value);
+			fn(data);
+			isExpress = true;
+		} catch (e) {
+			isExpress = false;
+		}
+		return isExpress ? fn(data) : null;
+	}
 	$.__mod__.tmplAttributes && $.extend($.__mod__.tmplAttributes, {
 		router: function(obj, type, a, data, _parent) {
 			if ($.__mod__.routes && $.__mod__.routes[a.value]) {
@@ -65,19 +77,13 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			}
 		},
 		custom: function(obj, type, a, data, _parent) {
-			var isExpress = false, fn;
-			try{
-				fn = new Function("return "+a.value);
-				fn();
-				isExpress = true;
-			}catch(e){
-				isExpress = false;
-			}
-			obj._attr(type, isExpress ? fn() : a.value);
+			var result = isExpress(a);
+			obj._attr(type, !result ? a.value : result);
 			obj._removeAttr(a.name);
 		},
-		html: function(obj, type, a, data, _parent){
-			var html = "", b = pTemplate.createDom("div", {});
+		html: function(obj, type, a, data, _parent) {
+			var html = "",
+				b = pTemplate.createDom("div", {});
 			pTemplate.__mod__.templates[a.value] && (html = pTemplate.__mod__.templates[a.value].content);
 			b.innerHTML = html;
 			b.children[0] && obj._append(b.children[0]);

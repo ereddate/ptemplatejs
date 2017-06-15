@@ -46,7 +46,7 @@
 			</article>
 		</script>
 		<div p-template="test">
-			<h1 p-custom:title="('header_title_'+'{{title}}').toUpperCase()" p-custom:data-custom="{{title | custom : 123}}">header_{{title | lowercase}}</h1>
+			<h1 p-custom:title="('header_title_'+'{{title | lowercase}}').toUpperCase()" p-custom:data-custom="{{title | custom : 123}}">header_{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
 			<input type="button" value="{{buttonText}}" p-handle:click.prevent="handleButtonAlert : hello world!" />
