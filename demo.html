@@ -57,21 +57,25 @@
 				</li>
 			</ul>
 			<my-component title="{{title}}"></my-component>
+			<!-- 模板的引用 -->
 			<div p-html="html"></div>
 		</div>
 		<div id="main"></div>
 		<div id="mainA"></div>
 		<script>
 			(function(win, $){
-				$.ready(function(){
-					$.extend($.__mod__.tmplThesaurus, {
+				$.ready(function(){  //页面准备后的回调
+					$.extend($.__mod__.tmplThesaurus, {  //对象的扩展
 						custom: function(val, filterCondition){
 							console.log(val, filterCondition)
 							return val;
 						}
 					});
+					//设置页面基础字体大小
 					$.setBaseFontSize(16);
+					//获取页面基础字体大小
 					var baseFontSize = window.baseFontSize || $.getBaseFontSize(),
+						//创建样式
 						styles = $.createStyle({
 							alink: {
 								fontWeight:400,
@@ -89,6 +93,7 @@
 								fontSize:(80/baseFontSize).toFixed(4)+"rem"
 							}
 						});
+					//创建模板
 					$.createTemplate("html").createTemplate("my-component", {
 						title: "header"
 					}).createTemplate("my-component-1", {
@@ -98,14 +103,14 @@
 								console.log(e)
 							}
 						}
-					}).router({
+					}).router({  //路由设置
 						"/test":{
 							path: "/",
 							params: {
 								a:1
 							}
 						}
-					}).render("test", {
+					}).render("test", {  //渲染DOM
 						title: "test",
 						index:2,
 						style: styles.alink,
@@ -150,7 +155,7 @@
 						}
 					}, function(elem) {
 						console.log(elem)
-					}).clone("test", "test1").render("test1", {
+					}).clone("test", "test1").render("test1", {  //clone克隆模板
 						title: "test1",
 						index: 3,
 						style: styles.alink,
@@ -187,7 +192,7 @@
 								})
 							}
 						}
-					}, $.query("#main"), function(elem) {
+					}, $.query("#main"), function(elem) {  //query选择器
 						console.log(elem)
 					}).clone("test1", "test2").render("test2", {
 						title: "test2",
@@ -200,15 +205,15 @@
 							handleClickFn(e) {
 								e.preventDefault();
 								console.log(e.type,3);
-								this.parentNode._append($.createDom("span", {
+								this.parentNode._append($.createDom("span", {  //_append追加标签
 									title: "kkk",
 									css: {
 										display: "block"
 									}
-								}, $.createDom("a", {
+								}, $.createDom("a", {  //创建标签
 									href: "/bbb",
 									text: "baba",
-									style: $.getStyle("alinkbutton") || styles.alinkbutton,
+									style: $.getStyle("alinkbutton") || styles.alinkbutton,  //获取样式类值
 									handle: {
 										click: function(e){
 											e.preventDefault();
@@ -221,12 +226,12 @@
 							},
 							handleChangeFn(e){
 								console.log(e.type);
-								this._set("test2", {
+								this._set("test2", {  //设置模板的数据
 									title: this.value
 								})
 							}
 						}
-					}, $.query("#mainA"), function(elem) {
+					}, $.query("#mainA"), function(elem) {  //渲染后的回调
 						console.log(elem)
 					});
 				});
