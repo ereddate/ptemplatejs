@@ -37,6 +37,55 @@ p-html="模板名称"，插入模板的html代码，忽略数据渲染
   </header>
   ...
 </div>
+
+3）模板数据过滤
+filter：内容过滤掉指定值
+json：json转String
+limitToCharacter：字数限制
+limitTo：位数限制
+lowercase：字符最小化
+uppercase：字符最大化
+orderBy：数据正序、倒序
+date：日期格式转换
+currency：货币转换
+empty：为空时替代
+passcard：卡号转换
+indexOf: 取指定值在数组或字符串的位置
+encodeURI: 转换为URI格式
+decodeURI: 解码encodeURI后的代码
+toString: 任务形式数据转换为字符串
+capitalize: 某位数的英文字母的大写转换
+toCNRMB: 转换为中文大写人民币
+toCNumber: 转换为中文大写数字
+toRem: 转换px为rem
+hexToRgb: 16进制转rgb
+rgbToHex: rgb转16进制
+cssPrefix: css属性自动加前缀 -webkit- -o- -ms- -moz-
+base64: 转换为base64数据
+
+写法：
+{{ name | filter : 'a' }}
+{{ {a:1,b:2} | json }}
+{{ text | limitTo : 2 }}
+{{ array | indexOf : "b" }}
+{{ number | toCNRMB }}
+{{ number | toCNumber }}
+{{ abc | lowercase }}
+{{ abc | uppercase }}
+{{ 123 | orderBy : reverse }}
+{{ 321 | orderBy : sort }}
+{{ date | date : MM/dd/yyyy }}
+{{ capitalize | capitalize : 2 }}
+{{ capitalize | capitalize : 0 }}
+{{ 1000 | currency : '$' }}
+{{ 8888888888888888888 | passcard : 4 }} 后面的4不输入的话，默认为4
+{{ usname | empty : null }}
+{{ 20 | toRem : 25.88 }} 后面的数据是html的字体大小
+{{ #efefef | hexToRgb }}
+{{ rgb(0,0,0) | rgbToHex }}
+{{ "backface-visibility:hidden" | cssPrefix }}
+{{ text | base64 : "text" }} 或 {{ text | base64 : "html" }}
+
 ```
 
 # 提供的方法：
