@@ -214,7 +214,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					toAda.push(val);
 				}
 			});
-			return toAda.join(';') + ";";
+			return toAda.join(';');
 		},
 		rgbToHex: function(val, filterCondition) {
 			var reg = /^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/,

@@ -65,7 +65,15 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			}
 		},
 		custom: function(obj, type, a, data, _parent) {
-			obj._attr(type, a.value);
+			var isExpress = false, fn;
+			try{
+				fn = new Function("return "+a.value);
+				fn();
+				isExpress = true;
+			}catch(e){
+				isExpress = false;
+			}
+			obj._attr(type, isExpress ? fn() : a.value);
 			obj._removeAttr(a.name);
 		},
 		html: function(obj, type, a, data, _parent){
