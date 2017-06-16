@@ -711,7 +711,8 @@
 			_data(name, value) {
 				if (/^data-/.test(name)) {
 					return this._attr(name, value);
-				}!this._elementData && (this._elementData = {});
+				}
+				!this._elementData && (this._elementData = {});
 				if (typeof value != "undefined") {
 					this._elementData[name] = value;
 					return this;

@@ -21,7 +21,11 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				}
 				var params = $.__mod__.jsonToUrlString(result.params || {}, "&"),
 					val = result.path + (params == "" ? "" : !/\?/.test(result.path) ? "?" : "&") + params;
-				obj._attr(type, val);
+				if (!type) {
+					obj._data("_router", val);
+				} else {
+					obj._attr(type, val);
+				}
 				obj._removeAttr(a.name)
 			}
 		},
@@ -64,12 +68,12 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					var index = parseInt(obj._attr("p-index")) || 0,
 						result = isExpress(a, /index/.test(a.value) ? index : data, /index/.test(a.value) ? "index" : "data");
 					//console.log(a.value, result, obj._html())
-					if (!result){
+					if (!result) {
 						result = new RegExp(a.value).test(obj._html());
 					}
 					if (!result) {
 						_parent && _parent._remove(obj);
-					}else{
+					} else {
 						obj._removeAttr(a.name);
 					}
 					break;
@@ -118,6 +122,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					data.handle && (obj._on(type[0], function(e, args) {
 						if (type[1]) {
 							filter(type, e);
+						}
+						if (obj._data("_router")){
+							obj._attr(obj._has("href") ? "href" : "src", obj._data("_router"))
 						}
 						data.handle[handle[0]].call(this, e, args)
 					}, handle[1], type[1] == "capture" ? true : false, type[1] == "once" ? true : false), obj._removeAttr(a.name));
