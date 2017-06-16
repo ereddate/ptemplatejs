@@ -1,4 +1,10 @@
-'use strict';
+/*!
+ * ptemplatejs v1.0.0
+ * @author yandong
+ *
+ * https://github.com/ereddate/ptemplatejs
+ */
+ 'use strict';
 (function(win) {
 	var doc = win.document;
 	Array.prototype._eq = function(index) {

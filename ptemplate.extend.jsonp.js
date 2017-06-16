@@ -1,3 +1,9 @@
+/*!
+ * ptemplatejs v1.0.0
+ * @author yandong
+ *
+ * https://github.com/ereddate/ptemplatejs
+ */
 'use strict';
 typeof window.pTemplate != "undefined" && (function(win, $) {
 	$.jsonp = (url, data, ops) => {
