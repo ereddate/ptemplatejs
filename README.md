@@ -52,6 +52,28 @@ DOM将拥有类似jquery相同的私有dom操作方法，如this._append()、thi
   </div>
 ...
 
+动态创建模板，例如：
+pTemplate.render($.createDom("script", {
+    "p-template": "test",
+    type: "text/html"
+  }, $.createDom("h1", {
+    html: "header_{{title}}"
+  }), $.createDom("input", {
+    value: "{{title}}",
+    "p-handle:change": "handleChangeFn"
+  }))._prependTo($.mixElement(document.body)), {
+  title: "test",
+  handle:{
+    handleChangeFn(e){
+      this._set("test", {
+        title: this.value
+      })
+    }
+  }
+}, $.query("#parent"), function(elem){
+  console.log(elem)
+});
+
 ```
 
 # 模板语法
@@ -188,6 +210,9 @@ tmpl(html, data)
 
 set(name, data)
 设置指定名称模板的数据值
+
+mixElement(element)
+扩展标签的私有方法，返回标签本身
 ```
 
 # Element对象私有方法，支持伪类选择器（例如："div:contents","div:parents","div:children","div:text"等等）。
