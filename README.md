@@ -25,6 +25,8 @@ p-custom:属性名 = "属性值"，属性，属性值可以是表达式或值，
 p-handle:事件名.修饰符(prevent|stop|capture) = "方法名称"，事件控制
 p-express:逻辑名(for或if) = "条件"，逻辑
 p-html="模板名称"，插入模板的html代码，忽略数据渲染
+p-bind="名称"，标签的绑定名称
+p-for="名称"，标签连接绑定标签的名称
 
 2）模板的嵌套，如下：
 <script type="text/html" p-template="my-template">
