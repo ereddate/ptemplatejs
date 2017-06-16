@@ -70,6 +70,8 @@
 		</div>
 		<div id="main"></div>
 		<div id="mainA"></div>
+		<div id="mainB"></div>
+		<div id="mainC"></div>
 		<script>
 			(function(win, $){
 				$.ready(function(){  //页面准备后的回调
@@ -249,6 +251,48 @@
 							}
 						}
 					}, $.query("#mainA"), function(elem) {  //渲染后的回调
+						console.log(elem)
+					}).render(function(success, error){
+						var elem = $.createDom("script", {
+							"p-template": "test201706161637",
+							type: "text/html"
+						}, $.createDom("h1", {
+							html: "header_{{title}}"
+						}), $.createDom("input", {
+							value: "{{title}}",
+							"p-handle:change": "handleChangeFn"
+						}));
+						elem._prependTo($.mixElement(document.body));
+						success(elem);
+					}, {
+						title: "test3",
+						handle:{
+							handleChangeFn(e){
+								this._set("test201706161637", {  //设置模板的数据
+									title: this.value
+								})
+							}
+						}
+					}, $.query("#mainB"), function(elem){
+						console.log(elem)
+					}).render($.createDom("script", {
+							"p-template": "test201706161640",
+							type: "text/html"
+						}, $.createDom("h1", {
+							html: "header_{{title}}"
+						}), $.createDom("input", {
+							value: "{{title}}",
+							"p-handle:change": "handleChangeFn"
+						}))._prependTo($.mixElement(document.body)), {
+						title: "test4",
+						handle:{
+							handleChangeFn(e){
+								this._set("test201706161640", {  //设置模板的数据
+									title: this.value
+								})
+							}
+						}
+					}, $.query("#mainC"), function(elem){
 						console.log(elem)
 					});
 				});

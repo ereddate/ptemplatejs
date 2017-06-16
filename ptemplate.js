@@ -120,7 +120,7 @@
 				});
 				return str.length > 0 ? str.join(at) : "";
 			},
-			mixElement(element) {
+			mixElement: function(element) {
 				mod.extend(element, pSubClass);
 				element.children && [...element.children].forEach(function(e) {
 					mod.mixElement(e);
@@ -179,17 +179,19 @@
 					mod.each(data, function(n, v) {
 						var reg = new RegExp("{{\\s*" + n + "\\s*(\\|\\s*([^<>,}]+)\\s*)*}}", "gim"),
 							then = function(u) {
-								obj = obj.replace(reg, function(a, b) {
-									//console.log(a, b, u)
-									if (b) {
-										b = b.split(':');
-										a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](u, b[1] && b[1].replace(/^\s+/gim, "") || undefined) || a;
-										//console.log(a);
-									} else {
-										a = u;
-									}
-									return a;
-								});
+								if (u) {
+									obj = obj.replace(reg, function(a, b) {
+										//console.log(a, b, u)
+										if (b) {
+											b = b.split(':');
+											a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](u, b[1] && b[1].replace(/^\s+/gim, "") || undefined) || a;
+											//console.log(a);
+										} else {
+											a = u;
+										}
+										return a;
+									});
+								}
 								//console.log(obj)
 							};
 						mod.promise(v, then);
@@ -711,8 +713,7 @@
 			_data(name, value) {
 				if (/^data-/.test(name)) {
 					return this._attr(name, value);
-				}
-				!this._elementData && (this._elementData = {});
+				}!this._elementData && (this._elementData = {});
 				if (typeof value != "undefined") {
 					this._elementData[name] = value;
 					return this;
@@ -917,38 +918,51 @@
 			!mod.templates[name] && (mod.templates[name] = args ? mod.extend(bool ? ops : ops.data, args) && ops : ops);
 			return this;
 		},
+		mixElement: function(elem) {
+			mod.mixElement(elem)
+			return elem;
+		},
 		render: function(name, data, parent, callback) {
 			var that = this,
-				template = mod.findNode("template:" + name) || mod.templates[name].content;
-
-			if (typeof parent == "function") {
-				callback = parent;
-				parent = template || mod.templates[name] && [mod.templates[name].parent] || [];
-			} else if (!parent || parent.length === 0) {
-				parent = template || mod.templates[name] && [mod.templates[name].parent] || [];
-			}
-			if (parent && parent.length > 0) {
-				!mod.templates[name] && that.createTemplate(name, {
-					parent: parent[0],
-					content: template[0].innerHTML,
-					data: data
-				}, true) || mod.extend(mod.templates[name], {
-					parent: parent[0],
-					data: data
-				});
-				var fn = function() {
-					that.render(name, data, parent, callback);
+				template, then = function(name) {
+					if (name) {
+						if (typeof name == "string") {
+							template = mod.findNode("template:" + name) || mod.templates[name].content;
+						} else if (name.nodeType) {
+							template = [name];
+							name = name._attr("p-template");
+						}
+						if (typeof parent == "function") {
+							callback = parent;
+							parent = template || mod.templates[name] && [mod.templates[name].parent] || [];
+						} else if (!parent || parent.length === 0) {
+							parent = template || mod.templates[name] && [mod.templates[name].parent] || [];
+						}
+						if (parent && parent.length > 0) {
+							!mod.templates[name] && that.createTemplate(name, {
+								parent: parent[0],
+								content: template[0].innerHTML,
+								data: data
+							}, true) || mod.extend(mod.templates[name], {
+								parent: parent[0],
+								data: data
+							});
+							var fn = function() {
+								that.render(name, data, parent, callback);
+							};
+							mod.each(mod.templates[name].data, function(n, val) {
+								mod.createObject(mod.templates[name].data, n, val, function(a, b) {
+									fn();
+								})
+							});
+							var html = mod.tmpl(mod.templates[name].content, data || {});
+							parent[0].innerHTML = html;
+							mod.tmpl(parent[0], data);
+							callback && callback(parent[0]);
+						}
+					}
 				};
-				mod.each(mod.templates[name].data, function(n, val) {
-					mod.createObject(mod.templates[name].data, n, val, function(a, b) {
-						fn();
-					})
-				});
-				var html = mod.tmpl(mod.templates[name].content, data || {});
-				parent[0].innerHTML = html;
-				mod.tmpl(parent[0], data);
-				callback && callback(parent[0]);
-			}
+			mod.promise(name, then);
 			return this;
 		},
 		tmpl: function(elem, data) {
