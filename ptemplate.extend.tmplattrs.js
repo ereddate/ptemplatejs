@@ -1,10 +1,10 @@
 'use strict';
 typeof window.pTemplate != "undefined" && (function(win, $) {
-	function isExpress(a, data) {
+	function isExpress(a, data, name) {
 		var isExpress = false,
 			fn;
 		try {
-			fn = new Function("data", "return " + a.value);
+			fn = new Function(name, "return " + a.value);
 			fn(data);
 			isExpress = true;
 		} catch (e) {
@@ -61,17 +61,16 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					}
 					break;
 				case "if":
-					//console.log(obj)
 					var index = parseInt(obj._attr("p-index")) || 0,
-						cmd = a.value.split(' '),
-						bool = true;
-					if (/index/.test(a.value)) {
-						bool = new Function("index", "return " + a.value)(index);
-					} else {
-						bool = new Function("data", "return " + a.value)(data);
+						result = isExpress(a, /index/.test(a.value) ? index : data, /index/.test(a.value) ? "index" : "data");
+					//console.log(a.value, result, obj._html())
+					if (!result){
+						result = new RegExp(a.value).test(obj._html());
 					}
-					if (!bool) {
+					if (!result) {
 						_parent && _parent._remove(obj);
+					}else{
+						obj._removeAttr(a.name);
 					}
 					break;
 			}

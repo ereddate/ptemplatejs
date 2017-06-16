@@ -50,7 +50,14 @@
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
 			<input type="button" value="{{buttonText}}" p-handle:click.prevent="handleButtonAlert : hello world!" />
-			<span><b p-express:if="'{{title | lowercase}}' == 'test'" style="{{style | cssPrefix}}">1</b><b p-express:if="'{{title | lowercase}}' != 'test'">2</b></span>
+			<span>
+				<b p-express:if="'{{title | lowercase}}' == 'test'" style="{{style | cssPrefix}}">1</b>
+				<b p-express:if="'{{title | lowercase}}' != 'test'">2</b>
+			</span>
+			<p>
+				<span p-express:if="test">test demo1</span>
+				<span p-express:if="xxx">test demo2</span>
+			</p>
 			<ul>
 				<li p-express:for="i in data" p-express:if="index % {{index}}">
 					<a p-custom:href="{{url}}" target="_blank" p-handle:click="handleForClick">{{newstitle}}</a>
