@@ -15,6 +15,30 @@ QQ群：9786575
 使用pTemplate.set()或事件中的this._set()方法更新模板的数据，将使模板对应的DOM刷新。
 DOM将拥有类似jquery相同的私有dom操作方法，如this._append()、this._frist()、this._css()、this._attr()等等。
 
+
+数据是可计算的，如下：
+...
+title:"AAAA",
+...
+<h1 p-custom:title="('header_title_'+'{{title | lowercase}}').toUpperCase()" 
+或
+...
+buttonText:"button text",
+computed: {
+    resetButtonText:function(){
+        return this.buttonText.split('').reverse().join('');
+    },
+    ...
+},
+...
+<input type="button" value="{{ resetButtonText | uppercase }}" 
+或
+...
+title:"3",
+...
+<span>header_{{title | express : parseInt(this) % 3 + title}}</span>
+
+
 标签绑定，例如：
 ...
   handleButtonClearClick(e){
@@ -29,7 +53,8 @@ DOM将拥有类似jquery相同的私有dom操作方法，如this._append()、thi
   <button p-for="count" p-handle:click="handleButtonRemoveClick">减少</button>
   <button p-for="count count_a ..." p-handle:click="handleButtonClearClick">清零</button>
 ...
-  
+
+
 数据绑定，例如：
 ...
   title:"defaultEdit",
@@ -51,6 +76,7 @@ DOM将拥有类似jquery相同的私有dom操作方法，如this._append()、thi
     ...
   </div>
 ...
+
 
 动态创建模板，例如：
 pTemplate.render($.createDom("script", {
