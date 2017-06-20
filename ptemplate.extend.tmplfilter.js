@@ -123,9 +123,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return symbol + negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
 		};
 	($.__mod__.tmplThesaurus || !$.__mod__.tmplThesaurus && ($.__mod__.tmplThesaurus = {})) && $.extend($.__mod__.tmplThesaurus, {
-		express: function(val, filterCondition){
+		express: function(val, filterCondition, name){
 			try{
-				return (new Function("return "+filterCondition)).call(val)
+				return (new Function(name, "return "+filterCondition)).call(val, val)
 			}catch(e){
 				console.log("express", e)
 			}

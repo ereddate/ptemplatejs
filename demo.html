@@ -259,7 +259,7 @@
 							"p-template": "test201706161637",
 							type: "text/html"
 						}, $.createDom("h1", {
-							html: "header_{{title | express : parseInt(this) % 3}}"
+							html: "header_{{title | express : parseInt(this) % 3 + title}}"
 						}), $.createDom("input", {
 							value: "{{title}}",
 							"p-handle:change": "handleChangeFn"
