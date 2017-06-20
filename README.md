@@ -133,6 +133,7 @@ toRem: 转换px为rem
 hexToRgb: 16进制转rgb
 rgbToHex: rgb转16进制
 cssPrefix: css属性自动加前缀 -webkit- -o- -ms- -moz-
+express: 表达式，表达式中的当前对象只能是this
 
 写法：
 {{ name | filter : 'a' }}
@@ -155,6 +156,7 @@ cssPrefix: css属性自动加前缀 -webkit- -o- -ms- -moz-
 {{ #efefef | hexToRgb }}
 {{ rgb(0,0,0) | rgbToHex }}
 {{ "backface-visibility:hidden" | cssPrefix }}
+{{ title | express : parseInt(this) % 3 }} title等于3时, this就是字符串3，表达式执行后返回结果0
 
 ```
 
