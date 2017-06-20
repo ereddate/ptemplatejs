@@ -4,7 +4,7 @@
  *
  * https://github.com/ereddate/ptemplatejs
  */
- 'use strict';
+'use strict';
 (function(win) {
 	var doc = win.document;
 	Array.prototype._eq = function(index) {
@@ -933,7 +933,17 @@
 				template, then = function(name) {
 					if (name) {
 						if (typeof name == "string") {
-							template = mod.findNode("template:" + name) || mod.templates[name].content;
+							if (/^\s*\<\s*[a-zA-Z]+\s*/.test(name)) {
+								var elem = that.createDom("div", {
+									html: name
+								});
+								template = [elem.children[0]];
+								name = $.mixElement(elem.children[0])._attr("p-template");
+								elem.children[0]._removeAttr("p-template");
+								elem._remove();
+							} else {
+								template = mod.findNode("template:" + name) || mod.templates[name].content;
+							}
 						} else if (name.nodeType) {
 							template = [name];
 							name = name._attr("p-template");

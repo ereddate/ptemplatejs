@@ -73,6 +73,7 @@
 		<div id="mainA"></div>
 		<div id="mainB"></div>
 		<div id="mainC"></div>
+		<div id="mainD"></div>
 		<script>
 			(function(win, $){
 				$.ready(function(){  //页面准备后的回调
@@ -295,7 +296,16 @@
 						}
 					}, $.query("#mainC"), function(elem){
 						console.log(elem)
-					});
+					}).render(
+						'<div p-template="test201706200915"><article><header><h1>header_{{title}}</h1></header></article></div>',
+						{
+							title:"test5"
+						}, 
+						$.query("#mainD"), 
+						function(elem){
+							console.log(elem)
+						}
+					);
 				});
 				console.log($.__mod__.templates)
 			})(this, pTemplate);
