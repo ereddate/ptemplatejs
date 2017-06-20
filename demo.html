@@ -259,7 +259,7 @@
 							"p-template": "test201706161637",
 							type: "text/html"
 						}, $.createDom("h1", {
-							html: "header_{{title}}"
+							html: "header_{{title | express : parseInt(this) % 3}}"
 						}), $.createDom("input", {
 							value: "{{title}}",
 							"p-handle:change": "handleChangeFn"
@@ -267,7 +267,7 @@
 						elem._prependTo($.mixElement(document.body));
 						success(elem);
 					}, {
-						title: "test3",
+						title: "3",
 						handle:{
 							handleChangeFn(e){
 								this._set("test201706161637", {  //设置模板的数据

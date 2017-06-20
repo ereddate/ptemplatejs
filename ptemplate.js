@@ -97,7 +97,6 @@
 				return Object.is(a, b);
 			},
 			set: function(n, o) {
-				console.log(mod.templates[n].data)
 				mod.templates[n] && mod.extend(mod.templates[n].data, o || {});
 			},
 			each: function(a, b, c) {
@@ -190,8 +189,10 @@
 										//console.log(a, b, u)
 										if (b) {
 											b = b.split(':');
-											a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](u, b[1] && b[1].replace(/^\s+/gim, "") || undefined) || a;
-											//console.log(a);
+											if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
+												var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](u, b[1] && b[1].replace(/^\s+/gim, "") || undefined)
+												a = typeof c != "undefined" ? c : a;
+											}
 										} else {
 											a = u;
 										}
