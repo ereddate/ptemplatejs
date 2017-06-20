@@ -176,31 +176,41 @@
 				return tag;
 			},
 			tmpl: function(obj, data) {
-				var bindAttrElement = {
-					bind: {},
-					for: {}
-				}
+				var rp = function(name, val, _object) {
+						var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*)*}}", "gim");
+						if (val) {
+							_object = _object.replace(reg, function(a, b) {
+								//console.log(a, b, u)
+								if (b) {
+									b = b.split(':');
+									if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
+										var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](val, b[1] && b[1].replace(/^\s+/gim, "") || undefined, name)
+										a = typeof c != "undefined" ? c : a;
+									}
+								} else {
+									a = val;
+								}
+								return a;
+							});
+						}
+						return _object;
+					},
+					bindAttrElement = {
+						bind: {},
+						for: {}
+					};
 				if (mod.is(typeof obj, "string")) {
 					mod.each(data, function(n, v) {
-						var reg = new RegExp("{{\\s*" + n + "\\s*(\\|\\s*([^<>,}]+)\\s*)*}}", "gim"),
-							then = function(u) {
-								if (u) {
-									obj = obj.replace(reg, function(a, b) {
-										//console.log(a, b, u)
-										if (b) {
-											b = b.split(':');
-											if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
-												var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](u, b[1] && b[1].replace(/^\s+/gim, "") || undefined, n)
-												a = typeof c != "undefined" ? c : a;
-											}
-										} else {
-											a = u;
-										}
-										return a;
-									});
-								}
-								//console.log(obj)
-							};
+						//console.log(n, v)
+						var then = function(u) {
+							if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
+								mod.each(u, function(name, val) {
+									obj = rp(name, val.call(data), obj);
+								});
+							} else {
+								obj = rp(n, u, obj);
+							}
+						};
 						mod.promise(v, then);
 					});
 				} else if (obj.nodeType) {
@@ -225,16 +235,12 @@
 									mod.each(data, function(n, v) {
 										var reg = new RegExp("{{\\s*" + a.name + "\\s*(\\|\\s*([^<>,]+)\\s*)*}}", "gim"),
 											then = function(u) {
-												if (u) {
-													a.value = a.value.replace(reg, function(a, b) {
-														if (b) {
-															b = b.split(':');
-															a = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "")] && mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "")](u, b[1]) || a;
-														} else {
-															a = u;
-														}
-														return a;
+												if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
+													mod.each(u, function(name, val) {
+														a.value = rp(name, val.call(data), a.value);
 													});
+												} else {
+													a.value = rp(n, u, a.value);
 												}
 												resolve();
 											};

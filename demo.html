@@ -50,7 +50,7 @@
 			<h1 p-custom:title="('header_title_'+'{{title | lowercase}}').toUpperCase()" p-custom:data-custom="{{title | custom : 123}}">header_{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
-			<input type="button" value="{{buttonText}}" p-handle:click.prevent="handleButtonAlert : hello world!" />
+			<input type="button" value="{{ resetButtonText | uppercase }}" p-handle:click.prevent="handleButtonAlert : hello world!" />
 			<span>
 				<b p-express:if="'{{title | lowercase}}' == 'test'" style="{{style | cssPrefix}}">1</b>
 				<b p-express:if="'{{title | lowercase}}' != 'test'">2</b>
@@ -132,7 +132,7 @@
 						title: "test",
 						index:2,
 						style: styles.alink,
-						buttonText: "alert",
+						buttonText: "alert window",
 						data:[{
 							newstitle: "1 news item title ...",
 							url: "/ccc"
@@ -149,11 +149,19 @@
 							newstitle: "5 news item title ...",
 							url: "/ccc"
 						}],
+						computed: {
+							resetButtonText:function(){
+								return this.buttonText.split('').reverse().join('');
+							}
+						},
 						handle: {
 							handleNoTypeClick(e, msg){
 								alert(msg)
 							},
 							handleButtonAlert(e, msg){
+								this._set("test", {
+									buttonText: msg
+								});
 								alert(msg)
 							},
 							handleForClick(e){
