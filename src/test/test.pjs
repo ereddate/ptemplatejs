@@ -1,0 +1,88 @@
+<template p-template="test">
+	<h1 p-custom:title="('header_title_'+'{{title | lowercase}}').toUpperCase()" p-custom:data-custom="{{title | custom : 123}}">header_{{title | lowercase}}</h1>
+	<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
+	<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
+	<input type="button" value="{{ resetButtonText | uppercase }}" p-handle:click.prevent="handleButtonAlert : hello world!" />
+	<span>
+		<b p-express:if="'{{title | lowercase}}' == 'test'" style="{{style | cssPrefix}}">1</b>
+		<b p-express:if="'{{title | lowercase}}' != 'test'">2</b>
+	</span>
+	<p>
+		<span p-express:if="test">test demo1</span>
+		<span p-express:if="xxx">test demo2</span>
+	</p>
+	<a p-router="/test" href="#" p-handle:click="handleNoTypeClick">no type</a>
+	<ul>
+		<li p-express:for="i in data" p-express:if="index % {{index}}">
+			<a p-custom:href="{{url}}" target="_blank" p-handle:click="handleForClick">{{newstitle}}</a>
+		</li>
+	</ul>
+	<my-component title="{{title}}"></my-component>
+	<!-- 模板的引用 -->
+	<div p-html="html"></div>
+</template>
+<script>
+	pTemplate.render("test", {
+		title: "test",
+		index:2,
+		style: pTemplate.getStyle(".alink"),
+		buttonText: "alert window",
+		data:[{
+			newstitle: "1 news item title ...",
+			url: "/ccc"
+		},{
+			newstitle: "2 news item title ...",
+			url: "/ccc"
+		},{
+			newstitle: "3 news item title ...",
+			url: "/ccc"
+		},{
+			newstitle: "4 news item title ...",
+			url: "/ccc"
+		},{
+			newstitle: "5 news item title ...",
+			url: "/ccc"
+		}],
+		computed: {
+			resetButtonText:function(){
+				return this.buttonText.split('').reverse().join('');
+			}
+		},
+		handle: {
+			handleNoTypeClick(e, msg){
+				alert(msg)
+			},
+			handleButtonAlert(e, msg){
+				this._set("test", {
+					buttonText: msg
+				});
+				alert(msg)
+			},
+			handleForClick(e){
+				e.preventDefault();
+				console.log("forClick")
+			},
+			handleWatchFn(e, msg){
+				console.log(e.type, msg)
+			},
+			handleClickFn(e) {
+				e.preventDefault();
+				console.log(e.type,1);
+			},
+			handleChangeFn(e){
+				console.log(e.type);
+				this._set("test", {
+					title: this.value
+				})
+			}
+		}
+	}, pTemplate.query("#app"), function(elem) {
+		console.log(elem)
+	});
+</script>
+<style>
+	.alink{
+		font-weight:700;
+		font-size: 20rem
+	}
+</style>

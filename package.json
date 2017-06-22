@@ -1,0 +1,37 @@
+{
+	"name": "ptemplatejs",
+	"version": "1.0.0",
+	"description": "ptemplatejs",
+	"author": "yandong",
+	"keywords": [
+		"ptemplatejs",
+		"ereddate",
+		"javascript"
+	],
+	"homepage": "http://github.com/ereddate/ptemplatejs",
+	"contributors": [
+		"ereddate@gmail.com"
+	],
+	"scripts": {
+		"test": "grunt"
+	},
+	"dependencies": {
+		"grunt-contrib-watch": "*",
+		"grunt": "*",
+		"grunt-cli": "*"
+	},
+	"base": "./",
+	"configs": {
+		"requirePjs": [
+			{
+				"src": [
+					"src/**/"
+				],
+				"ext": "pjs"
+			}
+		],
+		"build": {
+			"path": "dist/"
+		}
+	}
+}

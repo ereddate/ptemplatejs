@@ -1,0 +1,35 @@
+<script>
+	pTemplate.setBaseFontSize(16);
+	var baseFontSize = window.baseFontSize || pTemplate.getBaseFontSize(),
+		styles = pTemplate.createStyle({
+			alink: {
+				fontWeight:400,
+				fontSize:(30/baseFontSize).toFixed(4)+"rem",
+				color:"rgb(255,255,255)",
+				width:(40/baseFontSize).toFixed(4)+"rem",
+				height:(40/baseFontSize).toFixed(4)+"rem",
+				textAlign:"center",
+				borderRadius:(30/baseFontSize).toFixed(4)+"rem",
+				display:"inline-block",
+				backgroundColor:"rgb(100,149,237)"
+			},
+			alinkbutton:{
+				fontWeight:400,
+				fontSize:(80/baseFontSize).toFixed(4)+"rem"
+			}
+		});
+	pTemplate.router({
+		"/test":{
+			path: "/",
+			params: {
+				a:1
+			}
+		},
+		"/test":{
+			path:"/no type/",
+			params: {
+				b:2
+			}
+		}
+	});
+</script>
