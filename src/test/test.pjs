@@ -22,10 +22,10 @@
 	<div p-html="html"></div>
 </template>
 <script>
-	pTemplate.render("test", {
+	$.render("test", {
 		title: "test",
 		index:2,
-		style: pTemplate.getStyle(".alink"),
+		style: $.getStyle(".alink"),
 		buttonText: "alert window",
 		data:[{
 			newstitle: "1 news item title ...",
@@ -76,7 +76,7 @@
 				})
 			}
 		}
-	}, pTemplate.query("#app"), function(elem) {
+	}, $.query("#app"), function(elem) {
 		console.log(elem)
 	});
 </script>

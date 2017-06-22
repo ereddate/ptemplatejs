@@ -1,7 +1,7 @@
 <script>
-	pTemplate.setBaseFontSize(16);
-	var baseFontSize = window.baseFontSize || pTemplate.getBaseFontSize(),
-		styles = pTemplate.createStyle({
+	$.setBaseFontSize(16);
+	var baseFontSize = window.baseFontSize || $.getBaseFontSize(),
+		styles = $.createStyle({
 			alink: {
 				fontWeight:400,
 				fontSize:(30/baseFontSize).toFixed(4)+"rem",
@@ -18,7 +18,7 @@
 				fontSize:(80/baseFontSize).toFixed(4)+"rem"
 			}
 		});
-	pTemplate.router({
+	$.router({
 		"/test":{
 			path: "/",
 			params: {

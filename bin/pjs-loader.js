@@ -100,7 +100,7 @@ module.exports = {
                     }
                     html.length = 0;
                   } else {
-                    html.push("</" + name + ">")
+                    !/br/.test(name) && html.push("</" + name + ">")
                   }
                   tagName = "";
                 },

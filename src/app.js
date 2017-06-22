@@ -10,6 +10,10 @@ module.exports = {
 				name: "app",
 				modules: ["index","test"],
 				ver: "0.0.1"
+			},{
+				name: "app.in",
+				modules: ["test.template", "test.style"],
+				ver: "0.0.1"
 			}]
 		}
 	}]

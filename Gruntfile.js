@@ -6,10 +6,16 @@ module.exports = function(grunt) {
     app.configs.forEach(function(c) {
       var dirVer = c.modules.ver;
       c.modules.files.forEach(function(f) {
-        var content = [];
+        var content = ["(function(win, $){/* time:" + (new Date()) + " */"];
         f.modules.forEach(function(m) {
-          app.template.modules[m] && content.push((app.template.modules[m].style||"") + (app.template.modules[m].template||"") + (app.template.modules[m].script||""))
+          var l = m.split('.');
+          if (l.length === 1) {
+            app.template.modules[m] && content.push((app.template.modules[m].style || "") + (app.template.modules[m].template || "") + (app.template.modules[m].script || ""))
+          } else {
+            app.template.modules[l[0]] && app.template.modules[l[0]][l[1]] && content.push(app.template.modules[l[0]][l[1]]);
+          }
         });
+        content.push("})(this, pTemplate);")
         var file = app.template._config.configs.build.path + "js/" + dirVer + "/" + f.name + "." + f.ver + ".js";
         grunt.file.write(file, content.join(''));
         grunt.log.writeln('file ' + file + ' created.');
@@ -20,8 +26,11 @@ module.exports = function(grunt) {
   grunt.initConfig({
     watch: {
       pjs: {
-        files: ["./**/*.pjs", "package.json"],
-        tasks: ["ptemplatejs-pjsBuild"]
+        files: ["./**/*.pjs", "package.json", "./src/*.js"],
+        tasks: ["ptemplatejs-pjsBuild"],
+        options: {
+          livereload: true
+        }
       }
     }
   });
