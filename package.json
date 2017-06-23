@@ -16,9 +16,11 @@
 		"test": "grunt watch:test"
 	},
 	"dependencies": {
-		"grunt-contrib-watch": "*",
 		"grunt": "*",
-		"grunt-cli": "*"
+		"grunt-cli": "*",
+		"grunt-cmd-concat": "^0.2.8",
+		"grunt-contrib-watch": "*",
+		"htmlparser2": "^3.9.2"
 	},
 	"base": "./",
 	"configs": {
@@ -33,9 +35,17 @@
 		"build": {
 			"path": "dist/"
 		},
-		"server":{
+		"server": {
 			"ip": "192.168.10.47",
 			"autoreload": true
+		},
+		"ptemplatejs": {
+			"path": "./",
+			"ignore": [
+				"jsonp",
+				"ajax"
+			],
+			"uglifys": true
 		}
 	}
 }

@@ -3,6 +3,16 @@ module.exports = function(grunt) {
     _watch = {};
   var app = require("./src/app"),
     gruntConfigs = {
+      concat: {
+        options: {
+          noncmd: true
+        }
+      },
+      uglify: {
+        options: {
+          report: "gzip"
+        }
+      },
       tmpl: {
         options: {
           prefix: "{{ ",
@@ -11,12 +21,26 @@ module.exports = function(grunt) {
         }
       },
       watch: _watch
-    };
+    },
+    uglifyFiles = [],
+    concats = [];
+
+  var libFiles = grunt.file.expand(pkg.configs.ptemplatejs.path + "*.js");
 
   app.configs.forEach(function(c) {
+    var libConcats = [];
+    libFiles.length > 0 && (libConcats.push(pkg.configs.ptemplatejs.path + pkg.name.replace("js", "") + ".js"), libFiles.forEach(function(f) {
+      if (/\.extend\./.test(f) && !(new RegExp("\\.(" + pkg.configs.ptemplatejs.ignore.join('|') + ")\\.").test(f))) {
+        libConcats.push(f)
+      }
+    }));
+    libConcats.length > 0 && concats.push({
+      src: libConcats,
+      dest: "./dist/" + c.projectName + "/libs/" + c.version + "/" + pkg.name + "." + c.version + ".js"
+    });
     _watch[c.projectName] = {
       files: ["./src/" + c.projectName + "/**/*.pjs", "package.json", "./src/" + c.projectName + "/**/*.js", "./src/app.js", "gruntfile.js", "./src/" + c.projectName + "/**/*.html"],
-      tasks: ["ptemplatejs-pjsBuild:" + c.projectName, "tmpl:" + c.projectName],
+      tasks: ["ptemplatejs-pjsBuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName],
       options: {
         livereload: true
       }
@@ -32,9 +56,14 @@ module.exports = function(grunt) {
         cwd: "src/" + c.projectName + "/html/"
       }]
     };
+    gruntConfigs.concat[c.projectName] = {
+      options: {
+        footer: '\n/*! time:<%= grunt.template.today("yyyy-mm-dd") %> end \*\/',
+        banner: '\n/*! ' + c.projectName + ' start\*\/'
+      },
+      files: concats
+    };
   });
-
-
 
   grunt.registerTask("ptemplatejs-pjsBuild", "ptemplatejs-pjsBuild", function(v) {
     console.log("-> ", v)
@@ -66,6 +95,7 @@ module.exports = function(grunt) {
   var tmplpro = require("./bin/pjs-tmpl.js");
   tmplpro(grunt);
 
+  grunt.loadNpmTasks("grunt-cmd-concat");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.registerTask('default', 'watch');
 }
