@@ -32,7 +32,6 @@ module.exports = {
           //console.log("->", a)
           a.length > 0 && a.forEach(function(file) {
             var result = grunt.file.read(file);
-
             var isWrite = false,
               tags = {
                 template: "",
@@ -40,7 +39,7 @@ module.exports = {
                 style: ""
               },
               html = [],
-              objName = file.replace(path + filepath.replace(/\*\*\//gim, ""), "").replace("." + ext, ""),
+              objName = /\/([^\.\/]+)\.(\d\.)*[a-zA-Z]+$/.exec(file)[1] || file,
               tagName = "",
               b = new htmlparser.Parser({
                 onopentag: function(name, attr) {
@@ -48,9 +47,9 @@ module.exports = {
                   if (/template|script|style/.test(name)) {
                     isWrite = true;
                     if (Reflect.has(attr, 'p-template')) {
-                      objName = attr["p-template"];
+                      //objName = attr["p-template"];
                       tags[name] = {
-                        name: objName
+                        name: attr["p-template"]
                       }
                     }
 
@@ -62,7 +61,7 @@ module.exports = {
                   if (isWrite) {
                     //console.log(tagName, text)
                     if (typeof text != "undefined" && /style/.test(tagName)) {
-                      text = "pTemplate.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+){([^{}]+)+}/gim, function(a, b, c) {
+                      text = "$.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+){([^{}]+)+}/gim, function(a, b, c) {
                         //console.log(a, b, c)
                         var d = [];
                         if (b) {
@@ -94,7 +93,7 @@ module.exports = {
                   if (/template|script|style/.test(name)) {
                     isWrite = false;
                     if (/template/.test(name)) {
-                      tags[name] = "pTemplate.createTemplate('" + tags[name].name + "', {parent: undefined,content: \"" + html.join('') + "\",data: {}}, true);";
+                      tags[name] = "$.createTemplate('" + tags[name].name + "', {parent: undefined,content: \"" + html.join('') + "\",data: {}}, true);";
                     } else {
                       tags[name] = html.join('');
                     }
