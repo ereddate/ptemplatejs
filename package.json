@@ -32,6 +32,10 @@
 		],
 		"build": {
 			"path": "dist/"
+		},
+		"server":{
+			"ip": "192.168.10.47",
+			"autoreload": true
 		}
 	}
 }

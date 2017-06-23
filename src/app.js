@@ -4,16 +4,16 @@ module.exports = {
 	template: templates,
 	configs: [{
 		projectName: "test",
+		version: "0.0.1",
 		modules: {
-			ver: "0.0.1",
 			files: [{
 				name: "app",
-				modules: ["index.script","test"],
-				ver: "0.0.1"
-			},{
+				modules: ["index.script", "test"],
+				version: "0.0.1"
+			}, {
 				name: "app.in",
 				modules: ["test.template", "test.style", "index.script"],
-				ver: "0.0.1"
+				version: "0.0.1"
 			}]
 		}
 	}]
