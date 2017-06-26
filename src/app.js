@@ -7,13 +7,8 @@ module.exports = {
 		version: "0.0.1",
 		modules: {
 			files: [{
-				name: "app",
-				modules: ["index", "test"],
-				version: "0.0.1"
-			}, {
-				name: "app.in",
-				modules: ["test.template", "test.style", "index.script"],
-				version: "0.0.1"
+				"app.0.0.1": "./src/test/js/index.js",
+				"app.in.0.0.1": "./src/test/js/index.in.js"
 			}]
 		}
 	}]

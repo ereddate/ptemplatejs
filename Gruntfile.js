@@ -1,5 +1,6 @@
 module.exports = function(grunt) {
   var pkg = grunt.file.readJSON('package.json'),
+    path = require("path"),
     _watch = {};
   var app = require("./src/app"),
     gruntConfigs = {
@@ -106,19 +107,31 @@ module.exports = function(grunt) {
       if (projectName == v) {
         var dirVer = c.version;
         c.modules.files.forEach(function(f) {
-          var content = ["'use strict';(function(win, $){/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */"];
-          f.modules.forEach(function(m) {
-            var l = m.split('.');
-            if (l.length === 1) {
-              app.template.modules[m] && content.push((app.template.modules[m].style || "") + (app.template.modules[m].template || "") + (app.template.modules[m].script || ""))
-            } else {
-              app.template.modules[l[0]] && app.template.modules[l[0]][l[1]] && content.push(app.template.modules[l[0]][l[1]]);
-            }
-          });
-          content.push("})(this, pTemplate);");
-          var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + f.name + "." + f.version + ".js";
-          grunt.file.write(file, content.join(''));
-          grunt.log.writeln('file ' + file + ' created.');
+          for (var n in f) {
+            var content = ["/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"];
+            var r = grunt.file.read(path.resolve(f[n]));
+            r = r.replace(/{{\s*require\(['"]([^{}'"\(\)]+)['"]\)\s*}}/gim, function(a, b) {
+              if (b) {
+                b = b.split(' ');
+                var g = [];
+                b.forEach(function(m) {
+                  var l = m.split('.');
+                  if (l.length === 1) {
+                    app.template.modules[m] && g.push((app.template.modules[m].style || "") + (app.template.modules[m].template || "") + (app.template.modules[m].script || ""))
+                  } else {
+                    app.template.modules[l[0]] && app.template.modules[l[0]][l[1]] && g.push(app.template.modules[l[0]][l[1]]);
+                  }
+                });
+                a = g.join('');
+              }
+              return a;
+            });
+            content.push(r);
+            content.push("})(this, pTemplate);");
+            var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + n + ".js";
+            grunt.file.write(file, content.join(''));
+            grunt.log.writeln('file ' + file + ' created.');
+          }
         });
       }
     })
