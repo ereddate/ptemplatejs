@@ -33,3 +33,13 @@
 		}
 	});
 </script>
+<style>
+	p{
+		span{
+			font-size: 5rem;
+			&:first{
+				font-size: 10rem;
+			}
+		}
+	}
+</style>

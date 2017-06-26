@@ -47,7 +47,6 @@ module.exports = {
                   if (/template|script|style/.test(name)) {
                     isWrite = true;
                     if (Reflect.has(attr, 'p-template')) {
-                      //objName = attr["p-template"];
                       tags[name] = {
                         name: attr["p-template"]
                       }
@@ -59,30 +58,7 @@ module.exports = {
                 },
                 ontext: function(text) {
                   if (isWrite) {
-                    //console.log(tagName, text)
                     if (typeof text != "undefined" && /style/.test(tagName)) {
-                      text = "$.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+){([^{}]+)+}/gim, function(a, b, c) {
-                        //console.log(a, b, c)
-                        var d = [];
-                        if (b) {
-                          b = b.split(/,\s*/);
-                          b.forEach(function(n) {
-                            var f = [];
-                            c.split(/;\s*/).forEach(function(e) {
-                              var g = e.split(/\:\s*/);
-                              if (/-/.test(g[0])) {
-                                var h = g[0].split('-');
-                                g[0] = h[0] + h[1][0].toUpperCase() + h[1].substr(1, h[1].length);
-                              }
-                              f.push("'" + g[0] + "':'" + g[1] + "'")
-                            })
-                            d.push("'" + n.replace(/^\s+/gim, "") + "':{" + f.join(f.length > 1 ? ',' : "") + "},")
-                          });
-                          a = d.join('')
-                        }
-                        return a;
-                      }) + "});";
-                      //console.log("->", text)
                       html.push(text);
                     } else if (typeof text != "undefined") {
                       html.push(text.replace(/[\r\n\t]+/gim, ""));
@@ -112,7 +88,6 @@ module.exports = {
             contents[objName] = tags;
           });
         });
-        //console.log(contents)
         grunt.log.writeln('pjs file loaded.');
       });
     }

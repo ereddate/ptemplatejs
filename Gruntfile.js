@@ -25,6 +25,40 @@ module.exports = function(grunt) {
     uglifyFiles = [],
     concats = [];
 
+  var less = require("less");
+  grunt.registerTask("lessToStyle", "lessToStyle", function(v) {
+    for (var n in app.template.modules) {
+      var obj = app.template.modules[n];
+      less.render(obj.style, function(e, output) {
+        var text = output.css;
+        text = "$.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+){([^{}]+)+}/gim, function(a, b, c) {
+          //console.log(a, b, c)
+          var d = [];
+          if (b) {
+            b = b.split(/,\s*/);
+            b.forEach(function(n) {
+              var f = [];
+              c.split(/;\s*/).forEach(function(e) {
+                var g = e.split(/\:\s*/);
+                if (/-/.test(g[0])) {
+                  var h = g[0].split('-');
+                  g[0] = h[0] + h[1][0].toUpperCase() + h[1].substr(1, h[1].length);
+                }
+                f.push("'" + g[0] + "':'" + g[1] + "'")
+              })
+              d.push("'" + n.replace(/^\s+/gim, "") + "':{" + f.join(f.length > 1 ? ',' : "") + "},")
+            });
+            a = d.join('')
+          }
+          return a;
+        }) + "});"
+        app.template.modules[n].style = text;
+      })
+    }
+    grunt.log.writeln('success.');
+  });
+
+
   var libFiles = grunt.file.expand(pkg.configs.ptemplatejs.path + "*.js");
 
   app.configs.forEach(function(c) {
@@ -40,7 +74,7 @@ module.exports = function(grunt) {
     });
     _watch[c.projectName] = {
       files: ["./src/" + c.projectName + "/**/*.pjs", "package.json", "./src/" + c.projectName + "/**/*.js", "./src/app.js", "gruntfile.js", "./src/" + c.projectName + "/**/*.html"],
-      tasks: ["ptemplatejs-pjsBuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName],
+      tasks: ["lessToStyle", "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName],
       options: {
         livereload: true
       }
@@ -65,7 +99,7 @@ module.exports = function(grunt) {
     };
   });
 
-  grunt.registerTask("ptemplatejs-pjsBuild", "ptemplatejs-pjsBuild", function(v) {
+  grunt.registerTask("pjsbuild", "pjs build", function(v) {
     console.log("-> ", v)
     app.configs.forEach(function(c) {
       var projectName = c.projectName;
