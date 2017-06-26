@@ -6,7 +6,30 @@ QQ群：9786575
 
 # 使用方法
 ```
-请查看 demo.html
+初次使用者，分三步学会使用。
+第一步，创建html：
+<div id="main"></div>
+<!-- 创建完的html将放到上面的div中 -->
+<div p-template="test">
+  <div style="{{ style }}">{{ title }}</div>
+</div>
+第二步，写样式:
+var styles = pTemplate.createStyle({
+  default:{
+    color: "red"
+  }
+});
+第三步：写javascript:
+pTemplate.render(
+  "test", 
+  {style: styles.default, title: "这是测试标题"},
+  pTemplate.query("#main"),
+  function(elem){
+    console.log("创建完成");
+  }
+);
+
+详细，请查看下面的说明和 demo.html
 
 链式写法：pTemplate.createTemplate("name")
                   .render("name",{}, parent, function(parent){...})
