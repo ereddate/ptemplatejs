@@ -29,7 +29,7 @@ module.exports = function(grunt) {
   grunt.registerTask("lessToStyle", "lessToStyle", function(v) {
     for (var n in app.template.modules) {
       var obj = app.template.modules[n];
-      less.render(obj.style, function(e, output) {
+      obj.style && less.render(obj.style, function(e, output) {
         var text = output.css;
         text = "$.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+){([^{}]+)+}/gim, function(a, b, c) {
           //console.log(a, b, c)
