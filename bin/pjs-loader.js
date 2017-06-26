@@ -22,13 +22,13 @@ module.exports = {
     var pkg = grunt.file.readJSON('package.json'),
       contents = {};
     if (pkg && pkg.configs) {
-      pkg.configs.requirePjs.forEach(function(f) {
+      pkg.configs.requirePjs ? pkg.configs.requirePjs.forEach(function(f) {
         var src = f.src,
           dest = f.dest,
           path = f.path || "./",
           ext = f.ext;
         src.forEach(function(filepath) {
-          var a = grunt.file.expand(path + filepath + "*." + ext);
+          var a = grunt.file.expand(path + pkg.base + filepath + "*." + ext);
           //console.log("->", a)
           a.length > 0 && a.forEach(function(file) {
             var result = grunt.file.read(file);
@@ -89,10 +89,10 @@ module.exports = {
           });
         });
         grunt.log.writeln('pjs file loaded.');
-      });
+      }) : console.log("skip pjs loader.");
     }
     return {
-      modules: contents,
+      modules: isEmptyObject(contents) ? null : contents,
       _config: pkg
     };
   }

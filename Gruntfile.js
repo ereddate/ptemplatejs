@@ -1,11 +1,13 @@
 module.exports = function(grunt) {
   var pkg = grunt.file.readJSON('package.json'),
     path = require("path"),
+    basePath = pkg.configs.base,
+    distPath = pkg.configs.build.path,
     _watch = {};
   var a = require("./bin/pjs-loader"),
     templates = a.getData();
 
-  var app = require("./src/app"),
+  var app = require("./" + basePath + "app"),
     gruntConfigs = {
       concat: {
         options: {
@@ -31,35 +33,39 @@ module.exports = function(grunt) {
 
   var less = require("less");
   grunt.registerTask("lessToStyle", "lessToStyle", function(v) {
-    for (var n in templates.modules) {
-      var obj = templates.modules[n];
-      obj.style && less.render(obj.style, function(e, output) {
-        var text = output.css;
-        text = "$.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+){([^{}]+)+}/gim, function(a, b, c) {
-          //console.log(a, b, c)
-          var d = [];
-          if (b) {
-            b = b.split(/,\s*/);
-            b.forEach(function(n) {
-              var f = [];
-              c.split(/;\s*/).forEach(function(e) {
-                var g = e.split(/\:\s*/);
-                if (/-/.test(g[0])) {
-                  var h = g[0].split('-');
-                  g[0] = h[0] + h[1][0].toUpperCase() + h[1].substr(1, h[1].length);
-                }
-                f.push("'" + g[0] + "':'" + g[1] + "'")
-              })
-              d.push("'" + n.replace(/^\s+/gim, "") + "':{" + f.join(f.length > 1 ? ',' : "") + "},")
-            });
-            a = d.join('')
-          }
-          return a;
-        }) + "});"
-        templates.modules[n].style = text;
-      })
+    if (templates.modules) {
+      for (var n in templates.modules) {
+        var obj = templates.modules[n];
+        obj.style && less.render(obj.style, function(e, output) {
+          var text = output.css;
+          text = "$.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+){([^{}]+)+}/gim, function(a, b, c) {
+            //console.log(a, b, c)
+            var d = [];
+            if (b) {
+              b = b.split(/,\s*/);
+              b.forEach(function(n) {
+                var f = [];
+                c.split(/;\s*/).forEach(function(e) {
+                  var g = e.split(/\:\s*/);
+                  if (/-/.test(g[0])) {
+                    var h = g[0].split('-');
+                    g[0] = h[0] + h[1][0].toUpperCase() + h[1].substr(1, h[1].length);
+                  }
+                  f.push("'" + g[0] + "':'" + g[1] + "'")
+                })
+                d.push("'" + n.replace(/^\s+/gim, "") + "':{" + f.join(f.length > 1 ? ',' : "") + "},")
+              });
+              a = d.join('')
+            }
+            return a;
+          }) + "});"
+          templates.modules[n].style = text;
+        })
+      }
+      grunt.log.writeln('success.');
+    } else {
+      console.log("skip lessToStyle.");
     }
-    grunt.log.writeln('success.');
   });
 
 
@@ -74,10 +80,10 @@ module.exports = function(grunt) {
     }));
     libConcats.length > 0 && concats.push({
       src: libConcats,
-      dest: "./dist/" + c.projectName + "/libs/" + c.version + "/" + pkg.name + "." + c.version + ".js"
+      dest: "./" + distPath + c.projectName + "/libs/" + c.version + "/" + pkg.name + "." + c.version + ".js"
     });
     _watch[c.projectName] = {
-      files: ["./src/" + c.projectName + "/**/*.pjs", "package.json", "./src/" + c.projectName + "/**/*.js", "./src/app.js", "gruntfile.js", "./src/" + c.projectName + "/**/*.html"],
+      files: ["./" + basePath + c.projectName + "/**/*.pjs", "package.json", "./" + basePath + c.projectName + "/**/*.js", "./" + basePath + "app.js", "gruntfile.js", "./" + basePath + c.projectName + "/**/*.html"],
       tasks: ["lessToStyle", "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName],
       options: {
         livereload: true
@@ -89,9 +95,9 @@ module.exports = function(grunt) {
       },
       files: [{
         src: "*.html",
-        dest: "dist/" + c.projectName + "/html/" + c.version + "/",
+        dest: distPath + c.projectName + "/html/" + c.version + "/",
         expand: true,
-        cwd: "src/" + c.projectName + "/html/"
+        cwd: basePath + c.projectName + "/html/"
       }]
     };
     gruntConfigs.concat[c.projectName] = {
@@ -143,11 +149,11 @@ module.exports = function(grunt) {
             }
           });
         } else {
-          var files = grunt.file.expand("./src/" + v + "/js/*.js");
+          var files = grunt.file.expand("./" + basePath + v + "/js/*.js");
           files.forEach(function(f) {
             var r = grunt.file.read(path.resolve(f));
             var content = readContent(r, projectName);
-            var file = f.replace("src/", pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
+            var file = f.replace(basePath, pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
             grunt.file.write(file, content.join(''));
             grunt.log.writeln('file ' + file + ' created.');
           })

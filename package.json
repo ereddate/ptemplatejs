@@ -25,10 +25,11 @@
 	},
 	"base": "./",
 	"configs": {
+		"base":"src/",
 		"requirePjs": [
 			{
 				"src": [
-					"src/**/pjs/"
+					"**/pjs/"
 				],
 				"ext": "pjs"
 			}
