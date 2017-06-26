@@ -2,6 +2,9 @@ module.exports = function(grunt) {
   var pkg = grunt.file.readJSON('package.json'),
     path = require("path"),
     _watch = {};
+  var a = require("./bin/pjs-loader"),
+    templates = a.getData();
+
   var app = require("./src/app"),
     gruntConfigs = {
       concat: {
@@ -28,8 +31,8 @@ module.exports = function(grunt) {
 
   var less = require("less");
   grunt.registerTask("lessToStyle", "lessToStyle", function(v) {
-    for (var n in app.template.modules) {
-      var obj = app.template.modules[n];
+    for (var n in templates.modules) {
+      var obj = templates.modules[n];
       obj.style && less.render(obj.style, function(e, output) {
         var text = output.css;
         text = "$.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+){([^{}]+)+}/gim, function(a, b, c) {
@@ -53,7 +56,7 @@ module.exports = function(grunt) {
           }
           return a;
         }) + "});"
-        app.template.modules[n].style = text;
+        templates.modules[n].style = text;
       })
     }
     grunt.log.writeln('success.');
@@ -102,37 +105,53 @@ module.exports = function(grunt) {
 
   grunt.registerTask("pjsbuild", "pjs build", function(v) {
     console.log("-> ", v)
+
+    function readContent(r, projectName) {
+      var content = ["/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"];
+      r = r.replace(/{{\s*require\(['"]([^{}'"\(\)]+)['"]\)\s*}}/gim, function(a, b) {
+        if (b) {
+          b = b.split(' ');
+          var g = [];
+          b.forEach(function(m) {
+            var l = m.split('.');
+            if (l.length === 1) {
+              templates.modules[m] && g.push((templates.modules[m].style || "") + (templates.modules[m].template || "") + (templates.modules[m].script || ""))
+            } else {
+              templates.modules[l[0]] && templates.modules[l[0]][l[1]] && g.push(templates.modules[l[0]][l[1]]);
+            }
+          });
+          a = g.join('');
+        }
+        return a;
+      });
+      content.push(r);
+      content.push("})(this, pTemplate);");
+      return content;
+    }
     app.configs.forEach(function(c) {
       var projectName = c.projectName;
       if (projectName == v) {
         var dirVer = c.version;
-        c.modules.files.forEach(function(f) {
-          for (var n in f) {
-            var content = ["/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"];
-            var r = grunt.file.read(path.resolve(f[n]));
-            r = r.replace(/{{\s*require\(['"]([^{}'"\(\)]+)['"]\)\s*}}/gim, function(a, b) {
-              if (b) {
-                b = b.split(' ');
-                var g = [];
-                b.forEach(function(m) {
-                  var l = m.split('.');
-                  if (l.length === 1) {
-                    app.template.modules[m] && g.push((app.template.modules[m].style || "") + (app.template.modules[m].template || "") + (app.template.modules[m].script || ""))
-                  } else {
-                    app.template.modules[l[0]] && app.template.modules[l[0]][l[1]] && g.push(app.template.modules[l[0]][l[1]]);
-                  }
-                });
-                a = g.join('');
-              }
-              return a;
-            });
-            content.push(r);
-            content.push("})(this, pTemplate);");
-            var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + n + ".js";
+        if (c.modules && c.modules.files) {
+          c.modules.files.forEach(function(f) {
+            for (var n in f) {
+              var r = grunt.file.read(path.resolve(f[n]));
+              var content = readContent(r, projectName);
+              var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + n + ".js";
+              grunt.file.write(file, content.join(''));
+              grunt.log.writeln('file ' + file + ' created.');
+            }
+          });
+        } else {
+          var files = grunt.file.expand("./src/" + v + "/js/*.js");
+          files.forEach(function(f) {
+            var r = grunt.file.read(path.resolve(f));
+            var content = readContent(r, projectName);
+            var file = f.replace("src/", pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
             grunt.file.write(file, content.join(''));
             grunt.log.writeln('file ' + file + ' created.');
-          }
-        });
+          })
+        }
       }
     })
   });
