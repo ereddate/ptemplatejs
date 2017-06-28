@@ -1,6 +1,6 @@
 <template p-template="my-footer">
 	<footer p-style:class=".footer">
-		&copy; ereddate/ptemplatejs 2017.
+		&copy; <a href="#" p-router:href="/demo">ereddate/ptemplatejs</a> 2017.
 	</footer>
 </template>
 <script>

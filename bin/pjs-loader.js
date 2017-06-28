@@ -28,7 +28,7 @@ module.exports = {
           path = f.path || "./",
           ext = f.ext;
         src.forEach(function(filepath) {
-          var a = grunt.file.expand(path + pkg.base + filepath + "*." + ext);
+          var a = grunt.file.expand(pkg.base + filepath + "*." + ext);
           //console.log("->", a)
           a.length > 0 && a.forEach(function(file) {
             var result = grunt.file.read(file);

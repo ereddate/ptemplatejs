@@ -23,7 +23,12 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			if ($.__mod__.routes && $.__mod__.routes[a.value]) {
 				var result = $.__mod__.routes[a.value];
 				if (Object.is(typeof result, "function")) {
-					result = result();
+					obj._on("click", function(e){
+						e.preventDefault();
+						result.call(this, e);
+					});
+					obj._attr(a.name, a.value)._removeAttr(a.name);
+					return;
 				}
 				var params = $.__mod__.jsonToUrlString(result.params || {}, "&"),
 					val = result.path + (params == "" ? "" : !/\?/.test(result.path) ? "?" : "&") + params;

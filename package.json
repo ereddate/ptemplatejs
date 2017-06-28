@@ -29,7 +29,7 @@
 		"requirePjs": [
 			{
 				"src": [
-					"**/pjs/"
+					"**/"
 				],
 				"ext": "pjs"
 			}

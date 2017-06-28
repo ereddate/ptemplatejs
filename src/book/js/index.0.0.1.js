@@ -1,6 +1,6 @@
 $.setBaseFontSize(16);
 var callbacks = $.Callbacks();
 
-{{ require("main header footer") }}
+{{ require("router.script main header footer") }}
 
 callbacks.done();

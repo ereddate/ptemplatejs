@@ -1,0 +1,14 @@
+<script>
+	$.router({
+		"/demo": function(e){
+			this._set("my-page", {
+				type: "welcome"
+			});
+		},
+		"/goback": function(e){
+			this._set("my-page", {
+				type: "hello"
+			});
+		}
+	});
+</script>

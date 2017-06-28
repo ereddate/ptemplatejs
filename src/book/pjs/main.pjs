@@ -1,7 +1,7 @@
 <template p-template="my-page">
-	<div>
+	<div id="main">
 		<div id="header"></div>
-		<div id="main" p-style:class=".main" class="clearfix">
+		<div p-style:class=".main" class="clearfix">
 			<h2 p-style:class=".main_h2">{{mainCenterText}}</h2>
 			<div p-style:class=".main_.selectbox">
 				<select p-style:class=".main_.selectbox_.selectlist">
