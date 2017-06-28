@@ -1,13 +1,15 @@
 <template p-template="my-header">
 	<header p-style:class=".header">
-		<h1 p-style:class=".header_h1">{{title}} <i p-style:class=".header_h1_i">{{version}}</i></h1>
+		<h1 p-style:class=".header_h1" p-express:if="'{{type}}' == 'home'">{{title}} <i p-style:class=".header_h1_i">{{version}}</i></h1>
+		<h1 p-style:class=".header_h1.gohome" p-express:if="'{{type}}' == 'view'"><a href="#" p-router:href="/gohome">goBack</a></h1>
 	</header>
 </template>
 <script>
 	callbacks.add(function(next){
 		$.render("my-header", {
 			title: "book",
-			version: "0.0.1"
+			version: "0.0.1",
+			type: "home"
 		}, $.query("#header"), 
 		function(){
 			next();
@@ -26,6 +28,11 @@
 				font-size: .5rem;
 				font-weight: 400;
 				font-style: initial;
+			}
+			&.gohome{
+				font-size: .5rem;
+				font-weight: 400;
+				margin-left: 0.3864rem;
 			}
 		}
 	}

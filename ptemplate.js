@@ -933,8 +933,12 @@
 		},
 		router: function(params) {
 			!mod.routes && (mod.routes = {});
-			mod.extend(mod.routes, params);
-			return this;
+			if (typeof params != "undefined") {
+				mod.extend(mod.routes, params);
+				return this;
+			} else {
+				return mod.routes;
+			}
 		},
 		clone: function(from, to) {
 			var toTmpl = mod.extend({}, mod.templates[from]);

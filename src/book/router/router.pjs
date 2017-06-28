@@ -5,9 +5,20 @@
 				type: "welcome"
 			});
 		},
-		"/goback": function(e){
-			this._set("my-page", {
-				type: "hello"
+		"/gohome": function(e){
+			$.render("my-page", $.getTemplate("my-page").data, $.query("#app"), function(){
+				$.render("my-header", $.extend($.getTemplate("my-header").data, {type:"home"}), $.query("#header"), function(){
+					$.render("my-footer", $.getTemplate("my-footer").data, $.query("#footer"))
+				});
+			});
+		},
+		"/next": function(e){
+			$.render("my-viewpage-1", {
+				mainCenterText: "End!"
+			}, $.query("#app"), function(){
+				$.render("my-header", $.extend($.getTemplate("my-header").data, {type:"view"}), $.query("#header"), function(){
+					$.render("my-footer", $.getTemplate("my-footer").data, $.query("#footer"))
+				});
 			});
 		}
 	});

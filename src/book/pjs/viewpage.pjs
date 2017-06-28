@@ -1,0 +1,9 @@
+<template p-template="my-viewpage-1">
+	<div id="main">
+		<div id="header"></div>
+		<div p-style:class=".main" class="clearfix">
+			<h2 p-style:class=".main_h2">{{mainCenterText}}</h2>
+		</div>
+		<div id="footer"></div>
+	</div>
+</template>

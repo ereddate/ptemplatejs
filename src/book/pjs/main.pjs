@@ -4,7 +4,7 @@
 		<div p-style:class=".main" class="clearfix">
 			<h2 p-style:class=".main_h2">{{mainCenterText}}</h2>
 			<div p-style:class=".main_.selectbox">
-				<select p-style:class=".main_.selectbox_.selectlist">
+				<select p-style:class=".main_.selectbox_.selectlist" p-handle:change="handleSelectChange">
 					<option p-express:for="i in data" value="{{value}}">{{title}}</option>
 				</select>
 			</div>
@@ -19,12 +19,23 @@
 			{
 				mainCenterText: "Hello pTemplateJs!",
 				data:[{
-					title: "demo",
-					value: "1"
+					title: "请选择...",
+					value: "0"
+				},{
+					title: "goto view",
+					value: "/next"
 				},{
 					title: "demo_1",
 					value: "2"
-				}]
+				}],
+				handle:{
+					handleSelectChange: function(e){
+						var result = $.router()[this._val()];
+						if (typeof result == "function"){
+							result.call(this, e);
+						}
+					}
+				}
 			}, 
 			$.query("#app"),
 			function(){
