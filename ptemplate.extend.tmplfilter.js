@@ -4,42 +4,9 @@
  *
  * https://github.com/ereddate/ptemplatejs
  */
- 'use strict';
+'use strict';
 typeof window.pTemplate != "undefined" && (function(win, $) {
-	var stringify = $.__mod__.stringify = function(obj) {
-			if (null == obj)
-				return "null";
-			if ("string" != typeof obj && obj.toJSON)
-				return obj.toJSON();
-			var type = typeof obj;
-			switch (type) {
-				case "string":
-					return '"' + obj.replace(/[\"\r\n\t\\]+/gim, ((a) => {
-						return "\\\\" + a
-					})) + '"';
-				case "number":
-					var ret = obj.toString();
-					return /N/.test(ret) ? "null" : ret;
-				case "boolean":
-					return obj.toString();
-				case "date":
-					return "new Date(" + obj.getTime() + ")";
-				case "array":
-					for (var ar = [], i = 0; i < obj.length; i++)
-						ar[i] = stringify(obj[i]);
-					return "[" + ar.join(",") + "]";
-				case "object":
-					if ($.__mod__.isPlainObject(obj)) {
-						ar = [];
-						for (var i in obj)
-							ar.push('"' + i.replace(/[\"\r\n\t\\]+/gim, ((a) => {
-								return "\\\\" + a
-							})) + '":' + stringify(obj[i]));
-						return "{" + ar.join(",") + "}"
-					}
-			}
-			return "null"
-		},
+	var stringify = $.__mod__.stringify,
 		_tmplFilterVal = function(val, filterCondition) {
 			if (typeof filterCondition == "function") {
 				return filterCondition(val);
@@ -123,10 +90,10 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return symbol + negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
 		};
 	($.__mod__.tmplThesaurus || !$.__mod__.tmplThesaurus && ($.__mod__.tmplThesaurus = {})) && $.extend($.__mod__.tmplThesaurus, {
-		express: function(val, filterCondition, name){
-			try{
-				return (new Function(name, "return "+filterCondition)).call(val, val)
-			}catch(e){
+		express: function(val, filterCondition, name) {
+			try {
+				return (new Function(name, "return " + filterCondition)).call(val, val)
+			} catch (e) {
 				console.log("express", e)
 			}
 		},

@@ -4,7 +4,7 @@
  *
  * https://github.com/ereddate/ptemplatejs
  */
- 'use strict';
+'use strict';
 typeof window.pTemplate != "undefined" && (function(win, $) {
 	function isExpress(a, data, name) {
 		var isExpress = false,
@@ -34,6 +34,36 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				}
 				obj._removeAttr(a.name)
 			}
+		},
+		style: function(obj, type, a, data, _parent) {
+			switch (type) {
+				case "json":
+					try {
+						var b = new Function("return" + a.value)();
+						for (var n in b) {
+							obj._css(n, b[n]);
+						}
+					} catch (e) {
+						console.log("tmplAttributes_style_json_error: ", e)
+					}
+					break;
+				case "text":
+					var b = a.value.split(';');
+					b.forEach(function(c) {
+						if (c != "") {
+							c = c.split(':');
+							obj._css(c[0], c[1])
+						}
+					});
+					break;
+				case "class":
+					obj._addClass(a.value)
+					break;
+				default:
+					obj.style.cssText = a.value;
+					break;
+			}
+			obj._removeAttr(a.name)
 		},
 		express: function(obj, type, a, data, _parent) {
 			switch (type) {
@@ -129,10 +159,11 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						if (type[1]) {
 							filter(type, e);
 						}
-						if (obj._data("_router")){
+						if (obj._data("_router")) {
 							obj._attr(obj._has("href") ? "href" : "src", obj._data("_router"))
+						} else {
+							data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args)
 						}
-						data.handle[handle[0]].call(this, e, args)
 					}, handle[1], type[1] == "capture" ? true : false, type[1] == "once" ? true : false), obj._removeAttr(a.name));
 					break;
 			}

@@ -68,7 +68,6 @@ module.exports = function(grunt) {
     }
   });
 
-
   var libFiles = grunt.file.expand(pkg.configs.ptemplatejs.path + "*.js");
 
   app.configs.forEach(function(c) {

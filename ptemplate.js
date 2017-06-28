@@ -175,6 +175,40 @@
 				});
 				return tag;
 			},
+			stringify: function(obj) {
+				if (null == obj)
+					return "null";
+				if ("string" != typeof obj && obj.toJSON)
+					return obj.toJSON();
+				var type = typeof obj;
+				switch (type) {
+					case "string":
+						return '"' + obj.replace(/[\"\r\n\t\\]+/gim, ((a) => {
+							return "\\\\" + a
+						})) + '"';
+					case "number":
+						var ret = obj.toString();
+						return /N/.test(ret) ? "null" : ret;
+					case "boolean":
+						return obj.toString();
+					case "date":
+						return "new Date(" + obj.getTime() + ")";
+					case "array":
+						for (var ar = [], i = 0; i < obj.length; i++)
+							ar[i] = mod.stringify(obj[i]);
+						return "[" + ar.join(",") + "]";
+					case "object":
+						if (mod.isPlainObject(obj)) {
+							ar = [];
+							for (var i in obj)
+								ar.push('"' + i.replace(/[\"\r\n\t\\]+/gim, ((a) => {
+									return "\\\\" + a
+								})) + '":' + mod.stringify(obj[i]));
+							return "{" + ar.join(",") + "}"
+						}
+				}
+				return "null"
+			},
 			tmpl: function(obj, data) {
 				var rp = function(name, val, _object) {
 						var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*)*}}", "gim");

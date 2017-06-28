@@ -19,6 +19,10 @@
 				padding: 0;
 				margin: 0;
 			}
+			.pstyle{
+				font-size:1rem;
+				color:rgb(255,69,0);
+			}
 		</style>
 	</head>
 	<body>
@@ -51,9 +55,9 @@
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
 			<input type="button" value="{{ resetButtonText | uppercase }}" p-handle:click.prevent="handleButtonAlert : hello world!" />
-			<span>
-				<b p-express:if="'{{title | lowercase}}' == 'test'" style="{{style | cssPrefix}}">1</b>
-				<b p-express:if="'{{title | lowercase}}' != 'test'">2</b>
+			<span p-style:json="{display:'block',border:'1rem solid rgb(30,144,255)'}">
+				<b p-express:if="'{{title | lowercase}}' == 'test'" style="{{style | cssPrefix}}" p-style:text="display:inline-block;font-size:2rem;">1</b>
+				<b p-express:if="'{{title | lowercase}}' != 'test'" p-style:class="pstyle">2</b>
 			</span>
 			<p>
 				<span p-express:if="test">test demo1</span>
