@@ -136,6 +136,7 @@ p-express:逻辑名(for或if) = "条件"，逻辑
 p-html="模板名称"，插入模板的html代码，忽略数据渲染
 p-bind="名称"，标签的绑定名称
 p-for="名称"，标签连接绑定标签的名称
+p-style:属性名（json|text|class) = "属性值", 样式
 
 2）模板的嵌套，如下：
 <script type="text/html" p-template="my-template">
