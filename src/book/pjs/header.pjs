@@ -1,0 +1,32 @@
+<template p-template="my-header">
+	<header p-style:class=".header">
+		<h1 p-style:class=".header_h1">{{title}} <i p-style:class=".header_h1_i">{{version}}</i></h1>
+	</header>
+</template>
+<script>
+	callbacks.add(function(next){
+		$.render("my-header", {
+			title: "book",
+			version: "0.0.1"
+		}, $.query("#header"), 
+		function(){
+			next();
+		});
+	});
+</script>
+<style>
+	.header{
+		border-bottom: .0386rem solid rgb(112,128,144);
+		background-color: rgb(211,211,211);
+		line-height: 2.3184rem;
+		h1{
+			font-size: 1rem;
+			margin-left: 0.3864rem;
+			i{
+				font-size: .5rem;
+				font-weight: 400;
+				font-style: initial;
+			}
+		}
+	}
+</style>

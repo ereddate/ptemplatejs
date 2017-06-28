@@ -38,8 +38,7 @@ module.exports = function(grunt) {
         var obj = templates.modules[n];
         obj.style && less.render(obj.style, function(e, output) {
           var text = output.css;
-          text = "$.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+){([^{}]+)+}/gim, function(a, b, c) {
-            //console.log(a, b, c)
+          text = "$.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+)\s*{([^{}]+)+}/gim, function(a, b, c) {
             var d = [];
             if (b) {
               b = b.split(/,\s*/);
@@ -53,7 +52,7 @@ module.exports = function(grunt) {
                   }
                   f.push("'" + g[0] + "':'" + g[1] + "'")
                 })
-                d.push("'" + n.replace(/^\s+/gim, "") + "':{" + f.join(f.length > 1 ? ',' : "") + "},")
+                d.push("'" + n.replace(/^\s+|\s+$/gim, "").replace(/\s+/gim, "_") + "':{" + f.join(f.length > 1 ? ',' : "") + "},")
               });
               a = d.join('')
             }

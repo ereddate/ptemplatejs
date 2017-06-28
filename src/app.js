@@ -8,5 +8,8 @@ module.exports = {
 				"app.in.0.0.1": "./src/test/js/index.in.js"
 			}]
 		}
+	},{
+		projectName: "book",
+		version: "0.0.1"
 	}]
 }

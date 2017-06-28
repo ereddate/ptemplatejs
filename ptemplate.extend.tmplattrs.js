@@ -57,7 +57,14 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					});
 					break;
 				case "class":
-					obj._addClass(a.value)
+					var b = a.value.split(' ');
+					b.forEach(function(c) {
+						if ($.getStyle(c)) {
+							obj.style.cssText += $.getStyle(c);
+						} else {
+							obj._addClass(c)
+						}
+					})
 					break;
 				default:
 					obj.style.cssText = a.value;

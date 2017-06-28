@@ -1,0 +1,34 @@
+<template p-template="my-page">
+	<div>
+		<div id="header"></div>
+		<div id="main" p-style:class=".main" class="clearfix">
+			<h2 p-style:class=".main_h2">{{mainCenterText}}</h2>
+		</div>
+		<div id="footer"></div>
+	</div>
+</template>
+<script>
+	callbacks.add(function(next){
+		$.render(
+			"my-page", 
+			{
+				mainCenterText: "Hello pTemplateJs!"
+			}, 
+			$.query("#app"),
+			function(){
+				next();
+			}
+		);
+	});
+</script>
+<style>
+	.main{
+		margin: 0.3864rem;
+		min-height: 11.5920rem;
+		h2{
+			font-size: 1.1592rem;
+			text-align: center;
+			line-height: 11.5920rem;
+		}
+	}
+</style>

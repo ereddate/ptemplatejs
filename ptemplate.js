@@ -19,7 +19,7 @@
 			Styles: {},
 			toStyle(val) {
 				let style = [];
-				for (let name in val) style.push(name + ":'" + val[name] + "'");
+				for (let name in val) name != "" && style.push(name.replace(/\s+/gim, "") + ":'" + val[name] + "'");
 				var a = [];
 				style.forEach((e) => {
 					e = e.split(':');
@@ -214,7 +214,6 @@
 						var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*)*}}", "gim");
 						if (val) {
 							_object = _object.replace(reg, function(a, b) {
-								//console.log(a, b, u)
 								if (b) {
 									b = b.split(':');
 									if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
@@ -266,20 +265,24 @@
 						if (attrs) {
 							attrs.forEach(function(a) {
 								(new Promise((resolve, reject) => {
-									mod.each(data, function(n, v) {
-										var reg = new RegExp("{{\\s*" + a.name + "\\s*(\\|\\s*([^<>,]+)\\s*)*}}", "gim"),
-											then = function(u) {
-												if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
-													mod.each(u, function(name, val) {
-														a.value = rp(name, val.call(data), a.value);
-													});
-												} else {
-													a.value = rp(n, u, a.value);
-												}
-												resolve();
-											};
-										mod.promise(v, then);
-									});
+									if (!data || !mod.isEmptyObject(data)) {
+										mod.each(data, function(n, v) {
+											var reg = new RegExp("{{\\s*" + a.name + "\\s*(\\|\\s*([^<>,]+)\\s*)*}}", "gim"),
+												then = function(u) {
+													if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
+														mod.each(u, function(name, val) {
+															a.value = rp(name, val.call(data), a.value);
+														});
+													} else {
+														a.value = rp(n, u, a.value);
+													}
+													resolve();
+												};
+											mod.promise(v, then);
+										});
+									} else {
+										resolve();
+									}
 								})).then(function() {
 									if (/^p-/.test(a.name.toLowerCase())) {
 										var name = a.name.replace(/p\-/gim, "").split(':');

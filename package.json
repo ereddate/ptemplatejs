@@ -13,7 +13,7 @@
 		"ereddate@gmail.com"
 	],
 	"scripts": {
-		"test": "grunt watch:test"
+		"test": "grunt watch:book"
 	},
 	"dependencies": {
 		"grunt": "*",
