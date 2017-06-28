@@ -3,6 +3,11 @@
 		<div id="header"></div>
 		<div id="main" p-style:class=".main" class="clearfix">
 			<h2 p-style:class=".main_h2">{{mainCenterText}}</h2>
+			<div p-style:class=".main_.selectbox">
+				<select p-style:class=".main_.selectbox_.selectlist">
+					<option p-express:for="i in data" value="{{value}}">{{title}}</option>
+				</select>
+			</div>
 		</div>
 		<div id="footer"></div>
 	</div>
@@ -12,7 +17,14 @@
 		$.render(
 			"my-page", 
 			{
-				mainCenterText: "Hello pTemplateJs!"
+				mainCenterText: "Hello pTemplateJs!",
+				data:[{
+					title: "demo",
+					value: "1"
+				},{
+					title: "demo_1",
+					value: "2"
+				}]
 			}, 
 			$.query("#app"),
 			function(){
@@ -29,6 +41,12 @@
 			font-size: 1.1592rem;
 			text-align: center;
 			line-height: 11.5920rem;
+		}
+		.selectbox{
+			text-align: center;
+			.selectlist{
+				font-size: .8rem;
+			}
 		}
 	}
 </style>
