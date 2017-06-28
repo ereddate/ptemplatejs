@@ -73,4 +73,4 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		});
 		return callback;
 	};
-})(this, pTemplate)
+})(this, pTemplate);
