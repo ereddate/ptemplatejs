@@ -4,9 +4,9 @@
 			<span p-express:if="'{{type}}' == 'home'" p-style:class=".nav_.active">首页</span>
 			<span p-express:if="'{{type}}' != 'home'">首页</span>
 		</a>
-		<a href="#" p-router:href="/channel" p-style:class=".nav_.navitem">
-			<span p-express:if="'{{type}}' == 'channel'" p-style:class=".nav_.active">频道</span>
-			<span p-express:if="'{{type}}' != 'channel'">频道</span>
+		<a href="#" p-router:href="/form" p-style:class=".nav_.navitem">
+			<span p-express:if="'{{type}}' == 'form'" p-style:class=".nav_.active">表单</span>
+			<span p-express:if="'{{type}}' != 'form'">表单</span>
 		</a>
 	</nav>
 </template>

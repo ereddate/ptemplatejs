@@ -13,6 +13,11 @@
 		},
 		"/github": function(e){
 			location.href = "https://github.com/ereddate/ptemplatejs";
+		},
+		"/form": function(e){
+			this._set("my-page", {
+				type: "form"
+			});
 		}
 	});
 </script>

@@ -10,6 +10,20 @@
 	Array.prototype._eq = function(index) {
 		return index < 0 ? this[this.length + index] : this[index];
 	};
+	var triggerEvent = doc.createEvent ? function(element, eventName, args, data) {
+		var event = doc.createEvent("HTMLEvents");
+		event.data = data;
+		event.args = args;
+		event.initEvent(eventName, true, true);
+		element.dispatchEvent(event);
+		return event;
+	} : function(element, eventName, args, data) {
+		var event = doc.createEventObject();
+		event.data = data;
+		event.args = args;
+		element.fireEvent("on" + eventName, event);
+		return event;
+	};
 	var mod = {
 			templates: {},
 			tmplThesaurus: {},
@@ -250,7 +264,8 @@
 					//console.log(obj.tagName)
 					if (obj.tagName && mod.templates[obj.tagName.toLowerCase()]) {
 						var attr = obj.attributes,
-							newObj = {}, mData = {};
+							newObj = {},
+							mData = {};
 						mod.each(attr, function(i, b) {
 							newObj[b.name] = b.value;
 						});
@@ -372,17 +387,8 @@
 			},
 			trigger: function(then, eventName, args) {
 				eventName = eventName.toLowerCase().split(' ');
-				eventName.forEach((ev) => {
-					mod.eventData.forEach((a) => {
-						if (mod.is(a.element, then) && mod.is(a.eventName, ev)) {
-							if (ev == "scroll") setTimeout(() => {
-								window.scrollTo(1, 1)
-							}, 1);
-							var event = null;
-							document.createEvent ? (event = document.createEvent("HTMLEvents"), event.initEvent(eventName, true, true)) : (event = document.createEventObject());
-							a.factory.call(a.element, event, args);
-						}
-					})
+				mod.each(eventName, function(i, ev) {
+					triggerEvent(then, ev, args, null);
 				});
 				return this;
 			},

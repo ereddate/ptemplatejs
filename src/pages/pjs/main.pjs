@@ -22,6 +22,16 @@
 				<span p-style:class=".main_.article_.source">原文地址：{{newsurl}}</span>
 			</article>
 		</div>
+		<div p-express:if="'{{type}}' == 'form'" p-style:class=".main">
+			<div p-style:class=".main_.reg">
+				<form p-custom:action="/ok" method="get" p-handle:submit="handleFormSubmit">
+					<label class="clearfix"><span p-style:class=".main_.reg_.title">用户名：</span><input name="usname" type="text" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : usname" /></label>
+					<label class="clearfix"><span p-style:class=".main_.reg_.title">密码：</span><input name="password" type="password" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : password" /></label>
+					<label class="clearfix"><span p-style:class=".main_.reg_.title">确认密码：</span><input name="repassword" type="password" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : repassword" /></label>
+					<label class="clearfix" p-style:class=".main_.reg_.submit"><button type="submit" p-handle:click.prevent="handleSubmitClick">{{submittext}}</button></label>
+				</form>
+			</div>
+		</div>
 		<my-footer></my-footer>
 	</div>
 </template>
@@ -32,7 +42,21 @@
 			title: "pages",
 			version: "0.0.1",
 			data:[],
-			index:0
+			index:0,
+			default_text: "请输入...",
+			submittext: "注册",
+			handle:{
+				handleInputChange: function(e, msg){
+					console.log(msg, this._val())
+				},
+				handleSubmitClick: function(e){
+					console.log("submit click");
+					this._parents("form")._trigger("submit");
+				},
+				handleFormSubmit: function(e){
+					console.log(this)
+				}
+			}
 		};
 		function loadData(callback){
 			(new Promise((resolve, reject) => {
@@ -94,6 +118,18 @@
 			}
 			.source{
 				font-size:0.4637rem;
+			}
+		}
+		.reg{
+			margin: 0.3864rem;
+			.title{
+				font-size: 0.7728rem;
+				display: inline-block;
+				width: 30%;
+				text-align: right;
+			}
+			.submit{
+				text-align: center;
 			}
 		}
 	}
