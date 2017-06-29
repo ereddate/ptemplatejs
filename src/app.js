@@ -11,5 +11,8 @@ module.exports = {
 	},{
 		projectName: "book",
 		version: "0.0.1"
+	},{
+		projectName: "pages",
+		version: "0.0.1"
 	}]
 }

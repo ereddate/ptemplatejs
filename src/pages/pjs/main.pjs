@@ -1,0 +1,100 @@
+<template p-template="my-page">
+	<div id="main">
+		<my-header type="{{type}}" title="{{title}}" version="{{version}}"></my-header>
+		<my-channel type="{{type}}"></my-channel>
+		<div p-express:if="'{{type}}' == 'home'" p-style:class=".main">
+			<ul>
+				<li p-express:for="i in data" p-style:class=".main_.newlist">
+					<a href="#" p-router:href="{{newsurl}}" p-style:class=".main_.newlist_a">{{newstitle}}</a>
+					<span p-style:class=".main_.newlist_span">{{newsmedia}} - {{newstime}}</span>
+				</li>
+			</ul>
+		</div>
+		<div p-express:if="'{{type}}' == 'view'" p-style:class=".main">
+			<article p-express:for="i in data" p-express:if="index == {{index}}" p-style:class=".main_.article">
+				<header>
+					<h1 p-style:class=".main_.article_h1">{{newstitle}}</h1>
+					<p p-style:class=".main_.article_.desc">{{newsmedia}} - {{newstime}}</p>
+				</header>
+				<div p-style:class=".main_.article_.content">
+					{{newscontent}}
+				</div>
+				<span p-style:class=".main_.article_.source">原文地址：{{newsurl}}</span>
+			</article>
+		</div>
+		<my-footer></my-footer>
+	</div>
+</template>
+<script>
+	callbacks.add(function(next){
+		var config = {
+			type:"home",
+			title: "pages",
+			version: "0.0.1",
+			data:[],
+			index:0
+		};
+		function loadData(callback){
+			(new Promise((resolve, reject) => {
+				var data = [], p = [], i=0;
+				for (var x=0;x<20;x++) data.push({
+					newstitle: "谁将接任央行行长？外媒盘点候选人蒋超良刘士余等在列1",
+					newsurl: "/view",
+					newsmedia: "和讯网",
+					newstime: "2017/06/29",
+					newscontent: "　　据英国金融时报报道，现年69岁的周小川是任职时间最长的一位中国人民银行行长。关注中国人民银行的人士认为，下述几人之一将会接替周小川担任行长。无论是谁，新行长都将扮演重要角色。"
+				});
+				data.forEach(function(n){
+					i+=1;
+					p.push($.extend(n, {newsurl: n.newsurl+(/\?/.test(n.newsurl) ? "&" : "?")+"index="+i}))
+				});
+				resolve(p);
+			})).then(function(data){
+				config.data = data;
+				callback();
+			})
+		}
+		loadData(function(){
+			$.render(
+				"my-page",
+				config,
+				$.query("#app"),
+				function(){
+					next();
+				}
+			);
+		});
+	});
+</script>
+<style>
+	.main{
+		.newlist{
+			margin:0.3864rem;
+			line-height:0.7728rem;
+			a{
+				font-size:0.7728rem;
+				display:block;
+			}
+			span{
+				font-size:0.4637rem;
+			}
+		}
+		.article{
+			margin: 0.3864rem;
+			h1{
+				font-size:0.7728rem;
+			}
+			.desc{
+				font-size:0.5410rem;
+				margin:0.3864rem 0;
+			}
+			.content{
+				font-size:0.7728rem;
+				line-height:1.3524rem;
+			}
+			.source{
+				font-size:0.4637rem;
+			}
+		}
+	}
+</style>

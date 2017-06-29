@@ -75,7 +75,7 @@
 						if (_class == newClassObject) return;
 						var oldClass = _class;
 						_class = newClassObject;
-						console.log(_class);
+						//console.log(_class);
 						callback && callback.call(obj, name, _class, oldClass);
 					}
 				});
@@ -250,15 +250,14 @@
 					//console.log(obj.tagName)
 					if (obj.tagName && mod.templates[obj.tagName.toLowerCase()]) {
 						var attr = obj.attributes,
-							newObj = {};
+							newObj = {}, mData = {};
 						mod.each(attr, function(i, b) {
 							newObj[b.name] = b.value;
 						});
-						var mData = mod.extend(mod.templates[obj.tagName.toLowerCase()].data, newObj),
-							a = mod.createDom("div", {
-								html: mod.tmpl(mod.templates[obj.tagName.toLowerCase()].content, mData)
-							});
-						obj.parentNode && obj.parentNode.replaceChild(mod.tmpl(a.children[0], mData), obj);
+						mData = mod.extend(mod.templates[obj.tagName.toLowerCase()].data, newObj);
+						pTemplate.render(obj.tagName.toLowerCase(), mData, [pTemplate.createDom("div", {})], function(parent) {
+							obj.parentNode && obj.parentNode.replaceChild(parent.children[0], obj);
+						});
 					} else {
 						mod.mixElement(obj);
 						var attrs = obj.attributes && obj.attributes.length > 0 && [...obj.attributes] || false;

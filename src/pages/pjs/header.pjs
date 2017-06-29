@@ -1,0 +1,26 @@
+<template p-template="my-header">
+	<header p-style:class=".header">
+		<h1 p-style:class=".header_h1" p-express:if="'{{type}}' == 'home'">{{title}} <i p-style:class=".header_h1_i">{{version}}</i></h1>
+		<h1 p-style:class=".header_h1.gohome" p-express:if="'{{type}}' != 'home'"><a href="#" p-router:href="/home">goBack</a></h1>
+	</header>
+</template>
+<style>
+	.header{
+		border-bottom: .0386rem solid rgb(112,128,144);
+		line-height: 2.3184rem;
+		h1{
+			font-size: 1rem;
+			margin-left: 0.3864rem;
+			i{
+				font-size: .5rem;
+				font-weight: 400;
+				font-style: initial;
+			}
+			&.gohome{
+				font-size: .5rem;
+				font-weight: 400;
+				margin-left: 0.3864rem;
+			}
+		}
+	}
+</style>

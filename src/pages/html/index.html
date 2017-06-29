@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		{{ include("./src/pages/html/modules/head.html", {
+			"title": "ptemplatejs demo",
+			"ver": "0.0.1",
+			"projectname": "pages",
+			"path": "//192.168.10.47/m/ptemplatejs/"
+		}) }}
+		<style>
+			body {
+				background: #f4f5f7;
+				font-family: 微软雅黑;
+			}
+			body, ul, p, header, h1,h2,h3, li, nav {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+			.clearfix{
+				clear:both;
+				display:block;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app"></div>
+		{{ include("./src/pages/html/modules/footer.html", {
+			"ver": "0.0.1",
+			"projectname": "pages",
+			"modulename": "app",
+			"path": "//192.168.10.47/m/ptemplatejs/"
+		}) }}
+	</body>
+</html>

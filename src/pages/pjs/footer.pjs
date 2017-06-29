@@ -1,0 +1,24 @@
+<template p-template="my-footer">
+	<footer p-style:class=".footer">
+		&copy; <a href="#" p-router:href="/github">ereddate/ptemplatejs</a> 2017.
+	</footer>
+</template>
+<script>
+	callbacks.add(function(next){
+		$.render(
+			"my-footer", 
+			{}, 
+			$.query("#footer"),
+			function(){
+				next();
+			}
+		);
+	});
+</script>
+<style>
+	.footer{
+		line-height: 1.1592rem;
+		font-size: .5rem;
+		text-align: center;
+	}
+</style>
