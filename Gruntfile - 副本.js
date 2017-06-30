@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     distPath = pkg.configs.build.path,
     _watch = {};
   var a = require("./bin/pjs-loader"),
-    templates = {};
+    templates = a.getData();
 
   var app = require("./" + basePath + "app"),
     gruntConfigs = {
@@ -31,10 +31,6 @@ module.exports = function(grunt) {
     uglifyFiles = [],
     concats = [];
 
-  grunt.registerTask("pjsloader", "pjs loader", function(v) {
-    templates = a.getData(v);
-  });
-
   var less = require("less");
   grunt.registerTask("lessToStyle", "lessToStyle", function(v) {
     if (templates.modules) {
@@ -42,7 +38,26 @@ module.exports = function(grunt) {
         var obj = templates.modules[n];
         obj.style && less.render(obj.style, function(e, output) {
           var text = output.css;
-          text = "var head = $.query('head')[0]; head.appendChild($.createStyle(\"" + text.replace(/\s+/gim, " ").replace(/\r+|\n+/gim, "").replace(/"/gim, "\\\"").replace(/'/gim, "\\\'") + "\"));"
+          text = "$.createStyle({" + text.replace(/\s+/gim, " ").replace(/([^{}]+)\s*{([^{}]+)+}/gim, function(a, b, c) {
+            var d = [];
+            if (b) {
+              b = b.split(/,\s*/);
+              b.forEach(function(n) {
+                var f = [];
+                c.split(/;\s*/).forEach(function(e) {
+                  var g = e.split(/\:\s*/);
+                  if (/-/.test(g[0])) {
+                    var h = g[0].split('-');
+                    g[0] = h[0] + h[1][0].toUpperCase() + h[1].substr(1, h[1].length);
+                  }
+                  f.push("'" + g[0] + "':'" + g[1] + "'")
+                })
+                d.push("'" + n.replace(/^\s+|\s+$/gim, "").replace(/\s+/gim, "_") + "':{" + f.join(f.length > 1 ? ',' : "") + "},")
+              });
+              a = d.join('')
+            }
+            return a;
+          }) + "});"
           templates.modules[n].style = text;
         })
       }
@@ -67,7 +82,7 @@ module.exports = function(grunt) {
     });
     _watch[c.projectName] = {
       files: ["./" + basePath + c.projectName + "/**/*.pjs", "package.json", "./" + basePath + c.projectName + "/**/*.js", "./" + basePath + "app.js", "gruntfile.js", "./" + basePath + c.projectName + "/**/*.html"],
-      tasks: ["pjsloader:" + c.projectName, "lessToStyle", "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName],
+      tasks: ["lessToStyle", "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName],
       options: {
         livereload: true
       }

@@ -2,39 +2,39 @@
 	<div id="main">
 		<my-header type="{{type}}" title="{{title}}" version="{{version}}"></my-header>
 		<my-channel type="{{type}}"></my-channel>
-		<div p-express:if="'{{type}}' == 'home'" p-style:class=".main">
+		<div p-express:if="'{{type}}' == 'home'" p-style:class="main">
 			<ul>
-				<li p-express:for="i in data" p-style:class=".main_.newlist">
-					<a href="#" p-router:href="{{newsurl}}" p-style:class=".main_.newlist_a">{{newstitle}}</a>
-					<span p-style:class=".main_.newlist_span">{{newsmedia}} - {{newstime}}</span>
+				<li p-express:for="i in data" p-style:class="newlist">
+					<a href="#" p-router:href="{{newsurl}}">{{newstitle}}</a>
+					<span>{{newsmedia}} - {{newstime}}</span>
 				</li>
 			</ul>
 		</div>
-		<div p-express:if="'{{type}}' == 'view'" p-style:class=".main">
-			<article p-express:for="i in data" p-express:if="index == {{index}}" p-style:class=".main_.article">
+		<div p-express:if="'{{type}}' == 'view'" p-style:class="main">
+			<article p-express:for="i in data" p-express:if="index == {{index}}" p-style:class="article">
 				<header>
-					<h1 p-style:class=".main_.article_h1">{{newstitle}}</h1>
-					<p p-style:class=".main_.article_.desc">{{newsmedia}} - {{newstime}}</p>
+					<h1>{{newstitle}}</h1>
+					<p p-style:class="desc">{{newsmedia}} - {{newstime}}</p>
 				</header>
-				<div p-style:class=".main_.article_.content">
+				<div p-style:class="content">
 					{{newscontent}}
 				</div>
-				<span p-style:class=".main_.article_.source">原文地址：{{newsurl}}</span>
+				<span p-style:class="source">原文地址：{{newsurl}}</span>
 			</article>
 		</div>
-		<div p-express:if="'{{type}}' == 'form'" p-style:class=".main">
-			<div p-style:class=".main_.reg">
+		<div p-express:if="'{{type}}' == 'form'" p-style:class="main">
+			<div p-style:class="reg">
 				<form p-custom:action="/ok" method="get" p-handle:submit="handleFormSubmit">
-					<label class="clearfix"><span p-style:class=".main_.reg_.title">用户名：</span><input name="usname" type="text" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : usname" /></label>
-					<label class="clearfix"><span p-style:class=".main_.reg_.title">密码：</span><input name="password" type="password" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : password" /></label>
-					<label class="clearfix"><span p-style:class=".main_.reg_.title">确认密码：</span><input name="repassword" type="password" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : repassword" /></label>
-					<label class="clearfix" p-style:class=".main_.reg_.submit"><button type="submit" p-handle:click.prevent="handleSubmitClick">{{submittext}}</button></label>
+					<label class="clearfix"><span p-style:class="title">用户名：</span><input name="usname" type="text" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : usname" /></label>
+					<label class="clearfix"><span p-style:class="title">密码：</span><input name="password" type="password" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : password" /></label>
+					<label class="clearfix"><span p-style:class="title">确认密码：</span><input name="repassword" type="password" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : repassword" /></label>
+					<label class="clearfix" p-style:class="submit"><button type="submit" p-handle:click.prevent="handleSubmitClick">{{submittext}}</button></label>
 				</form>
 			</div>
 		</div>
-		<div p-express:if="'{{type}}' == 'search'" p-style:class=".main">
-			<div p-style:class=".main_.searchbox"><input type="text" value="" p-style:class=".main_.searchbox_.searchinput" placeholder="{{default_text}}" p-handle:keyup.enter="handleSearchKeyupEnter" p-handle:keyup.space="handleSearchKeyupSpace" /> </div>
-			<div p-style:class=".main_.searchresult">waiting...</div>
+		<div p-express:if="'{{type}}' == 'search'" p-style:class="main">
+			<div p-style:class="searchbox"><input type="text" value="" p-style:class="searchinput" placeholder="{{default_text}}" p-handle:keyup.enter="handleSearchKeyupEnter" p-handle:keyup.space="handleSearchKeyupSpace" /> </div>
+			<div p-style:class="searchresult">waiting...</div>
 		</div>
 		<my-footer></my-footer>
 	</div>
@@ -93,7 +93,7 @@
 				"my-page",
 				config,
 				$.query("#app"),
-				function(){
+				function(elem){
 					next();
 				}
 			);

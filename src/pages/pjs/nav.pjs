@@ -1,15 +1,15 @@
 <template p-template="my-channel">
-	<nav p-style:class=".nav">
-		<a href="#" p-router:href="/home" p-style:class=".nav_.navitem">
-			<span p-express:if="'{{type}}' == 'home'" p-style:class=".nav_.active">首页</span>
+	<nav p-style:class="nav">
+		<a href="#" p-router:href="/home" p-style:class="navitem">
+			<span p-express:if="'{{type}}' == 'home'" p-style:class="active">首页</span>
 			<span p-express:if="'{{type}}' != 'home'">首页</span>
 		</a>
-		<a href="#" p-router:href="/form" p-style:class=".nav_.navitem">
-			<span p-express:if="'{{type}}' == 'form'" p-style:class=".nav_.active">表单</span>
+		<a href="#" p-router:href="/form" p-style:class="navitem">
+			<span p-express:if="'{{type}}' == 'form'" p-style:class="active">表单</span>
 			<span p-express:if="'{{type}}' != 'form'">表单</span>
 		</a>
-		<a href="#" p-router:href="/search" p-style:class=".nav_.navitem">
-			<span p-express:if="'{{type}}' == 'search'" p-style:class=".nav_.active">搜索</span>
+		<a href="#" p-router:href="/search" p-style:class="navitem">
+			<span p-express:if="'{{type}}' == 'search'" p-style:class="active">搜索</span>
 			<span p-express:if="'{{type}}' != 'search'">搜索</span>
 		</a>
 	</nav>

@@ -981,15 +981,21 @@
 			return this;
 		},
 		createStyle: function(style) {
-			for (let name in style) {
-				if (!Reflect.has(mod.Styles, name))
-					style[name] = mod.toStyle(style[name]);
-				else {
-					Reflect.deleteProperty(style, name);
-					style[name] = mod.Styles[name];
+			if (mod.isPlainObject(style)) {
+				for (let name in style) {
+					if (!Reflect.has(mod.Styles, name))
+						style[name] = mod.toStyle(style[name]);
+					else {
+						Reflect.deleteProperty(style, name);
+						style[name] = mod.Styles[name];
+					}
 				}
+				return mod.extend(mod.Styles, style);
+			} else if (typeof style == "string") {
+				return this.createDom("style", {
+					html: style
+				});
 			}
-			return mod.extend(mod.Styles, style);
 		},
 		getStyle: function(name) {
 			return !Object.is(mod.Styles[name], undefined) && mod.Styles[name];

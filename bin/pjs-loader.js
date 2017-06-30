@@ -18,7 +18,7 @@ var fs = require("fs"),
   };
 
 module.exports = {
-  getData: function() {
+  getData: function(projectname) {
     var pkg = grunt.file.readJSON('package.json'),
       contents = {};
     if (pkg && pkg.configs) {
@@ -28,8 +28,9 @@ module.exports = {
           path = f.path || "./",
           ext = f.ext;
         src.forEach(function(filepath) {
-          var a = grunt.file.expand(pkg.base + filepath + "*." + ext);
-          //console.log("->", a)
+          var a = grunt.file.expand(pkg.base + pkg.configs.base + projectname + "/" + filepath + "*." + ext);
+          console.log("->", pkg.base + pkg.configs.base + projectname + "/" + filepath + "*." + ext)
+          console.log("->", a)
           a.length > 0 && a.forEach(function(file) {
             var result = grunt.file.read(file);
             var isWrite = false,

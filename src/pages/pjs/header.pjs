@@ -1,7 +1,7 @@
 <template p-template="my-header">
-	<header p-style:class=".header">
-		<h1 p-style:class=".header_h1" p-express:if="'{{type}}' == 'home'">{{title}} <i p-style:class=".header_h1_i">{{version}}</i></h1>
-		<h1 p-style:class=".header_h1.gohome" p-express:if="'{{type}}' != 'home'"><a href="#" p-router:href="/home">goBack</a></h1>
+	<header p-style:class="header">
+		<h1 p-express:if="'{{type}}' == 'home'">{{title}} <i>{{version}}</i></h1>
+		<h1 p-style:class="gohome" p-express:if="'{{type}}' != 'home'"><a href="#" p-router:href="/home">goBack</a></h1>
 	</header>
 </template>
 <style>

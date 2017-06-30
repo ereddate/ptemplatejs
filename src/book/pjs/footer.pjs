@@ -1,5 +1,5 @@
 <template p-template="my-footer">
-	<footer p-style:class=".footer">
+	<footer p-style:class="footer">
 		&copy; <a href="#" p-router:href="/demo">ereddate/ptemplatejs</a> 2017.
 	</footer>
 </template>

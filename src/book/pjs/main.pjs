@@ -1,10 +1,10 @@
 <template p-template="my-page">
 	<div id="main">
 		<div id="header"></div>
-		<div p-style:class=".main" class="clearfix">
-			<h2 p-style:class=".main_h2">{{mainCenterText}}</h2>
-			<div p-style:class=".main_.selectbox">
-				<select p-style:class=".main_.selectbox_.selectlist" p-handle:change="handleSelectChange">
+		<div p-style:class="main" class="clearfix">
+			<h2>{{mainCenterText}}</h2>
+			<div p-style:class="selectbox">
+				<select p-style:class="selectlist" p-handle:change="handleSelectChange">
 					<option p-express:for="i in data" value="{{value}}">{{title}}</option>
 				</select>
 			</div>

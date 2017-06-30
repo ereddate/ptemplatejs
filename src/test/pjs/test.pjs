@@ -4,7 +4,7 @@
 	<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
 	<input type="button" value="{{ resetButtonText | uppercase }}" p-handle:click.prevent="handleButtonAlert : hello world!" />
 	<span>
-		<b p-express:if="'{{title | lowercase}}' == 'test'" style="{{style | cssPrefix}}">1</b>
+		<b p-express:if="'{{title | lowercase}}' == 'test'" p-style:class="alink">1</b>
 		<b p-express:if="'{{title | lowercase}}' != 'test'">2</b>
 	</span>
 	<p>
@@ -25,7 +25,6 @@
 	$.render("test", {
 		title: "test",
 		index:2,
-		style: $.getStyle(".alink"),
 		buttonText: "alert window",
 		data:[{
 			newstitle: "1 news item title ...",
