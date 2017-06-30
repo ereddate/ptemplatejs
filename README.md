@@ -37,7 +37,7 @@ pTemplate.render(
                   ...
 使用pTemplate.set()或事件中的this._set()方法更新模板的数据，将使模板对应的DOM刷新。
 DOM将拥有类似jquery相同的私有dom操作方法，如this._append()、this._frist()、this._css()、this._attr()等等。
-
+调用内部方法，可以使用pTemplate.__mod__.方法名取得。
 
 数据是可计算的，如下：
 ...
