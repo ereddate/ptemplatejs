@@ -99,6 +99,10 @@
 				mod.createObject(obj, key, val, callback);
 				return this;
 			},
+			nextTick: function(obj, callback, args) {
+				callback && callback.apply(obj, !mod.isArray(args) ? [args] : args);
+				return obj;
+			},
 			createObject: function(obj, name, _class, callback) {
 				Reflect.defineProperty(obj, name, {
 					get: function() {
@@ -109,7 +113,7 @@
 						var oldClass = _class;
 						_class = newClassObject;
 						//console.log(_class);
-						callback && callback.call(obj, name, _class, oldClass);
+						mod.nextTick(obj, callback, [name, _class, oldClass]);
 					}
 				});
 				return this;
@@ -367,11 +371,12 @@
 				return ret;
 			},
 			on: function(then, eventName, callback, args, bool, onebool) {
+				var that = this;
 				eventName = eventName.split(' ');
 				eventName.forEach((ev) => {
 					var fn = (e) => {
 						//onebool && then._off(ev);
-						callback && callback.call(then, e, args);
+						that.nextTick(then, callback, [e, args]);
 					};
 					if (then.addEventListener) {
 						then.addEventListener(ev, fn, bool || false);
@@ -447,6 +452,9 @@
 				}
 				return parent && id && parent.length === 1 && parent[0] || parent;
 			},
+			isArray: function(obj) {
+				return (Array.isArray || _instanceOf(Array))(obj);
+			},
 			isEmptyObject: function(obj) {
 				var name;
 				for (var name in obj) {
@@ -477,7 +485,7 @@
 			has: function(target, obj) {
 				var hasIn = false;
 
-				if ((Array.isArray || _instanceOf(Array))(target)) {
+				if (mod.isArray(target)) {
 					var i = -1;
 					target.forEach((t) => {
 						if (t === obj) hasIn = i + 1;
@@ -942,7 +950,7 @@
 				completed = () => {
 					doc.removeEventListener("DOMContentLoaded", completed);
 					win.removeEventListener("load", completed);
-					callback && callback();
+					mod.nextTick(this, callback, []);
 				};
 			doc.addEventListener("DOMContentLoaded", completed);
 			win.addEventListener("load", completed);
@@ -1003,6 +1011,10 @@
 			mod.mixElement(elem)
 			return elem;
 		},
+		nextTick: function(callback, args) {
+			mod.nextTick(this, callback, args);
+			return this;
+		},
 		render: function(name, data, parent, callback) {
 			var that = this,
 				template, then = function(name) {
@@ -1049,7 +1061,7 @@
 							var html = mod.tmpl(mod.templates[name].content, data || {});
 							parent[0].innerHTML = html;
 							mod.tmpl(parent[0], data);
-							callback && callback(parent[0]);
+							that.nextTick(callback, parent[0]);
 						}
 					}
 				};
