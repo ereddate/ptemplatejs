@@ -138,6 +138,9 @@ p-bind="名称"，标签的绑定名称
 p-for="名称"，标签连接绑定标签的名称
 p-style:属性名（json|text|class) = "属性值", 样式
 
+注：
+p-handle:事件名(keyup)专用修饰符(enter|delete|esc|space|up|down|left|right)
+
 2）模板的嵌套，如下：
 <script type="text/html" p-template="my-template">
   <header>
