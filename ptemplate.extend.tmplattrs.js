@@ -174,8 +174,48 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						data.handle[handle[0]].call(this, e, args)
 					}, handle[1], type[1] == "capture" ? true : false, type[1] == "once" ? true : false), obj._removeAttr(a.name));
 					break;
+				case "keyup":
+					if (data.handle) {
+						if (type[1]) {
+							obj._off(type.join('.'))._on(type.join('.'), function(e, args) {
+								data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
+							});
+						}
+						obj._off("keyup")._on("keyup", function(e, args) {
+							var name = "";
+							switch(e.keyCode){
+								case 13:
+									name = "keyup.enter";
+									break;
+								case 27:
+									name = "keyup.esc";
+									break;
+								case 32:
+									name = "keyup.space";
+									break;
+								case 46:
+									name = "keyup.delete";
+									break;
+								case 38:
+									name = "keyup.up";
+									break;
+								case 40:
+									name = "keyup.down";
+									break;
+								case 37:
+									name = "keyup.left";
+									break;
+								case 39:
+									name = "keyup.right";
+									break;
+							}
+							type[1] ? this._trigger(name) : data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
+						});
+						obj._removeAttr(a.name);
+					}
+					break;
 				default:
-					data.handle && (obj._on(type[0], function(e, args) {
+					data.handle && (obj._off(type[0])._on(type[0], function(e, args) {
 						if (type[1]) {
 							filter(type, e);
 						}

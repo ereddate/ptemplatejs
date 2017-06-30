@@ -8,6 +8,10 @@
 			<span p-express:if="'{{type}}' == 'form'" p-style:class=".nav_.active">表单</span>
 			<span p-express:if="'{{type}}' != 'form'">表单</span>
 		</a>
+		<a href="#" p-router:href="/search" p-style:class=".nav_.navitem">
+			<span p-express:if="'{{type}}' == 'search'" p-style:class=".nav_.active">搜索</span>
+			<span p-express:if="'{{type}}' != 'search'">搜索</span>
+		</a>
 	</nav>
 </template>
 <script>

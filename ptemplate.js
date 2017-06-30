@@ -24,6 +24,25 @@
 		element.fireEvent("on" + eventName, event);
 		return event;
 	};
+	var removeEvent = doc.removeEventListener ?
+		function(elem, type, handle) {
+			// This "if" is needed for plain objects
+			if (elem.removeEventListener) {
+				elem.removeEventListener(type, handle);
+			}
+		} :
+		function(elem, type, handle) {
+			var name = "on" + type;
+			if (elem.detachEvent) {
+				// #8545, #7054, preventing memory leaks for custom events in IE6-8
+				// detachEvent needed property on element, by name of that event,
+				// to properly expose it to GC
+				if (typeof elem[name] === "undefined") {
+					elem[name] = null;
+				}
+				elem.detachEvent(name, handle);
+			}
+		};
 	var mod = {
 			templates: {},
 			tmplThesaurus: {},
@@ -354,12 +373,15 @@
 						//onebool && then._off(ev);
 						callback && callback.call(then, e, args);
 					};
-					then.addEventListener(ev, fn, bool || false);
+					if (then.addEventListener) {
+						then.addEventListener(ev, fn, bool || false);
+					} else if (then.attachEvent) {
+						then.attachEvent("on" + ev, fn);
+					}
 					mod.eventData.push({
 						element: then,
 						eventName: ev,
-						factory: fn,
-						bool: bool
+						factory: fn
 					});
 				});
 				return this;
@@ -378,7 +400,7 @@
 					mod.eventData.forEach((a) => {
 						i += 1;
 						if (mod.is(a.element, then) && mod.is(a.eventName, ev)) {
-							then.removeEventListener(ev, a.factory, a.bool || false);
+							removeEvent(then, ev, a.factory);
 							mod.eventData.splice(i, 1);
 						}
 					})
@@ -387,7 +409,7 @@
 			},
 			trigger: function(then, eventName, args) {
 				eventName = eventName.toLowerCase().split(' ');
-				mod.each(eventName, function(i, ev) {
+				mod.each(eventName, function(n, ev) {
 					triggerEvent(then, ev, args, null);
 				});
 				return this;
@@ -467,7 +489,7 @@
 					return reg.test(target);
 				} else {
 					for (var name in target) {
-						if (typeof obj == "object" && target[name] == obj[name] || typeof obj == "string" && name == obj) hasIn = name;
+						if (typeof obj == "object" && target[name] == obj[name] || name == obj || target[name] == obj) hasIn = name;
 					}
 					return hasIn;
 				}

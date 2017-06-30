@@ -18,6 +18,11 @@
 			this._set("my-page", {
 				type: "form"
 			});
+		},
+		"/search": function(e){
+			this._set("my-page", {
+				type: "search"
+			});
 		}
 	});
 </script>

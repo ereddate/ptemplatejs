@@ -32,6 +32,10 @@
 				</form>
 			</div>
 		</div>
+		<div p-express:if="'{{type}}' == 'search'" p-style:class=".main">
+			<div p-style:class=".main_.searchbox"><input type="text" value="" p-style:class=".main_.searchbox_.searchinput" placeholder="{{default_text}}" p-handle:keyup.enter="handleSearchKeyupEnter" p-handle:keyup.space="handleSearchKeyupSpace" /> </div>
+			<div p-style:class=".main_.searchresult">waiting...</div>
+		</div>
 		<my-footer></my-footer>
 	</div>
 </template>
@@ -55,13 +59,19 @@
 				},
 				handleFormSubmit: function(e){
 					console.log(this)
+				},
+				handleSearchKeyupEnter: function(e){
+					console.log("enter...")
+				},
+				handleSearchKeyupSpace: function(e){
+					console.log("space...")
 				}
 			}
 		};
 		function loadData(callback){
 			(new Promise((resolve, reject) => {
 				var data = [], p = [], i=0;
-				for (var x=0;x<20;x++) data.push({
+				for (var x=0;x<10;x++) data.push({
 					newstitle: "谁将接任央行行长？外媒盘点候选人蒋超良刘士余等在列1",
 					newsurl: "/view",
 					newsmedia: "和讯网",
@@ -131,6 +141,21 @@
 			.submit{
 				text-align: center;
 			}
+		}
+		.searchbox{
+			background: rgb(211,211,211);
+			line-height: 1.3524rem;
+			overflow:hidden;
+			.searchinput{
+				width: 100%;
+				border:0;
+				font-size: 0.5rem;
+				padding: 0.1932rem;
+			}
+		}
+		.searchresult{
+			font-size: 0.5rem;
+			margin: 0.3864rem;
 		}
 	}
 </style>
