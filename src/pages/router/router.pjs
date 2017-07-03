@@ -23,6 +23,21 @@
 			this._set("my-page", {
 				type: "search"
 			});
+		},
+		"/newpage": function(e, args){
+			var item = $.query(".mypage")[0];
+			item && item._remove();
+			var a = $.createDom("div", {});
+			$.render(args.id, {
+				type:"dialog"
+			}, a, function(element){
+				item = element.children[0];
+				$.query("body")[0]._append(item._addClass("show"))._addClass("showdialog");
+				$.query("html")[0]._addClass("showdialog");
+			});
+		},
+		"/close": function(e, args){
+			this._parents(".mypage")._toggleClass("show hide")._parents("body")._removeClass("showdialog")._parents("html")._removeClass("showdialog");
 		}
 	});
 </script>

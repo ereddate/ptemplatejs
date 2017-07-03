@@ -1,0 +1,60 @@
+<template p-template="my-singlepage">
+	<div p-style:class="page" class="mypage">
+		<my-header type="{{type}}" title="{{title}}" version="{{version}}"></my-header>
+		<div p-style:class="page_main">
+			new page!
+		</div>
+	</div>
+</template>
+<style>
+	html{
+		&.showdialog{
+			width:100%;
+			height:100%;
+			overflow:hidden;
+			position:relative;
+		}
+	}
+	body{
+		&.showdialog{
+			width:100%;
+			height:100%;
+			overflow:hidden;
+			position:relative;
+		}
+	}
+	.page{
+		position:absolute;
+		top:0;
+		left:0;
+		bottom:0;
+		right:0;
+		background-color:rgb(255,255,255);
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		&.hide{
+			animation: moveToRight .5s ease both;
+		}
+		.page_main{
+			width:100%;
+			height:100%;
+			overflow:scroll;
+			font-size: 1rem;
+		}
+	}
+	@-webkit-keyframes moveFromRight {
+		from { -webkit-transform: translateX(100%); }
+	}
+	@keyframes moveFromRight {
+		from { -webkit-transform: translateX(100%); transform: translateX(100%); }
+	}
+	@-webkit-keyframes moveToRight {
+		from { }
+		to { -webkit-transform: translateX(100%); }
+	}
+	@keyframes moveToRight {
+		from { }
+		to { -webkit-transform: translateX(100%); transform: translateX(100%); }
+	}
+</style>

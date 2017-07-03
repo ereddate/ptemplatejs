@@ -12,6 +12,9 @@
 			<span p-express:if="'{{type}}' == 'search'" p-style:class="active">搜索</span>
 			<span p-express:if="'{{type}}' != 'search'">搜索</span>
 		</a>
+		<a href="#" p-router:href="/newpage?id=my-singlepage" p-style:class="navitem">
+			<span>弹窗</span>
+		</a>		
 	</nav>
 </template>
 <script>

@@ -1,7 +1,8 @@
 <template p-template="my-header">
-	<header p-style:class="header">
+	<header p-style:class="header" class="clearfix">
 		<h1 p-express:if="'{{type}}' == 'home'">{{title}} <i>{{version}}</i></h1>
-		<h1 p-style:class="gohome" p-express:if="'{{type}}' != 'home'"><a href="#" p-router:href="/home">goBack</a></h1>
+		<h1 p-style:class="gohome" p-express:if="'{{type}}' != 'home' && '{{type}}' != 'dialog'"><a href="#" p-router:href="/home">gohome</a></h1>
+		<h1 p-style:class="close" p-express:if="'{{type}}' == 'dialog'"><a href="#" p-router:href="/close?id=mypage">goback</a></h1>
 	</header>
 </template>
 <style>
@@ -9,6 +10,7 @@
 		border-bottom: .0386rem solid rgb(112,128,144);
 		line-height: 2.3184rem;
 		position:relative;
+		min-height: 2.3184rem;
 		h1{
 			font-size: 1rem;
 			margin-left: 0.3864rem;
@@ -18,6 +20,11 @@
 				font-style: initial;
 			}
 			&.gohome{
+				font-size: .5rem;
+				font-weight: 400;
+				margin-left: 0.3864rem;
+			}
+			&.close{
 				font-size: .5rem;
 				font-weight: 400;
 				margin-left: 0.3864rem;

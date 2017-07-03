@@ -29,8 +29,8 @@ module.exports = {
           ext = f.ext;
         src.forEach(function(filepath) {
           var a = grunt.file.expand(pkg.base + pkg.configs.base + projectname + "/" + filepath + "*." + ext);
-          console.log("->", pkg.base + pkg.configs.base + projectname + "/" + filepath + "*." + ext)
-          console.log("->", a)
+          //onsole.log("->", pkg.base + pkg.configs.base + projectname + "/" + filepath + "*." + ext)
+          //console.log("->", a)
           a.length > 0 && a.forEach(function(file) {
             var result = grunt.file.read(file);
             var isWrite = false,

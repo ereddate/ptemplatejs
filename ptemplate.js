@@ -163,7 +163,9 @@
 				return str.length > 0 ? str.join(at) : "";
 			},
 			mixElement: function(element) {
-				mod.extend(element, pSubClass);
+				mod.isArray(element) ? element.forEach(function(n) {
+					mod.extend(n, pSubClass);
+				}) : mod.extend(element, pSubClass);
 				element.children && [...element.children].forEach(function(e) {
 					mod.mixElement(e);
 				});
@@ -783,7 +785,7 @@
 			_removeClass(name) {
 				var then = this;
 				name.split(' ').forEach((n) => {
-					mod.has(then.className, n) && (then.className = then.className.replace(new RegExp("\\s*" + n, "gim"), ""));
+					mod.has(then.className.split(' '), n) && (then.className = then.className.replace(new RegExp("\\s*" + n, "gim"), ""));
 				});
 				return this;
 			},
@@ -1035,7 +1037,8 @@
 								elem.children[0]._removeAttr("p-template");
 								elem._remove();
 							} else {
-								template = mod.findNode("template:" + name) || mod.templates[name].content;
+								var t = mod.findNode("template:" + name);
+								template = !t || t.length > 0 ? t : mod.templates[name].content;
 							}
 						} else if (name.nodeType) {
 							template = [name];
@@ -1043,11 +1046,13 @@
 						}
 						if (typeof parent == "function") {
 							callback = parent;
-							parent = template || mod.templates[name] && [mod.templates[name].parent] || [];
+							parent = typeof template != "string" && template || mod.templates[name] && [mod.templates[name].parent] || [];
 						} else if (!parent || parent.length === 0) {
-							parent = template || mod.templates[name] && [mod.templates[name].parent] || [];
+							parent = typeof template != "string" && template || mod.templates[name] && [mod.templates[name].parent] || [];
+						} else if (!mod.isArray(parent) && parent.nodeType) {
+							parent = [parent];
 						}
-						if (parent && parent.length > 0) {
+						if (parent && parent.length > 0 && parent[0]) {
 							!mod.templates[name] && that.createTemplate(name, {
 								parent: parent[0],
 								content: template[0].innerHTML,
@@ -1065,7 +1070,9 @@
 								})
 							});
 							var html = mod.tmpl(mod.templates[name].content, data || {});
-							parent[0].innerHTML = html;
+							parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
+								html: html
+							})) : (parent[0].innerHTML = html);
 							mod.tmpl(parent[0], data);
 							that.nextTick(callback, parent[0]);
 						}

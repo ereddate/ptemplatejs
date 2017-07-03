@@ -13,7 +13,9 @@
 		"ereddate@gmail.com"
 	],
 	"scripts": {
-		"test": "grunt watch:pages"
+		"pages": "grunt watch:pages",
+		"book": "grunt watch:book",
+		"test": "grunt watch:test"
 	},
 	"dependencies": {
 		"grunt": "*",
@@ -25,15 +27,13 @@
 	},
 	"base": "./",
 	"configs": {
-		"base":"src/",
-		"requirePjs": [
-			{
-				"src": [
-					"**/"
-				],
-				"ext": "pjs"
-			}
-		],
+		"base": "src/",
+		"requirePjs": [{
+			"src": [
+				"**/"
+			],
+			"ext": "pjs"
+		}],
 		"build": {
 			"path": "dist/"
 		},
