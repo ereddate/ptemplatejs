@@ -1,0 +1,47 @@
+<template p-template="my-dialog">
+	<div p-style:class="alert" class="dialog_box" p-express:if="'{{type}}' == 'alert'">
+		<p>{{content}}</p>
+		<a p-style:class="close" type="button" p-router:href="/close?id=alert">{{buttonText}}</a>
+	</div>
+</template>
+<style>
+	.alert{
+		position:absolute;
+		bottom:0.3864rem;
+		left:0.3864rem;
+		right:0.3864rem;
+		background-color: rgba(0,0,0,.8);
+		color:rgb(255,255,255);
+		border-radius: 0.3864rem;
+		text-align:center;
+		padding:0.3864rem;
+		&.show{
+			animation: moveFromBottom .5s ease both;
+		}
+		&.hide{
+			animation: moveToBottom .5s ease both;
+		}
+		p{
+			text-align:left;
+			font-size: .5rem;
+		}
+		.close{
+			font-size: .5rem;
+			color: rgb(255,255,255);
+		}
+	}
+	@-webkit-keyframes moveFromBottom {
+		from { -webkit-transform: translateY(100%); }
+	}
+	@keyframes moveFromBottom {
+		from { -webkit-transform: translateY(100%); transform: translateY(100%); }
+	}
+	@-webkit-keyframes moveToBottom {
+		from { opacity:1;}
+		to { -webkit-transform: translateY(100%); opacity:0;}
+	}
+	@keyframes moveToBottom {
+		from { }
+		to { -webkit-transform: translateY(100%); transform: translateY(100%);  opacity:0;}
+	}
+</style>

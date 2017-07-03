@@ -28,7 +28,10 @@
 					<label class="clearfix"><span p-style:class="title">用户名：</span><input name="usname" type="text" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : usname" /></label>
 					<label class="clearfix"><span p-style:class="title">密码：</span><input name="password" type="password" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : password" /></label>
 					<label class="clearfix"><span p-style:class="title">确认密码：</span><input name="repassword" type="password" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : repassword" /></label>
-					<label class="clearfix" p-style:class="submit"><button type="submit" p-handle:click.prevent="handleSubmitClick">{{submittext}}</button></label>
+					<label class="clearfix" p-style:class="submit">
+						<button type="submit" p-handle:click.prevent="handleSubmitClick">{{submittext}}</button>
+						<a p-style:class="submitbutton" p-router:href="/alert?id=my-dialog&content=你确定要提交表单吗？">Enter Alert</a>
+					</label>
 				</form>
 			</div>
 		</div>
@@ -101,6 +104,10 @@
 	});
 </script>
 <style>
+	body{
+		overflow-x:hidden;
+		overflow-y:auto;
+	}
 	.main{
 		.newlist{
 			margin:0.3864rem;
@@ -140,6 +147,10 @@
 			}
 			.submit{
 				text-align: center;
+				.submitbutton{
+					margin-left: 0.3864rem;
+					font-size: .5rem;
+				}
 			}
 		}
 		.searchbox{

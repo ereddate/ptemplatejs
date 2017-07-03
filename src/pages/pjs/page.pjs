@@ -1,7 +1,7 @@
 <template p-template="my-singlepage">
 	<div p-style:class="page" class="mypage">
 		<my-header type="{{type}}" title="{{title}}" version="{{version}}"></my-header>
-		<div p-style:class="page_main">
+		<div p-style:class="page_main" class="mypage_main">
 			new page!
 		</div>
 	</div>
