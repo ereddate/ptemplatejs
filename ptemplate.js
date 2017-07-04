@@ -968,14 +968,24 @@
 		getTemplate: function(name) {
 			return mod.templates[name] || {};
 		},
-		router: function(params) {
+		router: function(params, callback) {
 			!mod.routes && (mod.routes = {});
-			if (typeof params != "undefined") {
+			if (typeof params != "undefined" && mod.isPlainObject(params)) {
 				mod.extend(mod.routes, params);
+				return this;
+			} else if (typeof params != "undefined" && typeof params == "string") {
+				params = params.split('?');
+				mod.toArgs && mod.routes[params[0]] && mod.routes[params[0]].call(this, null, mod.extend(mod.toArgs(params[1]), {
+					callback: callback
+				}));
 				return this;
 			} else {
 				return mod.routes;
 			}
+		},
+		update: function(name, data){
+			mod.templates[name] && mod.extend(mod.templates[name].data, data);
+			return this;
 		},
 		clone: function(from, to) {
 			var toTmpl = mod.extend({}, mod.templates[from]);

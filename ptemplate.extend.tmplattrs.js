@@ -18,6 +18,14 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		}
 		return isExpress ? fn(data) : null;
 	}
+	$.__mod__.toArgs = function(result) {
+		var b = {};
+		result.split('&').forEach(function(n) {
+			n = n.split('=');
+			b[n[0]] = n[1];
+		});
+		return b;
+	};
 	$.__mod__.tmplAttributes && $.extend($.__mod__.tmplAttributes, {
 		router: function(obj, type, a, data, _parent) {
 			var routers = a.value.split('?');
@@ -25,12 +33,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				var result = $.__mod__.routes[routers[0]];
 				if (Object.is(typeof result, "function")) {
 					if (routers[1]) {
-						var b = {};
-						routers[1].split('&').forEach(function(n) {
-							n = n.split('=');
-							b[n[0]] = n[1];
-						});
-						routers[1] = b;
+						routers[1] = $.__mod__.toArgs(routers[1], data);
 					}
 					obj._attr(type, a.value)._on("click", function(e, args) {
 						e.preventDefault();
@@ -183,7 +186,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						}
 						obj._off("keyup")._on("keyup", function(e, args) {
 							var name = "";
-							switch(e.keyCode){
+							switch (e.keyCode) {
 								case 13:
 									name = "keyup.enter";
 									break;

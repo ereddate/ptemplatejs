@@ -31,6 +31,7 @@
 					<label class="clearfix" p-style:class="submit">
 						<button type="submit" p-handle:click.prevent="handleSubmitClick">{{submittext}}</button>
 						<a p-style:class="submitbutton" p-router:href="/alert?id=my-dialog&content=你确定要提交表单吗？">Enter Alert</a>
+						<a p-style:class="submitbutton" p-handle:click.prevent="handleAlertClick : alert">Enter Alert X</a>
 					</label>
 				</form>
 			</div>
@@ -68,6 +69,29 @@
 				},
 				handleSearchKeyupSpace: function(e){
 					console.log("space...")
+				},
+				handleAlertClick: function(e, id){
+					var item = $.query("."+id)[0];
+					item && item._remove();
+					var a = $.createDom("div", {});
+					$.render("my-dialog", {
+						type:id,
+						content: "你确定要提交表单吗？",
+						buttonText: "Enter",
+						handle:{
+							handleCloseClick: function(e){
+								this._parents("."+id)._toggleClass("show hide");
+								this.timeout && clearTimeout(this.timeout);
+								this.timeout = setTimeout(function(){
+									var item = $.query("."+id)[0];
+									item && item._remove();
+								}, 500);
+							}
+						}
+					}, a, function(element){
+						item = element.children[0];
+						$.query("body")[0]._append(item._addClass("show"));
+					});
 				}
 			}
 		};

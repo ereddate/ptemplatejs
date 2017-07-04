@@ -1,9 +1,18 @@
 <template p-template="my-dialog">
 	<div p-style:class="alert" class="dialog_box" p-express:if="'{{type}}' == 'alert'">
 		<p>{{content}}</p>
-		<a p-style:class="close" type="button" p-router:href="/close?id=alert">{{buttonText}}</a>
+		<a p-style:class="close" type="button" p-handle:click="handleCloseClick">{{buttonText}}</a>
 	</div>
 </template>
+<script>
+	$.update("my-dialog", {
+		handle: {
+			handleCloseClick: function(e){
+				$.router("/close?id=alert");
+			}
+		}
+	});
+</script>
 <style>
 	.alert{
 		position:absolute;

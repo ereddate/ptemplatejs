@@ -31,7 +31,17 @@
 			$.render(args.id, {
 				type:"alert",
 				content: args.content,
-				buttonText: "Enter"
+				buttonText: "Enter",
+				handle: {
+					handleCloseClick: function(e){
+						this._parents(".alert")._toggleClass("show hide");
+						this.timeout && clearTimeout(this.timeout);
+						this.timeout = setTimeout(function(){
+							var item = $.query(".alert")[0];
+							item && item._remove();
+						}, 500)
+					}
+				}
 			}, a, function(element){
 				item = element.children[0];
 				$.query("body")[0]._append(item._addClass("show"));
