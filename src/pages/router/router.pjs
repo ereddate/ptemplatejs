@@ -1,9 +1,27 @@
 <script>
 	$.router({
 		"/home": function(e){
-			this._set("my-page", {
-				type: "home"
-			});
+			var that = this;
+			(new Promise((resolve, reject) => {
+				var data = [], p = [], i=0;
+				for (var x=0;x<10;x++) data.push({
+					newstitle: "谁将接任央行行长？外媒盘点候选人蒋超良刘士余等在列2017-07-04",
+					newsurl: "/view",
+					newsmedia: "和讯网",
+					newstime: "2017/06/29",
+					newscontent: "　　据英国金融时报报道，现年69岁的周小川是任职时间最长的一位中国人民银行行长。关注中国人民银行的人士认为，下述几人之一将会接替周小川担任行长。无论是谁，新行长都将扮演重要角色。"
+				});
+				data.forEach(function(n){
+					i+=1;
+					p.push($.extend(n, {newsurl: n.newsurl+(/\?/.test(n.newsurl) ? "&" : "?")+"index="+i}))
+				});
+				resolve(p);
+			})).then(function(data){
+				that._set("my-page", {
+					type: "home",
+					data: data
+				});
+			})
 		},
 		"/view": function(e, args){
 			this._set("my-page", {

@@ -221,6 +221,12 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					data.handle && (obj._off(type[0])._on(type[0], function(e, args) {
 						if (type[1]) {
 							filter(type, e);
+							if (type[1] == "self") {
+								if (e.target == this) {
+									data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
+								}
+								return;
+							}
 						}
 						if (obj._data("_router")) {
 							obj._attr(obj._has("href") ? "href" : "src", obj._data("_router"))

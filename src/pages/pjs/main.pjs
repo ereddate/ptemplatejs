@@ -33,6 +33,9 @@
 						<a p-style:class="submitbutton" p-router:href="/alert?id=my-dialog&content=你确定要提交表单吗？">Enter Alert</a>
 						<a p-style:class="submitbutton" p-handle:click.prevent="handleAlertClick : alert">Enter Alert X</a>
 					</label>
+					<div p-handle:click.self="handleDivSelfClick" p-style:class="divself">
+						<a href="#">click me!</a>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -54,6 +57,9 @@
 			default_text: "请输入...",
 			submittext: "注册",
 			handle:{
+				handleDivSelfClick: function(e){
+					console.log("click me!")
+				},
 				handleInputChange: function(e, msg){
 					console.log(msg, this._val())
 				},
@@ -133,6 +139,14 @@
 		overflow-y:auto;
 	}
 	.main{
+		.divself{
+			padding: 0.3864rem;
+			background-color: rgb(255,0,255);
+			a{
+				background-color: rgb(255,255,255);
+				display:block;
+			}
+		}
 		.newlist{
 			margin:0.3864rem;
 			line-height:0.7728rem;
