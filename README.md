@@ -131,7 +131,7 @@ pTemplate.render($.createDom("script", {
 p-template="模板名称"，指定模板并赋予名称
 p-router:属性名（href或src) = "路由别名"，路由
 p-custom:属性名 = "属性值"，属性，属性值可以是表达式或值，如：('title_'+'{{title}}').toUpperCase()
-p-handle:事件名.修饰符(prevent|stop|capture) = "方法名称"，事件控制
+p-handle:事件名.修饰符(prevent|stop|capture|self) = "方法名称"，事件控制
 p-express:逻辑名(for或if) = "条件"，逻辑
 p-html="模板名称"，插入模板的html代码，忽略数据渲染
 p-bind="名称"，标签的绑定名称
