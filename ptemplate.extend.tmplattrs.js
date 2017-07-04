@@ -211,6 +211,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 								case 39:
 									name = "keyup.right";
 									break;
+								default:
+									name = "keyup." + e.keyCode;
+									break;
 							}
 							type[1] ? this._trigger(name) : data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
 						});
