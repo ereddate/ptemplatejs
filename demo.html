@@ -78,6 +78,7 @@
 		<div id="mainB"></div>
 		<div id="mainC"></div>
 		<div id="mainD"></div>
+		<div id="mainE"></div>
 		<script>
 			(function(win, $){
 				$.ready(function(){  //页面准备后的回调
@@ -317,7 +318,37 @@
 						function(elem){
 							console.log(elem)
 						}
-					);
+					).render({
+						render: function(createDom){
+							return createDom("script", {
+								"p-template": "test201707051053",
+								type:"text/html"
+							}, createDom("input",{
+								value: '{{title}}',
+								"p-handle:change": "handleinputChange"
+							}), createDom("h1", {
+								html: "{{title}}"
+							}));
+						}
+					}, {
+						title: "test6",
+						handle:{
+							handleinputChange: function(e){
+								this._set("test201707051053", {
+									title: this._val()
+								});
+							}
+						},
+						watch:{
+							title: function(val){
+								return val.toUpperCase();
+							}
+						}
+					},
+					$.query("#mainE"),
+					function(elem){
+						console.log(elem)
+					});
 				});
 				console.log($.__mod__.templates)
 			})(this, pTemplate);

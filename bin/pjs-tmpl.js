@@ -241,7 +241,7 @@ module.exports = function(grunt) {
 				//var img2base64 = require("../../../views/modules/html2base64");
 				//contents = img2base64(contents);
 
-				/*contents = ("toHTML" in String.prototype ? contents.toHTML() : require('js-beautify').html(contents, {
+				contents = require('js-beautify').html(contents, {
 					indent_size: 4,
 					indent_char: " ",
 					indent_with_tabs: false,
@@ -250,7 +250,7 @@ module.exports = function(grunt) {
 					wrap_line_length: 0,
 					indent_inner_html: false,
 					brace_style: "collapse"
-				}));*/
+				});
 				//console.log(tags)
 				grunt.file.write(dest, contents);
 

@@ -95,6 +95,8 @@ module.exports = function(grunt) {
   grunt.registerTask("pjsbuild", "pjs build", function(v) {
     console.log("-> ", v)
 
+    var js_beautify = require("js-beautify").js;
+
     function readContent(r, projectName) {
       var content = ["/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"];
       r = r.replace(/{{\s*require\(['"]([^{}'"\(\)]+)['"]\)\s*}}/gim, function(a, b) {
@@ -117,6 +119,20 @@ module.exports = function(grunt) {
       content.push("})(this, pTemplate);");
       return content;
     }
+
+    function savefile(file, content) {
+      grunt.file.write(file, js_beautify(content, {
+        indent_size: 4,
+        indent_char: " ",
+        indent_with_tabs: false,
+        preserve_newlines: false,
+        max_preserve_newlines: 10,
+        wrap_line_length: 0,
+        indent_inner_html: false,
+        brace_style: "collapse"
+      }));
+      grunt.log.writeln('file ' + file + ' created.');
+    }
     app.configs.forEach(function(c) {
       var projectName = c.projectName;
       if (projectName == v) {
@@ -127,8 +143,7 @@ module.exports = function(grunt) {
               var r = grunt.file.read(path.resolve(f[n]));
               var content = readContent(r, projectName);
               var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + n + ".js";
-              grunt.file.write(file, content.join(''));
-              grunt.log.writeln('file ' + file + ' created.');
+              savefile(file, content.join(''));
             }
           });
         } else {
@@ -137,8 +152,7 @@ module.exports = function(grunt) {
             var r = grunt.file.read(path.resolve(f));
             var content = readContent(r, projectName);
             var file = f.replace(basePath, pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
-            grunt.file.write(file, content.join(''));
-            grunt.log.writeln('file ' + file + ' created.');
+            savefile(file, content.join(''));
           })
         }
       }

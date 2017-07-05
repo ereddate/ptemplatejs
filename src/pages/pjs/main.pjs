@@ -25,7 +25,7 @@
 		<div p-express:if="'{{type}}' == 'form'" p-style:class="main">
 			<div p-style:class="reg">
 				<form p-custom:action="/ok" method="get" p-handle:submit="handleFormSubmit">
-					<label class="clearfix"><span p-style:class="title">用户名：</span><input name="usname" type="text" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : usname" /></label>
+					<label class="clearfix"><span p-style:class="title">用户名：{{usname}}</span><input name="usname" type="text" value="{{usname}}" placeholder="{{default_text}}" p-handle:change="handleInputChange : usname" /></label>
 					<label class="clearfix"><span p-style:class="title">密码：</span><input name="password" type="password" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : password" /></label>
 					<label class="clearfix"><span p-style:class="title">确认密码：</span><input name="repassword" type="password" value="" placeholder="{{default_text}}" p-handle:change="handleInputChange : repassword" /></label>
 					<label class="clearfix"><span p-style:class="title">测试键值事件：</span><input name="test" type="text" value="" p-handle:keyup.68="handleKeyCode" /></label>
@@ -55,8 +55,14 @@
 			version: "0.0.1",
 			data:[],
 			index:0,
+			usname:"usname",
 			default_text: "请输入...",
 			submittext: "注册",
+			watch: {
+				usname: function(val){
+					return val.toUpperCase().replace(this.title.toUpperCase(), "").replace(/\s+/gim, "") + " " + this.title.toUpperCase();
+				}
+			},
 			handle:{
 				handleKeyCode: function(e){
 					console.log("keyCode", e.keyCode)
@@ -65,6 +71,9 @@
 					console.log("click me!")
 				},
 				handleInputChange: function(e, msg){
+					msg == "usname" && this._set("my-page", {
+						usname: this._val()
+					});
 					console.log(msg, this._val())
 				},
 				handleSubmitClick: function(e){

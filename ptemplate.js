@@ -111,8 +111,9 @@
 					set: function(newClassObject) {
 						if (_class == newClassObject) return;
 						var oldClass = _class;
+						//console.log(_class, newClassObject);
+						obj.watch && obj.watch[name] && (newClassObject = obj.watch[name].call(obj, newClassObject));
 						_class = newClassObject;
-						//console.log(_class);
 						mod.nextTick(obj, callback, [name, _class, oldClass]);
 					}
 				});
@@ -983,7 +984,7 @@
 				return mod.routes;
 			}
 		},
-		update: function(name, data){
+		update: function(name, data) {
 			mod.templates[name] && mod.extend(mod.templates[name].data, data);
 			return this;
 		},
@@ -1053,6 +1054,11 @@
 						} else if (name.nodeType) {
 							template = [name];
 							name = name._attr("p-template");
+						} else if (mod.isPlainObject(name) && "render" in name) {
+							template = [name.render(that.createDom)];
+							if (template) {
+								name = template[0]._attr("p-template");
+							}
 						}
 						if (typeof parent == "function") {
 							callback = parent;
