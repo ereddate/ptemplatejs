@@ -288,7 +288,7 @@
 								obj = rp(n, u, obj);
 							}
 						};
-						mod.promise(v, then);
+						n != "created" && mod.promise(v, then);
 					});
 				} else if (obj.nodeType) {
 					//console.log(obj.tagName)
@@ -323,7 +323,7 @@
 													}
 													resolve();
 												};
-											mod.promise(v, then);
+											n != "created" && mod.promise(v, then);
 										});
 									} else {
 										resolve();
@@ -1095,7 +1095,7 @@
 								html: html
 							})) : (parent[0].innerHTML = html);
 							mod.tmpl(parent[0], data);
-							that.nextTick(callback, parent[0]);
+							data.created ? that.nextTick(data.created, parent[0]) : that.nextTick(callback, parent[0]);
 						}
 					}
 				};

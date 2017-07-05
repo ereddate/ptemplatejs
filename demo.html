@@ -358,11 +358,14 @@
 							title: function(val){
 								return val.toUpperCase();
 							}
+						},
+						created: function(elem){
+							console.log("created", elem);
 						}
 					},
 					$.query("#mainE"),
 					function(elem){
-						console.log(elem)
+						console.log("callback", elem)
 					});
 				});
 				console.log($.__mod__.templates)
