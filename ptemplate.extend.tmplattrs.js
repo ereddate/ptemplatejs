@@ -163,7 +163,10 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							e.stopPropagation();
 							break;
 					}
-				}
+				},
+				mixins = function(that, name, e, args) {
+					data.mixins && data.mixins.handle && data.mixins.handle[name] && data.mixins.handle[name].call(that, e, args);
+				};
 			switch (type[0]) {
 				case "watch":
 					data.handle && (obj._on("DOMSubtreeModified", function(e) {
@@ -174,7 +177,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						if (type[1]) {
 							filter(type, e);
 						}
-						data.handle[handle[0]].call(this, e, args)
+						data.handle[handle[0]].call(this, e, args);
+						mixins(this, handle[0], e, args);
 					}, handle[1], type[1] == "capture" ? true : false, type[1] == "once" ? true : false), obj._removeAttr(a.name));
 					break;
 				case "keyup":
@@ -182,6 +186,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						if (type[1]) {
 							obj._off(type.join('.'))._on(type.join('.'), function(e, args) {
 								data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
+								mixins(this, handle[0], e, args);
 							});
 						}
 						obj._off("keyup")._on("keyup", function(e, args) {
@@ -215,7 +220,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 									name = "keyup." + e.keyCode;
 									break;
 							}
-							type[1] ? this._trigger(name) : data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
+							type[1] ? this._trigger(name) : (data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args), mixins(this, handle[0], e, args));
 						});
 						obj._removeAttr(a.name);
 					}
@@ -227,6 +232,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							if (type[1] == "self") {
 								if (e.target == this) {
 									data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
+									mixins(this, handle[0], e, args);
 								}
 								return;
 							}
@@ -234,7 +240,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						if (obj._data("_router")) {
 							obj._attr(obj._has("href") ? "href" : "src", obj._data("_router"))
 						} else {
-							data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args)
+							data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
+							mixins(this, handle[0], e, args);
 						}
 					}, handle[1], type[1] == "capture" ? true : false, type[1] == "once" ? true : false), obj._removeAttr(a.name));
 					break;

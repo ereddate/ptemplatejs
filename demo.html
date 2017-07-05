@@ -110,6 +110,20 @@
 								fontSize:(80/baseFontSize).toFixed(4)+"rem"
 							}
 						});
+
+					var mixins = {
+						watch:{
+							title: function(val){
+								return val.toUpperCase() + "_" + Math.random(10).toFixed(2)
+							}
+						}
+					}, mixinsA = {
+						watch:{
+							title: function(val){
+								return val.toUpperCase() + "_" + (new Date().getTime())
+							}
+						}
+					};
 					//创建模板
 					$.createTemplate("html").createTemplate("my-component", {
 						title: "header"
@@ -332,6 +346,7 @@
 						}
 					}, {
 						title: "test6",
+						mixins: [mixins, mixinsA],
 						handle:{
 							handleinputChange: function(e){
 								this._set("test201707051053", {

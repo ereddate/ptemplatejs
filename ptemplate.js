@@ -113,6 +113,9 @@
 						var oldClass = _class;
 						//console.log(_class, newClassObject);
 						obj.watch && obj.watch[name] && (newClassObject = obj.watch[name].call(obj, newClassObject));
+						obj.mixins && obj.mixins.forEach(function(n) {
+							n.watch && n.watch[name] && (newClassObject = n.watch[name].call(obj, newClassObject));
+						});
 						_class = newClassObject;
 						mod.nextTick(obj, callback, [name, _class, oldClass]);
 					}
@@ -279,6 +282,7 @@
 							if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
 								mod.each(u, function(name, val) {
 									obj = rp(name, val.call(data), obj);
+									data.mixins && data.mixins[n.toLowerCase()] && (obj = rp(name, data.mixins[n.toLowerCase()][name].call(data), obj));
 								});
 							} else {
 								obj = rp(n, u, obj);
@@ -312,6 +316,7 @@
 													if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
 														mod.each(u, function(name, val) {
 															a.value = rp(name, val.call(data), a.value);
+															data.mixins && data.mixins[n.toLowerCase()] && (a.value = rp(name, data.mixins[n.toLowerCase()][name].call(data), a.value));
 														});
 													} else {
 														a.value = rp(n, u, a.value);
