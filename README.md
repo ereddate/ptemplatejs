@@ -259,7 +259,7 @@ createTemplate(name, arguments)
 
 render(name, arguments, parent, callback)
 渲染模板，参数分别是名称、配置、插入到的父级、渲染后的回调函数
-注：name可以是模板名称、模板HTML字符串、dom标签、function
+注：name可以是模板名称、模板HTML字符串、dom标签、function、包含render方法的对象
 
 tmpl(html, data)
 模板翻译，参数分别是模板（dom或string）、数据
