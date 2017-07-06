@@ -265,10 +265,11 @@
 										a = typeof c != "undefined" ? c : a;
 									} else {
 										try {
-											var c = new Function(name, "return " + a.replace(/&quot;/gim, "\\\'").replace(/[{}]+/gim, "")+";")(val);
+											var d = new Function(name, "return " + a.replace(/&quot;/gim, "'").replace(/[{}]+/gim, "") + ";");
+											var c = d(val);
 											a = c;
 										} catch (e) {
-											console.log(e)
+											console.log(e, a, name, val)
 										}
 									}
 								} else {
@@ -320,16 +321,16 @@
 									if (!data || !mod.isEmptyObject(data)) {
 										mod.each(data, function(n, v) {
 											var then = function(u) {
-													if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
-														mod.each(u, function(name, val) {
-															a.value = rp(name, val.call(data), a.value);
-															data.mixins && data.mixins[n.toLowerCase()] && (a.value = rp(name, data.mixins[n.toLowerCase()][name].call(data), a.value));
-														});
-													} else {
-														a.value = rp(n, u, a.value);
-													}
-													resolve();
-												};
+												if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
+													mod.each(u, function(name, val) {
+														a.value = rp(name, val.call(data), a.value);
+														data.mixins && data.mixins[n.toLowerCase()] && (a.value = rp(name, data.mixins[n.toLowerCase()][name].call(data), a.value));
+													});
+												} else {
+													a.value = rp(n, u, a.value);
+												}
+												resolve();
+											};
 											n != "created" && mod.promise(v, then);
 										});
 									} else {
@@ -529,44 +530,50 @@
 			},
 			findNode: function(selector, element) {
 				element = element || doc;
-				if (/^name=/.test(selector)) {
-					var children = element.getElementsByName && element.getElementsByName(selector.toLowerCase().replace(/^name=/gim, ""));
-					if (children) {
-						return [...children];
+				if (typeof selector == "string") {
+					if (/^name=/.test(selector)) {
+						var children = element.getElementsByName && element.getElementsByName(selector.toLowerCase().replace(/^name=/gim, ""));
+						if (children) {
+							return [...children];
+						}
+					} else if (/template\:/.test(selector)) {
+						var nodes = element.querySelectorAll("[p-" + selector.replace(":", "=") + "]");
+						return [...nodes];
+					} else if (/\[[^\[\]]+\]/.test(selector)) {
+						var reg = /([^\[\]]+)\s*\[([^\[\]]+)\]/.exec(selector);
+						if (reg) {
+							var nodes = [];
+							[...element.querySelectorAll(reg[1])].forEach((e) => {
+								var exp = new RegExp(reg[2].split('=')[1].replace(/\:/gim, "\\s*\\:\\s*"), "gim"),
+									is = exp.test(e.getAttribute(reg[2].split('=')[0]));
+								if (is) {
+									nodes.push(e);
+								}
+							});
+							return nodes;
+						}
+					} else if (/\:/.test(selector)) {
+						var reg = /([^\[\]]+)\s*\:\s*([^\[\]]+)/.exec(selector);
+						if (reg) {
+							var nodes = [];
+							[...element.querySelectorAll(reg[1])].forEach((e) => {
+								var elems = e["_" + reg[2]] && e["_" + reg[2]]() || null;
+								if (elems && elems.nodeType) {
+									nodes.push(elems);
+								} else if (elems && elems.length > 0) {
+									mod.extend(nodes, elems);
+								}
+							});
+							return nodes;
+						}
 					}
-				} else if (/template\:/.test(selector)) {
-					var nodes = element.querySelectorAll("[p-" + selector.replace(":", "=") + "]");
-					return [...nodes];
-				} else if (/\[[^\[\]]+\]/.test(selector)) {
-					var reg = /([^\[\]]+)\s*\[([^\[\]]+)\]/.exec(selector);
-					if (reg) {
-						var nodes = [];
-						[...element.querySelectorAll(reg[1])].forEach((e) => {
-							var exp = new RegExp(reg[2].split('=')[1].replace(/\:/gim, "\\s*\\:\\s*"), "gim"),
-								is = exp.test(e.getAttribute(reg[2].split('=')[0]));
-							if (is) {
-								nodes.push(e);
-							}
-						});
-						return nodes;
-					}
-				} else if (/\:/.test(selector)) {
-					var reg = /([^\[\]]+)\s*\:\s*([^\[\]]+)/.exec(selector);
-					if (reg) {
-						var nodes = [];
-						[...element.querySelectorAll(reg[1])].forEach((e) => {
-							var elems = e["_" + reg[2]] && e["_" + reg[2]]() || null;
-							if (elems && elems.nodeType) {
-								nodes.push(elems);
-							} else if (elems && elems.length > 0) {
-								mod.extend(nodes, elems);
-							}
-						});
-						return nodes;
-					}
+					var node = element.querySelectorAll(selector);
+					return [...node];
+				}else if (selector.nodeType){
+					return [selector];
+				}else{
+					return selector;
 				}
-				var node = element.querySelectorAll(selector);
-				return [...node];
 			}
 		},
 		hasOwn = {}.hasOwnProperty,

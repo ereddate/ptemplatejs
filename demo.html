@@ -9,6 +9,7 @@
 		<script src="ptemplate.extend.tmplfilter.js"></script>
 		<script src="ptemplate.extend.jsonp.js"></script>
 		<script src="ptemplate.extend.ajax.js"></script>
+		<script src="ptemplate.extend.touchs.js"></script>
 		<style>
 			body {
 				background: #f4f5f7;
@@ -63,6 +64,7 @@
 				<span p-express:if="test">test demo1</span>
 				<span p-express:if="xxx">test demo2</span>
 			</p>
+			<button p-handle:tap="handleButtonTap">tap button</button>
 			<div title='{{open == false ? "-" : "+"}}' style="{{open == false ? 'display:block' : 'display:none'}}">{{open ? "-" : "+"}}</div>
 			<a p-router="/test" href="#" p-handle:click="handleNoTypeClick">no type</a>
 			<ul>
@@ -176,6 +178,9 @@
 							}
 						},
 						handle: {
+							handleButtonTap: function(e, type){
+								console.log(e, type)
+							},
 							handleNoTypeClick(e, msg){
 								alert(msg)
 							},

@@ -225,6 +225,22 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						obj._removeAttr(a.name);
 					}
 					break;
+				case "tap":
+				case "pinched":
+				case "swipe":
+					if ($.__mod__.touch && $.__mod__.touch[type[0]]) {
+						switch (type[0]) {
+							case "tap":
+							case "pinched":
+							case "swipe":
+								$.__mod__.touch[type[0]](obj, function(e, args) {
+									data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
+									mixins(this, handle[0], e, args);
+								});
+								break;
+						}
+					}
+					break;
 				default:
 					data.handle && (obj._off(type[0])._on(type[0], function(e, args) {
 						if (type[1]) {
