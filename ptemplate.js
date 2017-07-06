@@ -254,14 +254,22 @@
 			},
 			tmpl: function(obj, data) {
 				var rp = function(name, val, _object) {
-						var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*)*}}", "gim");
-						if (val) {
+						var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*|([^{}]+)\\s*)*}}", "gim");
+						//new RegExp("{{\\s*[^{}]*\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*|([^{}]+)\\s*)*}}", "gim");
+						if (typeof val != "undefined") {
 							_object = _object.replace(reg, function(a, b) {
 								if (b) {
 									b = b.split(':');
 									if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
 										var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](val, b[1] && b[1].replace(/^\s+/gim, "") || undefined, name)
 										a = typeof c != "undefined" ? c : a;
+									} else {
+										try {
+											var c = new Function(name, "return " + a.replace(/&quot;/gim, "\\\'").replace(/[{}]+/gim, "")+";")(val);
+											a = c;
+										} catch (e) {
+											console.log(e)
+										}
 									}
 								} else {
 									a = val;
@@ -311,8 +319,7 @@
 								(new Promise((resolve, reject) => {
 									if (!data || !mod.isEmptyObject(data)) {
 										mod.each(data, function(n, v) {
-											var reg = new RegExp("{{\\s*" + a.name + "\\s*(\\|\\s*([^<>,]+)\\s*)*}}", "gim"),
-												then = function(u) {
+											var then = function(u) {
 													if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
 														mod.each(u, function(name, val) {
 															a.value = rp(name, val.call(data), a.value);
@@ -1035,8 +1042,8 @@
 			mod.mixElement(elem)
 			return elem;
 		},
-		nextTick: function(callback, args) {
-			mod.nextTick(this, callback, args);
+		nextTick: function(obj, callback, args) {
+			mod.nextTick(obj, callback, args);
 			return this;
 		},
 		render: function(name, data, parent, callback) {
@@ -1095,7 +1102,7 @@
 								html: html
 							})) : (parent[0].innerHTML = html);
 							mod.tmpl(parent[0], data);
-							data.created ? that.nextTick(data.created, parent[0]) : that.nextTick(callback, parent[0]);
+							data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 						}
 					}
 				};

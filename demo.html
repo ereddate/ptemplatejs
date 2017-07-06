@@ -63,6 +63,7 @@
 				<span p-express:if="test">test demo1</span>
 				<span p-express:if="xxx">test demo2</span>
 			</p>
+			<div title='{{open == false ? "-" : "+"}}' style="{{open == false ? 'display:block' : 'display:none'}}">{{open ? "-" : "+"}}</div>
 			<a p-router="/test" href="#" p-handle:click="handleNoTypeClick">no type</a>
 			<ul>
 				<li p-express:for="i in data" p-express:if="index % {{index}}">
@@ -152,6 +153,7 @@
 						index:2,
 						style: styles.alink,
 						buttonText: "alert window",
+						open: false,
 						data:[{
 							newstitle: "1 news item title ...",
 							url: "/ccc"

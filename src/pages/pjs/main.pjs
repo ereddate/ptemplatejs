@@ -137,11 +137,13 @@
 		loadData(function(){
 			$.render(
 				"my-page",
-				config,
-				$.query("#app"),
-				function(elem){
-					next();
-				}
+				$.extend(config, {
+					created: function(elem){
+						console.log("created");
+						next();
+					}
+				}),
+				$.query("#app")
 			);
 		});
 	});
