@@ -140,6 +140,7 @@ p-style:属性名（json|text|class) = "属性值", 样式
 
 注：
 p-handle:事件名(keyup)专用修饰符(enter|delete|esc|space|up|down|left|right)
+p-handle,增加新的touch事件(pinched|swipe|tap)
 
 2）模板的嵌套，如下：
 <script type="text/html" p-template="my-template">
