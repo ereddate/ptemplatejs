@@ -82,6 +82,14 @@
 		<div id="mainC"></div>
 		<div id="mainD"></div>
 		<div id="mainE"></div>
+		<script type="text/html" p-template="forin">
+			<div>
+				<div p-express:for="item in data.list.items">
+					<span>{{title}}</span>
+				</div>
+			</div>
+		</script>
+		<div id="mainF"></div>
 		<script>
 			(function(win, $){
 				$.ready(function(){  //页面准备后的回调
@@ -127,6 +135,25 @@
 							}
 						}
 					};
+
+					$.render("forin", {
+						data:{
+							list:{
+								items:[{
+									title:"forin title"
+								},{
+									title:"forin title"
+								},{
+									title:"forin title"
+								},{
+									title:"forin title"
+								},{
+									title:"forin title"
+								}]
+							}
+						}
+					}, $.query("#mainF"));
+
 					//创建模板
 					$.createTemplate("html").createTemplate("my-component", {
 						title: "header"

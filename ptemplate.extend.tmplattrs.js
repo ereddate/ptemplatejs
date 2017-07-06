@@ -94,10 +94,10 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					var cmd = a.value.split(' '),
 						then = function(result) {
 							var html = obj._removeAttr("p-express:" + type).outerHTML,
-								//parent = obj.parentNode,
+								name = /\./.test(cmd[2]) ? cmd[2].split('.')[0] : cmd[2],
 								f = pTemplate.createDom("docmentfragment", {}),
 								t = 'var html =[], len = ' + cmd[2] + '.length;for (var ' + cmd[0] + '=0;' + cmd[0] + '<len;' + cmd[0] + '++){var x_data = ' + cmd[2] + '[' + cmd[0] + ']; html.push(pTemplate.createDom("div", {"p-index": ' + cmd[0] + '+1,html:pTemplate.tmpl(\'' + html.replace(/\r|\n/gim, "") + '\', x_data)}))}return html;',
-								r = new Function(cmd[2], t)(result[cmd[2]] || {});
+								r = new Function(name, t)(result[name] || {});
 							r.forEach(function(e) {
 								f.appendChild(pTemplate.__mod__.mixElement(e.children[0])._attr("p-index", e._attr("p-index")));
 							});
@@ -106,9 +106,18 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 								_parent.innerHTML = "";
 								_parent.appendChild(f);
 							}
+						},
+						findSubObject = function(obj, selector) {
+							var reslut = obj;
+							selector = selector.split('.');
+							selector.forEach(function(s) {
+								reslut = reslut[s];
+							});
+							return reslut;
 						};
-					if (data[cmd[2]]) {
-						if (typeof(data[cmd[2]]) == "function") {
+					var result = /\./.test(cmd[2]) ? findSubObject(data, cmd[2]) : data[cmd[2]];
+					if (result) {
+						if (typeof(result) == "function") {
 							var b = new Promise((resolve, reject) => {
 								data[cmd[2]](resolve, reject);
 							});
