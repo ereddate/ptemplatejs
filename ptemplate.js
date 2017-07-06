@@ -255,7 +255,6 @@
 			tmpl: function(obj, data) {
 				var rp = function(name, val, _object) {
 						var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*|([^{}]+)\\s*)*}}", "gim");
-						//new RegExp("{{\\s*[^{}]*\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*|([^{}]+)\\s*)*}}", "gim");
 						if (typeof val != "undefined") {
 							_object = _object.replace(reg, function(a, b) {
 								if (b) {

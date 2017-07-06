@@ -72,6 +72,10 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						}
 					});
 					break;
+				case "express":
+					var b = isExpress(a);
+					b && (obj.style.cssText = b);
+					break;
 				case "class":
 					var b = a.value.split(' ');
 					b.forEach(function(c) {

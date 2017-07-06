@@ -1,0 +1,69 @@
+<template p-template="my-header">
+	<header class="header">
+		<div class="header_list">
+			<div class="header_list_item logo">
+				<h1 class="logo_box">Logo</h1>
+			</div>
+			<div class="header_list_item nav">
+				<my-nav type="{{type}}"></my-nav>
+			</div>
+			<div class="header_list_item power"><a href="#" p-router:href="/github">github</a></div>
+		</div>
+		<div class="header_nav" p-express:if="'{{type}}' == 'home'">
+			<a href="#" p-router:href="/prev?n={{type}}">&lt; prev</a>
+			<a href="#" p-router:href="/next?n={{type}}">more &gt;</a>
+		</div>
+	</header>
+</template>
+<style>
+	.header{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		color:rgb(255,255,255);
+		a{
+			text-decoration:none;
+		}
+		.header_list{
+			background-color:rgb(255,102,0);
+			display:flex;
+			flex-flow: row;
+			font-size: 0.5410rem;
+			padding:0.3864rem 0;
+			.header_list_item{
+				width:33.33%;
+				&.logo, &.nav{
+					text-align:left;
+				}
+				&.logo{
+					width:23.33%;
+					.logo_box{
+						font-size: 0.5410rem;
+						margin:0 0.3864rem;
+					}
+				}
+				&.nav{
+					width:56.33%;
+				}
+				&.power{
+					width:20.33%;
+					text-align:center;
+					a{
+						color:rgb(255,255,255);
+					}
+				}
+			}
+		}
+		.header_nav{
+			background-color:rgba(255,255,255,.8);
+			padding:0.1932rem 0;
+			font-size: 0.5410rem;
+			text-align:center;
+			a{
+				color:rgb(0,0,0);
+				margin:0 0.3864rem;
+			}
+		}
+	}
+</style>

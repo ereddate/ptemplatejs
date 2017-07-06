@@ -14,5 +14,8 @@ module.exports = {
 	},{
 		projectName: "pages",
 		version: "0.0.1"
+	},{
+		projectName: "hackernews",
+		version: "0.0.1"
 	}]
 }

@@ -1,0 +1,19 @@
+<script>
+	$.router({
+		"/home": function(e, args){
+			this._set("my-mainpage",{
+				type: "home"
+			});
+		},
+		"/doc": function(e, args){
+			this._set("my-mainpage",{
+				type: "doc"
+			});
+		},
+		"/aboutus": function(e, args){
+			this._set("my-mainpage",{
+				type: "aboutus"
+			});
+		}
+	});
+</script>
