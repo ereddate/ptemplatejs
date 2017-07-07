@@ -84,7 +84,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						} else {
 							obj._addClass(c)
 						}
-					})
+					});
 					break;
 				default:
 					obj.style.cssText = a.value;
@@ -139,7 +139,6 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				case "if":
 					var index = parseInt(obj._attr("p-index")) || 0,
 						result = isExpress(a, /index/.test(a.value) ? index : data, /index/.test(a.value) ? "index" : "data");
-					//console.log(a.value, result, obj._html())
 					if (!result) {
 						result = new RegExp(a.value).test(obj._html());
 					}

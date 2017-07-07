@@ -83,7 +83,6 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		if (settings.headers)
 			for (name in settings.headers) setHeader(name, settings.headers[name])
 		xhr.setRequestHeader = setHeader
-			//console.log(headers)
 		var nativeSetHeader = xhr.setRequestHeader,
 			abortTimeout;
 		xhr.onreadystatechange = function() {
@@ -111,10 +110,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		var async = 'async' in settings ? settings.async : true
 		xhr.open(settings.type, settings.url, async, settings.username, settings.password)
 		for (let name in headers) {
-			//console.log(name, headers[name]);
 			nativeSetHeader.apply(xhr, headers[name]);
 		}
-		//console.log(xhr)
 		if (settings.timeout > 0) abortTimeout = setTimeout(function() {
 			xhr.onreadystatechange = empty
 			xhr.abort()

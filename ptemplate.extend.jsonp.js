@@ -51,7 +51,6 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					script.id = callback;
 					script.src = url + (/\?/.test(url) ? "&" : "?") + (ops && ops.callback || "callback") + "=" + callback;
 					script.onload = function(a) {
-						//console.log(arguments)
 					};
 					script.onerror = function() {
 						head.removeChild(this);

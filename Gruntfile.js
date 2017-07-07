@@ -14,11 +14,6 @@ module.exports = function(grunt) {
           noncmd: true
         }
       },
-      uglify: {
-        options: {
-          report: "gzip"
-        }
-      },
       tmpl: {
         options: {
           prefix: "{{ ",
@@ -28,9 +23,12 @@ module.exports = function(grunt) {
       },
       watch: _watch
     },
-    uglifyFiles = [],
     concats = [];
-
+  /*uglify: {
+          options: {
+            report: "gzip"
+          }
+        },*/
   grunt.registerTask("pjsloader", "pjs loader", function(v) {
     templates = a.getData(v);
   });
@@ -52,6 +50,10 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.registerTask("uglifyjs", "uglify javascript files", function(v) {
+    require("./bin/pjs-uglifyjs").uglifyjs(v);
+  });
+
   var libFiles = grunt.file.expand(pkg.configs.ptemplatejs.path + "*.js");
 
   app.configs.forEach(function(c) {
@@ -67,11 +69,24 @@ module.exports = function(grunt) {
     });
     _watch[c.projectName] = {
       files: ["./" + basePath + c.projectName + "/**/*.pjs", "package.json", "./" + basePath + c.projectName + "/**/*.js", "./" + basePath + "app.js", "gruntfile.js", "./" + basePath + c.projectName + "/**/*.html"],
-      tasks: ["pjsloader:" + c.projectName, "lessToStyle", "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName],
+      tasks: ["pjsloader:" + c.projectName, "lessToStyle", "pjsbuild:" + c.projectName, "concat:" + c.projectName, "uglifyjs:" + c.projectName, "tmpl:" + c.projectName],
       options: {
         livereload: true
       }
-    }
+    };
+    /*gruntConfigs.uglify[c.projectName] = {
+      options: {
+        banner: "\n/*! " + c.projectName + "/" + grunt.template.today("yyyy-mm-dd") + "end \*\/",
+        mangle: true, //不混淆变量名
+        preserveComments: false //删除注释，还可以为 false（删除全部注释），some（保留@preserve @license @cc_on等注释）
+      },
+      files: [{
+        expand: true,
+        cwd: 'dist/' + c.projectName + "/js/", //js目录下
+        src: '**\/*.js', //所有js文件
+        dest: 'dist/' + c.projectName + "/js/" //输出到此目录下
+      }]
+    };*/
     gruntConfigs.tmpl[c.projectName] = {
       options: {
         encoding: "utf-8"
@@ -121,7 +136,7 @@ module.exports = function(grunt) {
     }
 
     function savefile(file, content) {
-      grunt.file.write(file, js_beautify(content, {
+      content = js_beautify(content, {
         indent_size: 4,
         indent_char: " ",
         indent_with_tabs: false,
@@ -130,7 +145,8 @@ module.exports = function(grunt) {
         wrap_line_length: 0,
         indent_inner_html: false,
         brace_style: "collapse"
-      }));
+      });
+      grunt.file.write(file, content);
       grunt.log.writeln('file ' + file + ' created.');
     }
     app.configs.forEach(function(c) {
@@ -164,6 +180,7 @@ module.exports = function(grunt) {
   var tmplpro = require("./bin/pjs-tmpl.js");
   tmplpro(grunt);
 
+  //grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-cmd-concat");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.registerTask('default', 'watch');

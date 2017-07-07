@@ -71,9 +71,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			function calculateAngle(startPoint, endPoint) {
 				var x = startPoint.x - endPoint.x;
 				var y = endPoint.y - startPoint.y;
-				var r = Math.atan2(y, x); //radians
-				var angle = Math.round(r * 180 / Math.PI); //degrees
-				//ensure value is positive
+				var r = Math.atan2(y, x); 
+				var angle = Math.round(r * 180 / Math.PI);
 				if (angle < 0) {
 					angle = 360 - Math.abs(angle);
 				}
@@ -136,7 +135,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						end = {
 							x: touches.pageX,
 							y: touches.pageY
-						}
+						};
 						delta = {
 							x: touches.pageX - start.x,
 							y: touches.pageY - start.y

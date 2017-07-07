@@ -26,7 +26,6 @@
 	};
 	var removeEvent = doc.removeEventListener ?
 		function(elem, type, handle) {
-			// This "if" is needed for plain objects
 			if (elem.removeEventListener) {
 				elem.removeEventListener(type, handle);
 			}
@@ -34,9 +33,6 @@
 		function(elem, type, handle) {
 			var name = "on" + type;
 			if (elem.detachEvent) {
-				// #8545, #7054, preventing memory leaks for custom events in IE6-8
-				// detachEvent needed property on element, by name of that event,
-				// to properly expose it to GC
 				if (typeof elem[name] === "undefined") {
 					elem[name] = null;
 				}
@@ -111,7 +107,6 @@
 					set: function(newClassObject) {
 						if (_class == newClassObject) return;
 						var oldClass = _class;
-						//console.log(_class, newClassObject);
 						obj.watch && obj.watch[name] && (newClassObject = obj.watch[name].call(obj, newClassObject));
 						obj.mixins && obj.mixins.forEach(function(n) {
 							n.watch && n.watch[name] && (newClassObject = n.watch[name].call(obj, newClassObject));
@@ -132,7 +127,7 @@
 					case "array":
 						var len = typeof a != "string" && ("length" in a) && a.length,
 							c = (typeof a).toLowerCase();
-						return "array" === c || 0 === len || "number" == typeof len && len > 0 && len - 1 in a
+						return "array" === c || 0 === len || "number" == typeof len && len > 0 && len - 1 in a;
 						break;
 				}
 				return Object.is(a, b);
@@ -148,9 +143,10 @@
 					if (g) {
 						for (; f > e; e++)
 							if (d = b.apply(a[e], c), d === !1) break
-					} else
+					} else {
 						for (var e in a)
 							if (d = b.apply(a[e], c), d === !1) break
+					}
 				} else if (g) {
 					for (; f > e; e++)
 						if (d = b.call(a[e], e, a[e]), d === !1) break
@@ -170,7 +166,7 @@
 				mod.isArray(element) ? element.forEach(function(n) {
 					mod.extend(n, pSubClass);
 				}) : mod.extend(element, pSubClass);
-				element.children && [...element.children].forEach(function(e) {
+				element.children && element.children.length > 0 && [].slice.call(element.children).forEach(function(e) {
 					mod.mixElement(e);
 				});
 				return element;
@@ -260,7 +256,7 @@
 								if (b) {
 									b = b.split(':');
 									if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
-										var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](val, b[1] && b[1].replace(/^\s+/gim, "") || undefined, name)
+										var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](val, b[1] && b[1].replace(/^\s+/gim, "") || undefined, name);
 										a = typeof c != "undefined" ? c : a;
 									} else {
 										try {
@@ -285,7 +281,6 @@
 					};
 				if (mod.is(typeof obj, "string")) {
 					mod.each(data, function(n, v) {
-						//console.log(n, v)
 						var then = function(u) {
 							if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
 								mod.each(u, function(name, val) {
@@ -299,7 +294,6 @@
 						n != "created" && mod.promise(v, then);
 					});
 				} else if (obj.nodeType) {
-					//console.log(obj.tagName)
 					if (obj.tagName && mod.templates[obj.tagName.toLowerCase()]) {
 						var attr = obj.attributes,
 							newObj = {},
@@ -313,7 +307,7 @@
 						});
 					} else {
 						mod.mixElement(obj);
-						var attrs = obj.attributes && obj.attributes.length > 0 && [...obj.attributes] || false;
+						var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
 						if (attrs) {
 							attrs.forEach(function(a) {
 								(new Promise((resolve, reject) => {
@@ -366,7 +360,7 @@
 								}
 							})
 						}
-						obj.children && mod.each([...obj.children], function(i, e) {
+						obj.children && mod.each([].slice.call(obj.children), function(i, e) {
 							mod.tmpl(e, data);
 						});
 					}
@@ -390,7 +384,6 @@
 				eventName = eventName.split(' ');
 				eventName.forEach((ev) => {
 					var fn = (e) => {
-						//onebool && then._off(ev);
 						that.nextTick(then, callback, [e, args]);
 					};
 					if (then.addEventListener) {
@@ -533,16 +526,16 @@
 					if (/^name=/.test(selector)) {
 						var children = element.getElementsByName && element.getElementsByName(selector.toLowerCase().replace(/^name=/gim, ""));
 						if (children) {
-							return [...children];
+							return [].slice.call(children);
 						}
 					} else if (/template\:/.test(selector)) {
 						var nodes = element.querySelectorAll("[p-" + selector.replace(":", "=") + "]");
-						return [...nodes];
+						return [].slice.call(nodes);
 					} else if (/\[[^\[\]]+\]/.test(selector)) {
 						var reg = /([^\[\]]+)\s*\[([^\[\]]+)\]/.exec(selector);
 						if (reg) {
 							var nodes = [];
-							[...element.querySelectorAll(reg[1])].forEach((e) => {
+							[].slice.call(element.querySelectorAll(reg[1])).forEach((e) => {
 								var exp = new RegExp(reg[2].split('=')[1].replace(/\:/gim, "\\s*\\:\\s*"), "gim"),
 									is = exp.test(e.getAttribute(reg[2].split('=')[0]));
 								if (is) {
@@ -555,7 +548,7 @@
 						var reg = /([^\[\]]+)\s*\:\s*([^\[\]]+)/.exec(selector);
 						if (reg) {
 							var nodes = [];
-							[...element.querySelectorAll(reg[1])].forEach((e) => {
+							[].slice.call(element.querySelectorAll(reg[1])).forEach((e) => {
 								var elems = e["_" + reg[2]] && e["_" + reg[2]]() || null;
 								if (elems && elems.nodeType) {
 									nodes.push(elems);
@@ -567,10 +560,10 @@
 						}
 					}
 					var node = element.querySelectorAll(selector);
-					return [...node];
-				}else if (selector.nodeType){
+					return [].slice.call(node);
+				} else if (selector.nodeType) {
 					return [selector];
-				}else{
+				} else {
 					return selector;
 				}
 			}
@@ -606,11 +599,11 @@
 			},
 			_contents() {
 				var elem = this;
-				return elem.tagName && elem.tagName.toLowerCase() == "iframe" ? elem.contentDocument || elem.contentWindow.document : elem.childNodes && [...elem.childNodes] || [];
+				return elem.tagName && elem.tagName.toLowerCase() == "iframe" ? elem.contentDocument || elem.contentWindow.document : elem.childNodes && [].slice.call(elem.childNodes) || [];
 			},
 			_empty() {
 				var element = this;
-				[...element.childNodes].forEach((e) => {
+				[].slice.call(element.childNodes).forEach((e) => {
 					e._remove();
 				});
 				return this;
@@ -633,9 +626,9 @@
 			},
 			_children(selector) {
 				if (selector) {
-					return [...this.querySelectorAll(selector)]
+					return [].slice.call(this.querySelectorAll(selector))
 				} else {
-					return [...this.children];
+					return [].slice.call(this.children);
 				}
 			},
 			_removeAttr(name) {
@@ -730,7 +723,7 @@
 					var n = doc.createElement("div"),
 						f = doc.createDocumentFragment();
 					n.innerHTML = element;
-					[...n.childNodes].forEach(function(b) {
+					[].slice.call(n.childNodes).forEach(function(b) {
 						f.appendChild(b)
 					});
 					this.appendChild(f);
@@ -1045,7 +1038,7 @@
 			return this;
 		},
 		mixElement: function(elem) {
-			mod.mixElement(elem)
+			mod.mixElement(elem);
 			return elem;
 		},
 		nextTick: function(obj, callback, args) {
@@ -1106,7 +1099,9 @@
 							var html = mod.tmpl(mod.templates[name].content, data || {});
 							parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
 								html: html
-							})) : parent[0].tagName.toLowerCase() == "body" ? parent[0]._append($.createDom("div", {html: html}).children[0]) : (parent[0].innerHTML = html);
+							})) : parent[0].tagName.toLowerCase() == "body" ? parent[0]._append($.createDom("div", {
+								html: html
+							}).children[0]) : (parent[0].innerHTML = html);
 							mod.tmpl(parent[0], data);
 							data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 						}

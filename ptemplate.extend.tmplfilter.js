@@ -61,11 +61,11 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			pattern = pattern || 'yyyy-MM-dd';
 			var y = d.getFullYear().toString(),
 				o = {
-					M: d.getMonth() + 1, //month
-					d: d.getDate(), //day
-					h: d.getHours(), //hour
-					m: d.getMinutes(), //minute
-					s: d.getSeconds() //second
+					M: d.getMonth() + 1,
+					d: d.getDate(), 
+					h: d.getHours(), 
+					m: d.getMinutes(), 
+					s: d.getSeconds() 
 				};
 			pattern = pattern.replace(/(y+)/ig, function(a, b) {
 				return y.substr(4 - Math.min(4, b.length));
@@ -117,7 +117,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				});
 				return stringify(a.splice(0, parseInt(filterCondition)));
 			} else if ($.__mod__.is("string", val)) {
-				return val.substr(0, parseInt(filterCondition)); //textFix(val, parseInt(filterCondition));
+				return val.substr(0, parseInt(filterCondition));
 			} else if ($.__mod__.is("number", val) && /\./.test(val + "")) {
 				return val.toFixed(filterCondition);
 			} else if ($.__mod__.is("number", val)) {
