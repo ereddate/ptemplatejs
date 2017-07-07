@@ -30,6 +30,7 @@
 	"base": "./",
 	"configs": {
 		"base": "src/",
+		"uglifyjs": false,
 		"requirePjs": [
 			{
 				"src": [

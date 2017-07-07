@@ -67,9 +67,13 @@ module.exports = function(grunt) {
       src: libConcats,
       dest: "./" + distPath + c.projectName + "/libs/" + c.version + "/" + pkg.name + "." + c.version + ".js"
     });
+    var tasks = ["pjsloader:" + c.projectName, "lessToStyle", "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName];
+    if (pkg.configs.uglifyjs === true){
+      tasks.push("uglifyjs:" + c.projectName);
+    }
     _watch[c.projectName] = {
       files: ["./" + basePath + c.projectName + "/**/*.pjs", "package.json", "./" + basePath + c.projectName + "/**/*.js", "./" + basePath + "app.js", "gruntfile.js", "./" + basePath + c.projectName + "/**/*.html"],
-      tasks: ["pjsloader:" + c.projectName, "lessToStyle", "pjsbuild:" + c.projectName, "concat:" + c.projectName, "uglifyjs:" + c.projectName, "tmpl:" + c.projectName],
+      tasks: tasks,
       options: {
         livereload: true
       }
