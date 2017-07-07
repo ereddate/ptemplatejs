@@ -1,4 +1,5 @@
 <script>
+	var timeout = null;
 	$.router({
 		"/home": function(e, args){
 			this._set("my-mainpage",{
@@ -14,6 +15,19 @@
 			this._set("my-mainpage",{
 				type: "aboutus"
 			});
+		},
+		"/github": function(e, args){
+			location.href = "https://github.com/ereddate/ptemplatejs";
+		},
+		"/loading": function(e, args){
+			$.render("my-loading", {}, $.query("body"));
+		},
+		"/closeloading": function(e, args){
+			$.query("#loading")[0]._toggleClass("show hide");
+			timeout && clearTimeout(timeout);
+			timeout = setTimeout(function() {
+				$.query("#loading")[0]._remove();
+			}, 500);
 		}
 	});
 </script>

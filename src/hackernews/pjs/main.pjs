@@ -1,90 +1,90 @@
 <template p-template="my-mainpage">
 	<div class="page">
 		<my-header type="{{type}}"></my-header>
-		<div class="page_main clearfix" p-express:if="'{{type}}' == 'home'">
-			<ul>
-				<li p-express:for="item in data" class="page_main_list">
-					<i class="page_main_list_item good">{{good}}</i>
-					<article class="page_main_list_item content">
-						<h1><a href="#" target="_blank">{{title}}</a> (<a href="#" target="_blank" class="media">{{media}}</a>)</h1>
-						<p>by <a href="#" target="_blank">{{author}}</a> {{time}} | <a href="#" target="_blank">{{comment_count}} comments</a></p>
-					</article>
-				</li>
-			</ul>
+		<div class="page_main clearfix" p-express:if="'{{type}}' == 'home'" id="main">
+			home
 		</div>
-		<div class="page_main clearfix doc" p-express:if="'{{type}}' == 'doc'">
-			document
+		<div class="page_main clearfix doc" p-express:if="'{{type}}' == 'doc'" id="doc">
+			doc
 		</div>
 		<div class="page_main clearfix aboutus" p-express:if="'{{type}}' == 'aboutus'">
-			aboutus
+			<article>
+				<header>
+					<h1 class="title">{{title}}</h1>
+					<p class="desc">{{desc}}</p>
+				</header>
+			</article>
 		</div>
 		<my-footer type="{{type}}"></my-footer>
 	</div>
 </template>
 <script>
-	var data = [];
-	for (var i=0;i<30;i++) data.push({
-			title: "Fixing bugs like it's 1988_"+(i+1),
-			media: "abs.com",
-			author: "xxx",
-			time: "2017-07-06",
-			comment_count: 10,
-			good: (Math.random(10)*100).toFixed(0)
-		});
-	$.render("my-mainpage", {
-		type: "home",
-		data:data
-	}, $.query("#app"));
+	callbacks.add(function(next){
+		$.render("my-mainpage", {
+			type: "home",
+			title:"pTemplatejs",
+			desc: "模板、数据绑定、数据过滤、事件处理、条件及列表渲染、样式控制、路由等等",
+			created: function(){
+				switch(this.type){
+					case "home":
+						$.router("/loading");
+						var data = [];
+						for (var i=0;i<30;i++) data.push({
+							title: "Fixing bugs like it's 1988_"+(i+1),
+							media: "abs.com",
+							author: "xxx",
+							time: "2017-07-06",
+							comment_count: 10,
+							good: (Math.random(10)*100).toFixed(0)
+						});
+						$.render("my-list", {
+							data: data,
+							created: function(){
+								$.router("/closeloading");
+							}
+						}, $.query("#main"));
+						break;
+					case "doc":
+						$.router("/loading");
+						var data = [];
+						for (var i=0;i<30;i++) data.push({
+							title: "Fixing bugs like it's 1988_"+(i+1),
+							media: "abs.com",
+							author: "xxx",
+							time: "2017-07-06",
+							comment_count: 10,
+							good: (Math.random(10)*100).toFixed(0)
+						});
+						$.render("my-list", {
+							data: data,
+							created: function(){
+								$.router("/closeloading");
+							}
+						}, $.query("#doc"));
+						break;
+				}
+				next();
+			}
+		}, $.query("#app"));
+	});
 </script>
 <style>
 	.page{
 		.page_main{
 			margin:2.8980rem 0.3864rem 0 0.3864rem;
-			.page_main_list{
-				padding:0.7728rem 0;
-				margin:0.3864rem 0;
-				background-color:rgb(255,255,255);
-				display:flex;
-				flex-flow: row;
-				.page_main_list_item{
-					width:33.33%;
-					font-size:0.5410rem;
-					line-height:0.7728rem;
-					&.good{
-						width:10.33%;
-						padding:0.3864rem;
-						font-style: initial;
-						text-align:center;
-						color:rgb(255,102,0);
-						font-weight:700;
-					}
-					&.content{
-						width:99.33%;
-					}
-					h1{
-						font-size:0.5410rem;
-						font-weight:400;
-						a{
-							color:rgb(0,0,0);
-							text-decoration:none;
-							&.media{
-								color:rgb(169,169,169);
-							}
-						}
-					}
-					p{
-						color:rgb(169,169,169);
-						a{
-							color:rgb(169,169,169);
-						}
-					}
-				}
-			}
 			&.doc{
 				margin:1.7388rem 0.3864rem 0 0.3864rem;
 			}
 			&.aboutus{
 				margin:1.7388rem 0.3864rem 0 0.3864rem;
+				.title{
+					font-size:1rem;
+					line-height:1.5456rem;
+				}
+				.desc{
+					font-size:.5rem;
+					margin:0.3864rem 0;
+				}
 			}
 		}
 	}

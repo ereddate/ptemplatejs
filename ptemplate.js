@@ -994,7 +994,7 @@
 				return this;
 			} else if (typeof params != "undefined" && typeof params == "string") {
 				params = params.split('?');
-				mod.toArgs && mod.routes[params[0]] && mod.routes[params[0]].call(this, null, mod.extend(mod.toArgs(params[1]), {
+				mod.toArgs && mod.routes[params[0]] && mod.routes[params[0]].call(this, null, params[1] && mod.extend(mod.toArgs(params[1]) || undefined, {
 					callback: callback
 				}));
 				return this;
@@ -1106,7 +1106,7 @@
 							var html = mod.tmpl(mod.templates[name].content, data || {});
 							parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
 								html: html
-							})) : (parent[0].innerHTML = html);
+							})) : parent[0].tagName.toLowerCase() == "body" ? parent[0]._append($.createDom("div", {html: html}).children[0]) : (parent[0].innerHTML = html);
 							mod.tmpl(parent[0], data);
 							data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 						}
