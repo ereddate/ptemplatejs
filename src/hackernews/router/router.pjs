@@ -20,14 +20,43 @@
 			location.href = "https://github.com/ereddate/ptemplatejs";
 		},
 		"/loading": function(e, args){
+			$.query("#loading").forEach(function(n){
+				n._remove();
+			});
 			$.render("my-loading", {}, $.query("body"));
 		},
 		"/closeloading": function(e, args){
 			$.query("#loading")[0]._toggleClass("show hide");
 			timeout && clearTimeout(timeout);
 			timeout = setTimeout(function() {
-				$.query("#loading")[0]._remove();
+				$.query("#loading").forEach(function(n){
+					n._remove();
+				});
 			}, 500);
+		},
+		"/getnews": function(e, args){
+			$.router("/loading");
+			var data = [];
+			for (var i=0;i<30;i++) data.push({
+				title: "Fixing bugs like it's 1988_"+(i+1),
+				media: "abs.com",
+				author: "xxx",
+				time: "2017-07-06",
+				comment_count: 10,
+				good: (Math.random(10)*100).toFixed(0)
+			});
+			$.render("my-list", {
+				data: data,
+				created: function(){
+					$.router("/closeloading");
+				}
+			}, $.query("#"+args.id));
+		},
+		"/prev": function(e, args){
+			$.router("/getnews?type="+args.type+"&id="+args.id);
+		},
+		"/next": function(e, args){
+			$.router("/getnews?type="+args.type+"&id="+args.id);
 		}
 	});
 </script>

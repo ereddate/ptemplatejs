@@ -27,40 +27,10 @@
 			created: function(){
 				switch(this.type){
 					case "home":
-						$.router("/loading");
-						var data = [];
-						for (var i=0;i<30;i++) data.push({
-							title: "Fixing bugs like it's 1988_"+(i+1),
-							media: "abs.com",
-							author: "xxx",
-							time: "2017-07-06",
-							comment_count: 10,
-							good: (Math.random(10)*100).toFixed(0)
-						});
-						$.render("my-list", {
-							data: data,
-							created: function(){
-								$.router("/closeloading");
-							}
-						}, $.query("#main"));
+						$.router("/getnews?type="+this.type+"&id=main");
 						break;
 					case "doc":
-						$.router("/loading");
-						var data = [];
-						for (var i=0;i<30;i++) data.push({
-							title: "Fixing bugs like it's 1988_"+(i+1),
-							media: "abs.com",
-							author: "xxx",
-							time: "2017-07-06",
-							comment_count: 10,
-							good: (Math.random(10)*100).toFixed(0)
-						});
-						$.render("my-list", {
-							data: data,
-							created: function(){
-								$.router("/closeloading");
-							}
-						}, $.query("#doc"));
+						$.router("/getnews?type="+this.type+"&id=doc");
 						break;
 				}
 				next();
