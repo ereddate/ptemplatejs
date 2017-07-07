@@ -8,14 +8,20 @@ module.exports = {
 				"app.in.0.0.1": "./src/test/js/index.in.js"
 			}]
 		}
-	},{
+	}, {
 		projectName: "book",
 		version: "0.0.1"
-	},{
+	}, {
 		projectName: "pages",
 		version: "0.0.1"
-	},{
+	}, {
 		projectName: "hackernews",
-		version: "0.0.1"
+		version: "0.0.1",
+		build: {
+			uglifyjs: false,
+			css: {
+				isfile: true
+			}
+		}
 	}]
 }

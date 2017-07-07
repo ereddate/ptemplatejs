@@ -35,19 +35,36 @@ module.exports = function(grunt) {
 
   var less = require("less");
   grunt.registerTask("lessToStyle", "lessToStyle", function(v) {
-    if (templates.modules) {
-      for (var n in templates.modules) {
-        var obj = templates.modules[n];
-        obj.style && less.render(obj.style, function(e, output) {
-          var text = output.css;
-          text = "var head = $.query('head')[0]; head.appendChild($.createStyle(\"" + text.replace(/\s+/gim, " ").replace(/\r+|\n+/gim, "").replace(/"/gim, "\\\"").replace(/'/gim, "\\\'") + "\"));"
-          templates.modules[n].style = text;
-        })
+    var pconfig = {};
+    var promise = function(next) {
+      app.configs.forEach(function(a) {
+        a.projectName == v && (pconfig = a, next(pconfig));
+      })
+    };
+    promise(function(pconfig) {
+      if ("projectName" in pconfig) {
+        if (templates.modules) {
+          for (var n in templates.modules) {
+            var obj = templates.modules[n];
+            obj.style && less.render(obj.style, function(e, output) {
+              var text = output.css;
+              text = text.replace(/\s+/gim, " ").replace(/\r+|\n+/gim, "").replace(/"/gim, "\\\"").replace(/'/gim, "\\\'");
+              if (pconfig.build && pconfig.build.css && pconfig.build.css.isfile) {
+                text = text;
+              }else{
+                text = "var head = $.query('head')[0]; head.appendChild($.createStyle(\"" + text + "\"));";
+              }
+              templates.modules[n].style = text;
+            })
+          }
+          grunt.log.writeln('success.');
+        } else {
+          console.log("skip lessToStyle.1");
+        }
+      } else {
+        console.log("skip lessToStyle.2");
       }
-      grunt.log.writeln('success.');
-    } else {
-      console.log("skip lessToStyle.");
-    }
+    });
   });
 
   grunt.registerTask("uglifyjs", "uglify javascript files", function(v) {
@@ -67,8 +84,8 @@ module.exports = function(grunt) {
       src: libConcats,
       dest: "./" + distPath + c.projectName + "/libs/" + c.version + "/" + pkg.name + "." + c.version + ".js"
     });
-    var tasks = ["pjsloader:" + c.projectName, "lessToStyle", "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName];
-    if (pkg.configs.uglifyjs === true){
+    var tasks = ["pjsloader:" + c.projectName, "lessToStyle:" + c.projectName, "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName];
+    if (c.uglifyjs === true) {
       tasks.push("uglifyjs:" + c.projectName);
     }
     _watch[c.projectName] = {
@@ -115,9 +132,15 @@ module.exports = function(grunt) {
     console.log("-> ", v)
 
     var js_beautify = require("js-beautify").js;
-
-    function readContent(r, projectName) {
-      var content = ["/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"];
+    var pconfig = {};
+    app.configs.forEach(function(a) {
+      a.projectName == v && (pconfig = a);
+    });
+    var isCssFile = ("projectName" in pconfig) && pconfig.build && pconfig.build.css && pconfig.build.css.isfile;
+    //console.log(isCssFile)
+    function readContent(r, projectName, file) {
+      var content = ["/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"],
+        h = [];
       r = r.replace(/{{\s*require\(['"]([^{}'"\(\)]+)['"]\)\s*}}/gim, function(a, b) {
         if (b) {
           b = b.split(' ');
@@ -125,9 +148,15 @@ module.exports = function(grunt) {
           b.forEach(function(m) {
             var l = m.split('.');
             if (l.length === 1) {
-              templates.modules[m] && g.push((templates.modules[m].style || "") + (templates.modules[m].template || "") + (templates.modules[m].script || ""))
+              templates.modules[m] && (!isCssFile ? g.push((templates.modules[m].style || "") + (templates.modules[m].template || "") + (templates.modules[m].script || "")) : (h.push(templates.modules[m].style || ""), g.push((templates.modules[m].template || "") + (templates.modules[m].script || ""))));
             } else {
-              templates.modules[l[0]] && templates.modules[l[0]][l[1]] && g.push(templates.modules[l[0]][l[1]]);
+              if (templates.modules[l[0]] && templates.modules[l[0]][l[1]]) {
+                if (l[1] == "style" && !isCssFile || l[1] != "style") {
+                  g.push(templates.modules[l[0]][l[1]]);
+                } else {
+                  h.push(templates.modules[l[0]][l[1]]);
+                }
+              }
             }
           });
           a = g.join('');
@@ -136,6 +165,9 @@ module.exports = function(grunt) {
       });
       content.push(r);
       content.push("})(this, pTemplate);");
+      if (h.length > 0) {
+        grunt.file.write(file.replace(/\/js\//gim, "/css/").replace(/\.js/gim, ".css"), h.join(''));
+      }
       return content;
     }
 
@@ -161,8 +193,8 @@ module.exports = function(grunt) {
           c.modules.files.forEach(function(f) {
             for (var n in f) {
               var r = grunt.file.read(path.resolve(f[n]));
-              var content = readContent(r, projectName);
               var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + n + ".js";
+              var content = readContent(r, projectName, file);
               savefile(file, content.join(''));
             }
           });
@@ -170,8 +202,8 @@ module.exports = function(grunt) {
           var files = grunt.file.expand("./" + basePath + v + "/js/*.js");
           files.forEach(function(f) {
             var r = grunt.file.read(path.resolve(f));
-            var content = readContent(r, projectName);
             var file = f.replace(basePath, pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
+            var content = readContent(r, projectName, file);
             savefile(file, content.join(''));
           })
         }
@@ -179,10 +211,10 @@ module.exports = function(grunt) {
     })
   });
 
-  grunt.initConfig(gruntConfigs);
-
   var tmplpro = require("./bin/pjs-tmpl.js");
   tmplpro(grunt);
+
+  grunt.initConfig(gruntConfigs);
 
   //grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-cmd-concat");

@@ -1,3 +1,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
 <title>{{ title }}</title>
+{{ if iscss == 'true' }}
+<link rel="stylesheet" href="{{ path }}dist/{{ projectname }}/css/{{ ver }}/{{ modulename }}.{{ ver }}.css">
+{{ end if }}
 <script src="{{ path }}dist/{{ projectname }}/libs/{{ ver }}/ptemplatejs.{{ ver }}.js"></script>
