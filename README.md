@@ -427,4 +427,7 @@ _bindElement
 _watch
 监听标签的变化（查看test-bindelem.html）
 
+_query
+私有选择器
+
 ```
