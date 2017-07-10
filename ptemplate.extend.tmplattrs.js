@@ -152,7 +152,6 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		},
 		custom: function(obj, type, a, data, _parent) {
 			var result = isExpress(a, data);
-			console.log(result, a)
 			obj._attr(type, !result ? a.value : result);
 			obj._removeAttr(a.name);
 		},
