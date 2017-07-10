@@ -1,6 +1,6 @@
 <template p-template="my-mainpage">
 	<div class="page">
-		<my-header type="{{type}}"></my-header>
+		<my-header type="{{type}}" islogin="{{islogin}}" usname="{{usname}}"></my-header>
 		<div class="page_main clearfix" p-express:if="'{{type}}' == 'home'" id="main">
 			home
 		</div>
@@ -23,6 +23,8 @@
 		$.render("my-mainpage", {
 			type: "home",
 			title:"pTemplatejs",
+			islogin: false,
+			usname: "",
 			desc: "模板、数据绑定、数据过滤、事件处理、条件及列表渲染、样式控制、路由等等",
 			created: function(){
 				switch(this.type){

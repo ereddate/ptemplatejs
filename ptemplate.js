@@ -936,6 +936,11 @@
 				}
 				this["scrollTop"] = value;
 				return this;
+			},
+			_query(selector){
+				var elems = mod.findNode(selector, this);
+				mod.mixElement(elems);
+				return elems;
 			}
 		};
 	var pTemplate = {

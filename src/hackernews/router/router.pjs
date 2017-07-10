@@ -16,6 +16,52 @@
 				type: "aboutus"
 			});
 		},
+		"/login": function(e, args){
+			$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._remove();
+			$.render("my-login", $.extend({
+				handleInputChange: function(e, args){
+					console.log(this._val())
+				}
+			}, args), $.createDom("div", {}), function(elem){
+				$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+				$.query("html")[0]._removeClass("show")._addClass("show");
+			});
+		},
+		"/loginout": function(e, args){
+			this._set("my-mainpage",{
+				islogin: false,
+				usname: ""
+			});
+		},
+		"/forgot_password": function(e, args){
+
+		},
+		"/send_login": function(e, args){
+			$.router("/loading");
+			var that = this;
+			var p = new Promise((resolve, reject) => {
+				$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._addClass("hide");
+				timeout && clearTimeout(timeout);
+				timeout = setTimeout(function() {
+					$.query(".dialog_page").forEach(function(n){
+						n._remove();
+					});
+					$.query("body")[0]._toggleClass("show");
+					$.query("html")[0]._toggleClass("show");
+					resolve();
+				},500);
+			});
+			p.then(function(){
+				$.router("/closeloading");
+				that._set("my-mainpage",{
+					islogin: true,
+					usname: "ereddate"
+				});
+			});
+		},
+		"/usinfo": function(e, args){
+			alert("正在建设中...")
+		},
 		"/github": function(e, args){
 			location.href = "https://github.com/ereddate/ptemplatejs";
 		},
@@ -43,10 +89,29 @@
 				author: "xxx",
 				time: "2017-07-06",
 				comment_count: 10,
-				good: (Math.random(10)*100).toFixed(0)
+				good: (Math.random(10)*100).toFixed(0),
+				id: i
 			});
 			window.scrollTo(1,1);
 			$.render("my-list", {
+				data: data,
+				created: function(){
+					$.router("/closeloading");
+				}
+			}, $.query("#"+args.id));
+		},
+		"/getcomments": function(e, args){
+			$.router("/loading");
+			var data = [];
+			for (var i=0;i<10;i++) data.push({
+				contents: "Fixing bugs like it's 1988_"+(i+1),
+				author: "xxx",
+				time: "2017-07-06",
+				good: (Math.random(10)*100).toFixed(0),
+				id: i
+			});
+			window.scrollTo(1,1);
+			$.render("my-commentlist", {
 				data: data,
 				created: function(){
 					$.router("/closeloading");
@@ -58,6 +123,51 @@
 		},
 		"/next": function(e, args){
 			$.router("/getnews?type="+args.type+"&id="+args.id);
+		},
+		"/comment": function(e, args){
+			$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._remove();
+			$.render("my-comment", $.extend({}, args), $.createDom("div", {}), function(elem){
+				$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+				$.query("html")[0]._removeClass("show")._addClass("show");
+				$.router("/getcomments?id=comment_main");
+			});
+		},
+		"/goback": function(e, args){
+			$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._addClass("hide");
+			timeout && clearTimeout(timeout);
+			timeout = setTimeout(function() {
+				$.query(".dialog_page").forEach(function(n){
+					n._remove();
+				});
+				$.query("body")[0]._toggleClass("show");
+				$.query("html")[0]._toggleClass("show");
+			}, 500);
+		},
+		"/send_comment": function(e, args){
+
+		},
+		"/cancel_comment": function(e, args){
+			
+		},
+		"/more": function(e, args){
+			var parent = this._parents("."+args.id),
+				elems = parent._query(".page_main_list"),
+				len = elems.length,
+				max = parseInt(args.len),
+				n = 0;
+			$.each(elems, function(i, elem){
+				if (elem._hasClass("hide")){
+					if (n<max){
+						elem._toggleClass("hide");
+						n+=1;
+						if (i+1>=len){
+							parent._query(".more")[0]._hide();
+						}
+					}else{
+						return false;
+					}
+				}
+			});
 		}
 	});
 </script>

@@ -1,0 +1,32 @@
+<template p-template="my-comment">
+	<div class="comment hide dialog_page">
+		<my-dialogheader title="{{title}}"></my-dialogheader>
+		<div class="main">
+			<my-commentinput id="{{id}}"></my-commentinput>
+			<div id="comment_main">
+			</div>
+		</div>
+	</div>
+</template>
+<style>
+	.comment{
+		background:rgb(244,245,247);
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		overflow:auto;
+		overflow-x:hidden;
+		animation: moveToRight .5s ease both;
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		&.hide{
+			animation: moveToRight .5s ease both;
+		}
+		.main{
+			margin:1.7388rem 0.3864rem 0 0.3864rem;
+		}
+	}
+</style>

@@ -45,17 +45,56 @@ module.exports = function(grunt) {
       if ("projectName" in pconfig) {
         if (templates.modules) {
           for (var n in templates.modules) {
-            var obj = templates.modules[n];
-            obj.style && less.render(obj.style, function(e, output) {
-              var text = output.css;
-              text = text.replace(/\s+/gim, " ").replace(/\r+|\n+/gim, "").replace(/"/gim, "\\\"").replace(/'/gim, "\\\'");
-              if (pconfig.build && pconfig.build.css && pconfig.build.css.isfile) {
-                text = text;
-              }else{
-                text = "var head = $.query('head')[0]; head.appendChild($.createStyle(\"" + text + "\"));";
-              }
-              templates.modules[n].style = text;
-            })
+            var obj = templates.modules[n],
+              imports = [],
+              then = function(text) {
+                text = text.replace(/\s+/gim, " ").replace(/\r+|\n+/gim, "").replace(/"/gim, "\\\"").replace(/'/gim, "\\\'");
+                if (pconfig.build && pconfig.build.css && pconfig.build.css.isfile) {
+                  text = text;
+                } else {
+                  text = "var head = $.query('head')[0]; head.appendChild($.createStyle(\"" + text + "\"));";
+                }
+                templates.modules[n].style = text;
+              };
+            if (obj.style && obj.style != "") {
+               less.render(obj.style, function(e, output) {
+                  if (e) {
+                    console.log(e);
+                  }
+                  var text = output.css;
+                  then(text);
+                });
+              /*obj.style = obj.style.replace(/\@import\s+['"]+([^'"]+)['"]+;/gim, function(a, b) {
+                if (b) {
+                  imports.push(b);
+                }
+                return "";
+              });
+              if (imports.length > 0) {
+                console.log(imports)
+                var parser = new(less.Parser)({
+                  paths: imports
+                });
+                parser.parse(obj.style, function(e, tree) {
+                  if (e) {
+                    console.log(e);
+                  }
+                  var text = tree.toCSS({
+                    compress: true
+                  });
+                  then(text);
+                });
+              } else {
+                less.render(obj.style, function(e, output) {
+                  if (e) {
+                    console.log(e);
+                  }
+                  var text = output.css;
+                  then(text);
+                });
+              }*/
+
+            }
           }
           grunt.log.writeln('success.');
         } else {
@@ -89,7 +128,7 @@ module.exports = function(grunt) {
       tasks.push("uglifyjs:" + c.projectName);
     }
     _watch[c.projectName] = {
-      files: ["./" + basePath + c.projectName + "/**/*.pjs", "package.json", "./" + basePath + c.projectName + "/**/*.js", "./" + basePath + "app.js", "gruntfile.js", "./" + basePath + c.projectName + "/**/*.html"],
+      files: ["./" + basePath + c.projectName + "/**/*.pjs", "package.json", "./" + basePath + c.projectName + "/**/*.js", "./" + basePath + "app.js", "gruntfile.js", "./" + basePath + c.projectName + "/**/*.html", "./" + basePath + c.projectName + "/**/*.less", "./" + basePath + c.projectName + "/**/*.css"],
       tasks: tasks,
       options: {
         livereload: true

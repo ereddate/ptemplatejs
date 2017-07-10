@@ -104,23 +104,23 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return stringify(val);
 		},
 		limitToCharacter: function(val, filterCondition) {
-			if ($.__mod__.is("string", val)) {
+			if ($.__mod__.is("string", typeof val)) {
 				return textFix(val, parseInt(filterCondition));
 			}
 			return val;
 		},
 		limitTo: function(val, filterCondition) {
-			if ($.__mod__.is("array", val)) {
+			if ($.__mod__.is("array", typeof val)) {
 				var a = [];
 				val.forEach(function(n) {
 					a.push(n);
 				});
 				return stringify(a.splice(0, parseInt(filterCondition)));
-			} else if ($.__mod__.is("string", val)) {
+			} else if ($.__mod__.is("string", typeof val)) {
 				return val.substr(0, parseInt(filterCondition));
-			} else if ($.__mod__.is("number", val) && /\./.test(val + "")) {
+			} else if ($.__mod__.is("number", typeof val) && /\./.test(val + "")) {
 				return val.toFixed(filterCondition);
-			} else if ($.__mod__.is("number", val)) {
+			} else if ($.__mod__.is("number", typeof val)) {
 				var len = (val + "").length;
 				return parseInt((val + "").substr(len - parseInt(filterCondition), filterCondition));
 			}
@@ -129,7 +129,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		indexOf: function(val, filterCondition) {
 			var index = -1,
 				i;
-			if ($.__mod__.is("array", val)) {
+			if ($.__mod__.is("array", typeof val)) {
 				for (i = 0; i < val.length; i++) {
 					if (val[i] == filterCondition) {
 						index = i;
@@ -137,7 +137,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					}
 				}
 			}
-			if ($.__mod__.is("string", val)) {
+			if ($.__mod__.is("string", typeof val)) {
 				index = val.indexOf(filterCondition);
 			}
 			return index;
@@ -152,7 +152,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return (parseFloat(val) / parseFloat(filterCondition)).toFixed(4);
 		},
 		orderBy: function(val, filterCondition) {
-			if ($.__mod__.is("array", val) && /reverse|sort/.test(filterCondition.toLowerCase())) {
+			if ($.__mod__.is("array", typeof val) && /reverse|sort/.test(filterCondition.toLowerCase())) {
 				return val[filterCondition.toLowerCase()]();
 			}
 			return val;
@@ -164,7 +164,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return _currency(val);
 		},
 		empty: function(val, filterCondition) {
-			return (typeof val == "string" && $.__mod__.trim(val) == "" || val == null || typeof val == "undefined" || $.__mod__.is("object", val) && $.__mod__.isEmptyObject(val) || $.__mod__.is("array", val) && val.length == 0) && filterCondition || "";
+			return (typeof val == "string" && $.__mod__.trim(val) == "" || val == null || typeof val == "undefined" || $.__mod__.is("object", typeof val) && $.__mod__.isEmptyObject(val) || $.__mod__.is("array", typeof val) && val.length == 0) && filterCondition || "";
 		},
 		passcard: function(val, filterCondition) {
 			var num = filterCondition || 4,

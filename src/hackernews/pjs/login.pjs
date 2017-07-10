@@ -1,0 +1,66 @@
+<template p-template="my-login">
+	<div class="login hide dialog_page">
+		<my-dialogheader title="{{title}}"></my-dialogheader>
+		<div class="main">
+			<label><span>Username or email address:</span><input type="text" name="usname" value="" p-handle:change="handleInputChange : usname" /></label>
+			<label><span>Password:</span><input type="password" name="password" value="" p-handle:change="handleInputChange : password" /></label>
+			<label><a href="#" p-router:href="/forgot_password">Forgot password?</a></label>
+			<label><a href="#" p-router:href="/send_login" class="submit">Sign in</a></label>
+		</div>
+	</div>
+</template>
+<style>
+	.login{
+		background:rgb(244,245,247);
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		overflow:auto;
+		overflow-x:hidden;
+		animation: moveToRight .5s ease both;
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		&.hide{
+			animation: moveToRight .5s ease both;
+		}
+		.main{
+			margin:1.7388rem 0.3864rem 0 0.3864rem;
+			background-color:rgb(255,255,255);
+			border-radius:0.3864rem;
+			padding:0.3864rem;
+			label{
+				display:block;
+				font-size:0.5410rem;
+				line-height:1.5456rem;
+				input{
+					display:block;
+					width:100%;
+					font-size:0.5410rem;
+					padding:0.3864rem;
+					border-radius: 0.1159rem;
+					box-sizing: border-box;
+					border: 0.03864rem solid rgb(209,213,218);
+					box-shadow: inset 0 0.03864rem 0.07728rem rgba(27,31,35,0.075);
+				}
+				a{
+					color:rgb(0,0,0);
+					&.submit{
+						text-decoration:none;
+						border-radius: 0.1159rem;
+						border: 0.03864rem solid rgba(27,31,35,0.2);
+						user-select: none;
+						cursor: pointer;
+						white-space: nowrap;
+						padding: 0.2318rem 0.4367rem;
+						background-color:rgb(255,102,0);
+						color:rgb(255,255,255);
+					}
+				}
+			}
+		}
+	}
+
+</style>

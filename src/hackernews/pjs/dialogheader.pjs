@@ -1,0 +1,41 @@
+<template p-template="my-dialogheader">
+	<header class="header">
+		<div class="header_list dialog_page">
+			<a href="#" p-router:href="/goback" class="goback">&lt; goback</a>
+			<span class="title">{{title}}...</span>
+		</div>
+	</header>
+</template>
+<style>
+	.header{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		color:rgb(255,255,255);
+		a{
+			text-decoration:none;
+		}
+		.header_list{
+			background-color:rgb(255,102,0);
+			display:flex;
+			flex-flow: row;
+			font-size: 0.5410rem;
+			padding:0.3864rem 0;
+			&.dialog_page{
+				a{
+					&.goback{
+						width:33.33%;
+						margin:0 0.3864rem;
+						color:rgb(255,255,255);
+					}
+				}
+				.title{
+					width:33.33%;
+					margin-left:0.3864rem;
+					text-indent:0.3684rem;
+				}
+			}
+		}
+	}
+</style>

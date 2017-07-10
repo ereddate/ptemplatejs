@@ -1,0 +1,23 @@
+<style>
+	html,body{
+		&.show{
+			width:100%;
+			height:100%;
+			overflow:hidden;
+		}
+	}
+	@-webkit-keyframes moveFromRight {
+		from { -webkit-transform: translateX(100%); }
+	}
+	@keyframes moveFromRight {
+		from { -webkit-transform: translateX(100%); transform: translateX(100%); }
+	}
+	@-webkit-keyframes moveToRight {
+		from { }
+		to { -webkit-transform: translateX(100%); }
+	}
+	@keyframes moveToRight {
+		from { }
+		to { -webkit-transform: translateX(100%); transform: translateX(100%); }
+	}
+</style>

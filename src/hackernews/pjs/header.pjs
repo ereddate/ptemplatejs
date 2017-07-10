@@ -1,13 +1,13 @@
 <template p-template="my-header">
 	<header class="header">
-		<div class="header_list">
+		<div class="header_list" p-express:if="'{{type}}' != 'page'">
 			<div class="header_list_item logo">
 				<h1 class="logo_box">Logo</h1>
 			</div>
 			<div class="header_list_item nav">
 				<my-nav type="{{type}}"></my-nav>
 			</div>
-			<div class="header_list_item power"><a href="#" p-router:href="/github">github</a></div>
+			<div class="header_list_item power"><a href="#" p-router:href="/login?title=sign in" p-express:if="{{islogin}} == false">sign in</a><a href="#" p-router:href="/usinfo" p-express:if="{{islogin}} == true">{{usname}}</a></div>
 		</div>
 		<div class="header_nav" p-express:if="'{{type}}' == 'home'">
 			<a href="#" p-router:href="/prev?n={{type}}">&lt; prev</a>

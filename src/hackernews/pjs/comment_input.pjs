@@ -1,0 +1,48 @@
+<template p-template="my-commentinput">
+	<div class="commentinput">
+		<textarea class="comment_content" name="comment_content"></textarea>
+		<a href="#" p-router:href="/send_comment?id={{id}}" class="submit">提 交</a><a href="#" p-router:href="/cancel_comment" class="cancel marg">取 消</a><span class="marg content_length">0/200</span>
+	</div>
+</template>
+<style>
+	.commentinput{
+		margin:0.3864rem 0;
+		.comment_content{
+			font-size:0.5410rem;
+			box-sizing: border-box;
+			padding:0.3864rem;
+			width:100%;
+			height:3.8640rem;
+		}
+		.content_length{
+			font-size:0.5410rem;
+			color:rgb(169,169,169);
+		}
+		.marg{
+			margin-left:0.1932rem;
+			display:inline-block;
+		}
+		a{
+			&.submit{
+				border-radius:0.1932rem;
+				padding:0.1932rem 0.3864rem;
+				display:inline-block;
+				font-size:0.5410rem;
+				color:rgb(255,255,255);
+				text-decoration:none;
+				background-color:rgb(255,102,0);
+				min-width:3.3864rem;
+				text-align:center;
+			}
+			&.cancel{
+				border-radius:0.1932rem;
+				padding:0.1932rem 0.3864rem;
+				display:inline-block;
+				font-size:0.5410rem;
+				color:rgb(0,0,0);
+				text-decoration:none;
+				background-color:rgb(211,211,211);
+			}
+		}
+	}
+</style>

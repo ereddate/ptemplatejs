@@ -35,7 +35,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					if (routers[1]) {
 						routers[1] = $.__mod__.toArgs(routers[1], data);
 					}
-					obj._attr(type, a.value)._on("click", function(e, args) {
+					obj._attr(type, a.value)._off("click")._on("click", function(e, args) {
 						e.preventDefault();
 						result.call(this, e, args);
 					}, routers[1])._removeAttr(a.name);
@@ -100,7 +100,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							var html = obj._removeAttr("p-express:" + type).outerHTML,
 								name = /\./.test(cmd[2]) ? cmd[2].split('.')[0] : cmd[2],
 								f = pTemplate.createDom("docmentfragment", {}),
-								t = 'var html =[], len = ' + cmd[2] + '.length;for (var ' + cmd[0] + '=0;' + cmd[0] + '<len;' + cmd[0] + '++){var x_data = ' + cmd[2] + '[' + cmd[0] + ']; html.push(pTemplate.createDom("div", {"p-index": ' + cmd[0] + '+1,html:pTemplate.tmpl(\'' + html.replace(/\r|\n/gim, "") + '\', x_data)}))}return html;',
+								t = 'var html =[], len = ' + cmd[2] + '.length;for (var ' + cmd[0] + '=0;' + cmd[0] + '<len;' + cmd[0] + '++){var x_data = ' + cmd[2] + '[' + cmd[0] + ']; html.push(pTemplate.createDom("div", {"p-index": ' + cmd[0] + '+1,html:pTemplate.tmpl(\'' + html.replace(/"/gim, "\\\"").replace(/'/gim, "\\\'").replace(/\r|\n/gim, "") + '\', x_data)}))}return html;',
 								r = new Function(name, t)(result[name] || {});
 							r.forEach(function(e) {
 								f.appendChild(pTemplate.__mod__.mixElement(e.children[0])._attr("p-index", e._attr("p-index")));
@@ -151,7 +151,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			}
 		},
 		custom: function(obj, type, a, data, _parent) {
-			var result = isExpress(a);
+			var result = isExpress(a, data);
+			console.log(result, a)
 			obj._attr(type, !result ? a.value : result);
 			obj._removeAttr(a.name);
 		},
