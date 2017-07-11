@@ -1,0 +1,139 @@
+<template p-template="my-dialog">
+	<div class="xdialog">
+		<div class="alert" p-express:if="'{{type}}' == 'alert'">
+			<article class="main">
+				<header>
+					<h1>{{title}}</h1>
+				</header>
+				<div class="content">
+					{{content}}
+				</div>
+				<a href="#" p-router:href="/closexdialog" class="close">close</a>
+			</article>
+		</div>
+		<div class="bottom_dialog" p-express:if="'{{type}}' == 'bottomdialog'">
+			<div class="main hide">
+				<div class="menulist">
+					<a href="#" p-router:href="{{url}}" p-express:for="i in buttons">{{title}}</a>
+				</div>
+				<a href="#" p-router:href="/closexdialog" class="close">close</a>
+			</div>
+		</div>
+		<div class="tip hide" p-express:if="'{{type}}' == 'tip'">
+			<span>{{content}}</span>
+			<a href="#" p-router:href="/closexdialog" class="close">close</a>
+		</div>
+	</div>
+</template>
+<style>
+	.alert{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index:999999;
+		text-align:center;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
+		.main{
+			min-width:7.7279rem;
+			display:block;
+			align-self: auto;
+			background-color: rgb(0,0,0);
+			color: rgb(255,255,255);
+			padding:0.1932rem 0.7728rem;
+			font-size:.5rem;
+			border-radius: 0.3864rem;
+			.content{
+				text-align:left;
+			}
+			a{
+				&.close{
+					color:rgb(255,255,255);
+					text-decoration:none;
+					display:block;
+					background: rgb(102,102,102);
+					border-radius: 0.7728rem;
+					margin: 0.3864rem 0 0;
+					padding: 0.1932rem 0;
+				}
+			}
+		}
+	}
+	.bottom_dialog{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(255,255,255,.1);
+		z-index:999999;
+		.main{
+			background-color:rgba(0,0,0,.8);
+			padding:0.3864rem;
+			position:absolute;
+			bottom:0;
+			left:0;
+			right:0;
+			&.show{
+				animation: moveFromBottom .5s ease both;
+			}
+			&.hide{
+				animation: moveToBottom .5s ease both;
+			}
+			a{
+				font-size:.5rem;
+				text-align:center;
+				display:block;
+				color:rgb(0,0,0);
+				text-decoration:none;
+				display:block;
+				background: rgb(255,255,255);
+				border-radius: 0.7728rem;
+				margin: 0.3864rem 0 0;
+				padding: 0.1932rem 0;
+				&.close{
+					color:rgb(255,255,255);
+					background: rgb(102,102,102);
+					border-radius: 0.7728rem;
+					margin: 0.7728rem 0 0;
+					padding: 0.1932rem 0;
+				}
+			}
+		}
+	}
+	.tip{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		display:flex;
+		flex-flow: row;
+		background-color:rgba(0,0,0,.8);
+		z-index:999999;
+		font-size:.5rem;
+		padding:0.3864rem;
+		max-height: 0.7728rem;
+		&.show{
+			animation: moveFromTop .5s ease both;
+		}
+		&.hide{
+			animation: moveToTop .5s ease both;
+		}
+		span{
+			width:90%;
+			color:rgb(255,255,255);
+		}
+		a{
+			width:10%;
+			color:rgb(255,255,255);
+			text-decoration:none;
+		}
+	}
+</style>

@@ -154,6 +154,9 @@
 				});
 			}, 500);
 		},
+		"/closexdialog": function(e, args){
+			$.query(".xdialog")[0]._remove();
+		},
 		"/getnews": function(e, args){
 			$.router("/loading");
 			var data = [];
@@ -235,7 +238,39 @@
 			});
 		},
 		"/share": function(e, args){
-			
+			$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
+			/*$.render("my-dialog",{
+				type: "alert",
+				title: "title",
+				content: "content..."
+			}, $.createDom("div", {}), function(elem){
+				$.query("body")[0]._append(elem.children[0]);
+			});*/
+			$.render("my-dialog",{
+				type: "bottomdialog",
+				buttons:[{
+					title: "menu",
+					url: "/menu?id=0"
+				},{
+					title: "menu",
+					url: "/menu?id=0"
+				},{
+					title: "menu",
+					url: "/menu?id=0"
+				},{
+					title: "menu",
+					url: "/menu?id=0"
+				}]
+			}, $.createDom("div", {}), function(elem){
+				$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"));
+			});
+			/*$.render("my-dialog",{
+				type: "tip",
+				content: "content..."
+			}, $.createDom("div", {}), function(elem){
+				$.query("body")[0]._append(elem.children[0]);
+				$.query(".tip")[0]._removeClass("hide")._addClass("show");
+			});*/
 		},
 		"/follow": function(e, args){
 			
@@ -246,8 +281,10 @@
 			timeout && clearTimeout(timeout);
 			timeout = setTimeout(function() {
 				a._remove();
-				$.query("body")[0]._toggleClass("show");
-				$.query("html")[0]._toggleClass("show");
+				if (!$.query(".dialog_page")[0]){
+					$.query("body")[0]._toggleClass("show");
+					$.query("html")[0]._toggleClass("show");
+				}
 			}, 500);
 		},
 		"/send_comment": function(e, args){

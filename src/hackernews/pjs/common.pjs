@@ -20,4 +20,32 @@
 		from { }
 		to { -webkit-transform: translateX(100%); transform: translateX(100%); }
 	}
+	@-webkit-keyframes moveToBottom {
+		from { -webkit-transform: translateY(100%); }
+	}
+	@keyframes moveToBottom {
+		from { -webkit-transform: translateY(100%); transform: translateY(100%); }
+	}
+	@-webkit-keyframes moveFormBottom {
+		from { }
+		to { -webkit-transform: translateY(100%); }
+	}
+	@keyframes moveFormBottom {
+		from { }
+		to { -webkit-transform: translateY(100%); transform: translateY(100%); }
+	}
+	@-webkit-keyframes moveToTop {
+		from { }
+		to { -webkit-transform: translateY(-100%); }
+	}
+	@keyframes moveToTop {
+		from { }
+		to { -webkit-transform: translateY(-100%); transform: translateY(-100%); }
+	}
+	@-webkit-keyframes moveFromTop {
+		from { -webkit-transform: translateY(-100%); }
+	}
+	@keyframes moveFromTop {
+		from { -webkit-transform: translateY(-100%); transform: translateY(-100%); }
+	}
 </style>
