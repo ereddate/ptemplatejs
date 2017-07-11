@@ -1,7 +1,7 @@
 <template p-template="my-share">
 	<div class="share">
 		<a href="#" p-router:href="/like?id=my-share" class="{{like == true ? 'good' : ''}}">good</a>
-		<a href="#" p-router:href="/comment?title={{title | limitTo : 10}}">comment</a>
+		<a href="#" p-router:href="/comment?title={{title | limitTo : 10}}&bool=false">comment</a>
 		<a href="#" p-router:href="/share">share</a>
 	</div>
 </template>

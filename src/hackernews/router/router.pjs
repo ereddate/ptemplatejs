@@ -1,17 +1,21 @@
 <script>
 	var timeout = null,
-		toggleDialog = function(next, callback){
+		toggleDialog = function(next, callback, bool){
 			var p = new Promise((resolve, reject) => {
-				$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._addClass("hide");
-				timeout && clearTimeout(timeout);
-				timeout = setTimeout(function() {
-					$.query(".dialog_page").forEach(function(n){
-						n._remove();
-					});
-					$.query("body")[0]._toggleClass("show");
-					$.query("html")[0]._toggleClass("show");
+				if (typeof bool == "boolean" && bool == true || typeof bool == "string" && bool == "true"){
+					$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._addClass("hide");
+					timeout && clearTimeout(timeout);
+					timeout = setTimeout(function() {
+						$.query(".dialog_page").forEach(function(n){
+							n._remove();
+						});
+						$.query("body")[0]._toggleClass("show");
+						$.query("html")[0]._toggleClass("show");
+						next(resolve);
+					},500);
+				}else{
 					next(resolve);
-				},500);
+				}
 			});
 			p.then(function(data){
 				callback && callback(data);
@@ -48,7 +52,7 @@
 					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
 					$.query("html")[0]._removeClass("show")._addClass("show");
 				});
-			});
+			}, true);
 		},
 		"/loginout": function(e, args){
 			$.router("/loading");
@@ -61,7 +65,7 @@
 					islogin: false,
 					usname: ""
 				});
-			});
+			}, true);
 		},
 		"/usmenu": function(e, args){
 
@@ -84,7 +88,7 @@
 					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
 					$.query("html")[0]._removeClass("show")._addClass("show");
 				});
-			});
+			}, true);
 		},
 		"/send_Reg": function(e, args){
 			$.router("/loading");
@@ -97,7 +101,7 @@
 					islogin: true,
 					usname: "ereddate"
 				});
-			});
+			}, true);
 		},
 		"/send_login": function(e, args){
 			$.router("/loading");
@@ -110,7 +114,7 @@
 					islogin: true,
 					usname: "ereddate"
 				});
-			});
+			}, true);
 		},
 		"/usinfo": function(e, args){
 			toggleDialog(function(next){
@@ -223,7 +227,7 @@
 					$.query("html")[0]._removeClass("show")._addClass("show");
 					$.router("/getcomments?id=comment_main");
 				});
-			});
+			}, args.bool);
 		},
 		"/like": function(e, args){
 			this._set(args.id, {
