@@ -237,6 +237,9 @@
 		"/share": function(e, args){
 			
 		},
+		"/follow": function(e, args){
+			
+		},		
 		"/goback": function(e, args){
 			var a = this._parents(".dialog_page");
 			a._addClass("hide");

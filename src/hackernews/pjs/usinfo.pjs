@@ -8,14 +8,15 @@
 			<a href="#" class="ushead_name">
 				<span class="usname">{{usname}}</span>
 			</a>
-			<div class="usmenu">
+			<div class="usmenu" style="{{isme == 'true' ? 'display:block' : 'display:none'}}">
 				<ul>
 					<li p-express:for="i in data">
 						<a href="#" p-router:href="{{url}}">{{menutitle}}</a>
 					</li>
 				</ul>
 			</div>
-			<a href="#" p-router:href="/loginout" class="loginout">Sign out</a>
+			<a href="#" p-router:href="/follow?id={{id}}" class="loginout" style="{{isme != 'true' ? 'display:block' : 'display:none'}}">Follow</a>
+			<a href="#" p-router:href="/loginout" class="loginout" style="{{isme == 'true' ? 'display:block' : 'display:none'}}">Sign out</a>
 		</div>
 	</div>
 </template>
@@ -69,6 +70,7 @@
 					padding: 0.2318rem 0.4367rem;
 					background-color:rgb(255,102,0);
 					color:rgb(255,255,255);
+					margin:0.3864rem 0;
 				}
 			}
 			.usmenu{

@@ -3,7 +3,7 @@
 		<li p-express:for="item in data" class="page_main_list {{id < 3 ? 'show' : 'hide'}}">
 			<article class="page_main_list_item">
 				<p class="content">{{contents | limitTo : 100}}</p>
-				<p class="desc">by <a href="#" target="_blank" p-router:href="/usinfo?id={{id}}">{{author}}</a> {{time}}</p>
+				<p class="desc">by <a href="#" target="_blank" p-router:href="/usinfo?id={{id}}&isme=false">{{author}}</a> {{time}}</p>
 			</article>
 		</li>
 	</ul>
