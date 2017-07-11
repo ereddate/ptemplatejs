@@ -1,0 +1,89 @@
+<template p-template="my-usinfo">
+	<div class="usinfo hide dialog_page">
+		<my-dialogheader title="{{title}}"></my-dialogheader>
+		<div class="main">
+			<a href="#" class="ushead">
+				<img src="{{ushead_img}}" alt="{{usname}}" />
+			</a>
+			<a href="#" class="ushead_name">
+				<span class="usname">{{usname}}</span>
+			</a>
+			<div class="usmenu">
+				<ul>
+					<li p-express:for="i in data">
+						<a href="#" p-router:href="{{url}}">{{menutitle}}</a>
+					</li>
+				</ul>
+			</div>
+			<a href="#" p-router:href="/loginout" class="loginout">Sign out</a>
+		</div>
+	</div>
+</template>
+<style>
+	.usinfo{
+		background:rgb(244,245,247);
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		overflow:auto;
+		overflow-x:hidden;
+		animation: moveToRight .5s ease both;
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		&.hide{
+			animation: moveToRight .5s ease both;
+		}
+		.main{
+			margin:1.7388rem 0.3864rem 0 0.3864rem;
+			padding:0.7728rem 0;
+			text-align:center;
+			a{
+				text-decoration:none;
+				color:rgb(0,0,0);
+				&.ushead{
+					width:3.8639rem;
+					height:3.8639rem;
+					overflow:hidden;
+					border-radius:3.8639rem;
+					margin:0.7728rem auto;
+					display:block;
+					img{
+						width:100%;
+					}
+				}
+				&.ushead_name{
+					display:block;
+					font-size:0.5410rem;
+				}
+				&.loginout{
+					font-size:0.5410rem;
+					text-decoration:none;
+					border-radius: 0.1159rem;
+					border: 0.03864rem solid rgba(27,31,35,0.2);
+					user-select: none;
+					cursor: pointer;
+					white-space: nowrap;
+					padding: 0.2318rem 0.4367rem;
+					background-color:rgb(255,102,0);
+					color:rgb(255,255,255);
+				}
+			}
+			.usmenu{
+				margin:0.3864rem 0;
+				li{
+					text-align:left;					
+					a{
+						padding:0 0.3864rem;
+						background-color:rgb(255,255,255);
+						font-size:0.5410rem;
+						display:block;
+						line-height:1.5456rem;
+					}
+				}
+			}
+		}
+	}
+</style>

@@ -3,7 +3,7 @@
 		<li p-express:for="item in data" class="page_main_list {{id < 3 ? 'show' : 'hide'}}">
 			<article class="page_main_list_item">
 				<p class="content">{{contents | limitTo : 100}}</p>
-				<p>by <a href="#" target="_blank">{{author}}</a> {{time}}</p>
+				<p class="desc">by <a href="#" target="_blank">{{author}}</a> {{time}}</p>
 			</article>
 		</li>
 	</ul>
@@ -30,13 +30,16 @@
 			font-size:0.5410rem;
 			line-height:0.7728rem;
 			p{
-				margin:0 0.3864rem;
 				color:rgb(169,169,169);
 				a{
 					color:rgb(169,169,169);
 				}
 				&.content{
+					margin:0 0.3864rem;
 					color:rgb(0,0,0);
+				}
+				&.desc{
+					margin:0 0.3864rem;
 				}
 			}
 		}

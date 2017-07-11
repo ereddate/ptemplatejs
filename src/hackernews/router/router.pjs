@@ -19,8 +19,10 @@
 		"/login": function(e, args){
 			$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._remove();
 			$.render("my-login", $.extend({
-				handleInputChange: function(e, args){
-					console.log(this._val())
+				handle:{
+					handleInputChange: function(e, args){
+						console.log(this._val())
+					}
 				}
 			}, args), $.createDom("div", {}), function(elem){
 				$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
@@ -28,10 +30,30 @@
 			});
 		},
 		"/loginout": function(e, args){
-			this._set("my-mainpage",{
-				islogin: false,
-				usname: ""
+			$.router("/loading");
+			var that = this;
+			var p = new Promise((resolve, reject) => {
+				$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._addClass("hide");
+				timeout && clearTimeout(timeout);
+				timeout = setTimeout(function() {
+					$.query(".dialog_page").forEach(function(n){
+						n._remove();
+					});
+					$.query("body")[0]._toggleClass("show");
+					$.query("html")[0]._toggleClass("show");
+					resolve();
+				},500);
 			});
+			p.then(function(){
+				$.router("/closeloading");
+				that._set("my-mainpage",{
+					islogin: false,
+					usname: ""
+				});
+			});
+		},
+		"/usmenu": function(e, args){
+
 		},
 		"/forgot_password": function(e, args){
 
@@ -60,7 +82,26 @@
 			});
 		},
 		"/usinfo": function(e, args){
-			alert("正在建设中...")
+			$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._remove();
+			var p = new Promise((resolve, reject) => {
+				var data = [];
+				for (var i=0;i<5;i++) data.push({
+					menutitle: "menu title",
+					url: "/usmenu?id="+i
+				});
+				resolve(data);
+			});
+			p.then(function(data){
+				$.render("my-usinfo", $.extend({
+					title: "usinfo",
+					ushead_img:"http://p2.gexing.com/G1/M00/EC/0A/rBACJlbt9uDDksMDAAAaBCieY0s711_200x200_3.jpg?recache=20131108",
+					usname: "ereddate",
+					data: data
+				}, args), $.createDom("div", {}), function(elem){
+					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+					$.query("html")[0]._removeClass("show")._addClass("show");
+				});
+			});
 		},
 		"/github": function(e, args){
 			location.href = "https://github.com/ereddate/ptemplatejs";
