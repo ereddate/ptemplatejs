@@ -1,6 +1,6 @@
 <template p-template="my-dialogheader">
 	<header class="header">
-		<div class="header_list dialog_page">
+		<div class="header_list header_a">
 			<a href="#" p-router:href="/goback" class="goback">&lt; goback</a>
 			<span class="title">{{title}}...</span>
 		</div>
@@ -22,7 +22,7 @@
 			flex-flow: row;
 			font-size: 0.5410rem;
 			padding:0.3864rem 0;
-			&.dialog_page{
+			&.header_a{
 				a{
 					&.goback{
 						width:33.33%;

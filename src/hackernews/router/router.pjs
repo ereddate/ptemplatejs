@@ -1,5 +1,22 @@
 <script>
-	var timeout = null;
+	var timeout = null,
+		toggleDialog = function(next, callback){
+			var p = new Promise((resolve, reject) => {
+				$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._addClass("hide");
+				timeout && clearTimeout(timeout);
+				timeout = setTimeout(function() {
+					$.query(".dialog_page").forEach(function(n){
+						n._remove();
+					});
+					$.query("body")[0]._toggleClass("show");
+					$.query("html")[0]._toggleClass("show");
+					next(resolve);
+				},500);
+			});
+			p.then(function(data){
+				callback && callback(data);
+			});
+		};
 	$.router({
 		"/home": function(e, args){
 			this._set("my-mainpage",{
@@ -17,34 +34,28 @@
 			});
 		},
 		"/login": function(e, args){
-			$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._remove();
-			$.render("my-login", $.extend({
-				handle:{
-					handleInputChange: function(e, args){
-						console.log(this._val())
+			var that = this;
+			toggleDialog(function(next){
+				next({});
+			}, function(data){
+				$.render("my-login", $.extend({
+					handle:{
+						handleInputChange: function(e, args){
+							console.log(this._val())
+						}
 					}
-				}
-			}, args), $.createDom("div", {}), function(elem){
-				$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
-				$.query("html")[0]._removeClass("show")._addClass("show");
+				}, args), $.createDom("div", {}), function(elem){
+					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+					$.query("html")[0]._removeClass("show")._addClass("show");
+				});
 			});
 		},
 		"/loginout": function(e, args){
 			$.router("/loading");
 			var that = this;
-			var p = new Promise((resolve, reject) => {
-				$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._addClass("hide");
-				timeout && clearTimeout(timeout);
-				timeout = setTimeout(function() {
-					$.query(".dialog_page").forEach(function(n){
-						n._remove();
-					});
-					$.query("body")[0]._toggleClass("show");
-					$.query("html")[0]._toggleClass("show");
-					resolve();
-				},500);
-			});
-			p.then(function(){
+			toggleDialog(function(next){
+				next({});
+			}, function(data){
 				$.router("/closeloading");
 				that._set("my-mainpage",{
 					islogin: false,
@@ -58,22 +69,42 @@
 		"/forgot_password": function(e, args){
 
 		},
+		"/join": function(e, args){
+			var that = this;
+			toggleDialog(function(next){
+				next({});
+			}, function(data){
+				$.render("my-signup", $.extend({
+					handle:{
+						handleInputChange: function(e, args){
+							console.log(this._val())
+						}
+					}
+				}, args), $.createDom("div", {}), function(elem){
+					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+					$.query("html")[0]._removeClass("show")._addClass("show");
+				});
+			});
+		},
+		"/send_Reg": function(e, args){
+			$.router("/loading");
+			var that = this;
+			toggleDialog(function(next){
+				next({});
+			}, function(data){
+				$.router("/closeloading");
+				that._set("my-mainpage",{
+					islogin: true,
+					usname: "ereddate"
+				});
+			});
+		},
 		"/send_login": function(e, args){
 			$.router("/loading");
 			var that = this;
-			var p = new Promise((resolve, reject) => {
-				$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._addClass("hide");
-				timeout && clearTimeout(timeout);
-				timeout = setTimeout(function() {
-					$.query(".dialog_page").forEach(function(n){
-						n._remove();
-					});
-					$.query("body")[0]._toggleClass("show");
-					$.query("html")[0]._toggleClass("show");
-					resolve();
-				},500);
-			});
-			p.then(function(){
+			toggleDialog(function(next){
+				next({});
+			}, function(data){
 				$.router("/closeloading");
 				that._set("my-mainpage",{
 					islogin: true,
@@ -82,16 +113,14 @@
 			});
 		},
 		"/usinfo": function(e, args){
-			$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._remove();
-			var p = new Promise((resolve, reject) => {
+			toggleDialog(function(next){
 				var data = [];
 				for (var i=0;i<5;i++) data.push({
 					menutitle: "menu title",
 					url: "/usmenu?id="+i
 				});
-				resolve(data);
-			});
-			p.then(function(data){
+				next(data);
+			}, function(data){
 				$.render("my-usinfo", $.extend({
 					title: "usinfo",
 					ushead_img:"http://p2.gexing.com/G1/M00/EC/0A/rBACJlbt9uDDksMDAAAaBCieY0s711_200x200_3.jpg?recache=20131108",
@@ -186,20 +215,30 @@
 			$.router("/getnews?type="+args.type+"&id="+args.id);
 		},
 		"/comment": function(e, args){
-			$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._remove();
-			$.render("my-comment", $.extend({}, args), $.createDom("div", {}), function(elem){
-				$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
-				$.query("html")[0]._removeClass("show")._addClass("show");
-				$.router("/getcomments?id=comment_main");
+			toggleDialog(function(next){
+				next({});
+			}, function(data){
+				$.render("my-comment", $.extend({}, args), $.createDom("div", {}), function(elem){
+					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+					$.query("html")[0]._removeClass("show")._addClass("show");
+					$.router("/getcomments?id=comment_main");
+				});
 			});
 		},
+		"/like": function(e, args){
+			this._set(args.id, {
+				like: true
+			});
+		},
+		"/share": function(e, args){
+			
+		},
 		"/goback": function(e, args){
-			$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._addClass("hide");
+			var a = this._parents(".dialog_page");
+			a._addClass("hide");
 			timeout && clearTimeout(timeout);
 			timeout = setTimeout(function() {
-				$.query(".dialog_page").forEach(function(n){
-					n._remove();
-				});
+				a._remove();
 				$.query("body")[0]._toggleClass("show");
 				$.query("html")[0]._toggleClass("show");
 			}, 500);
@@ -248,6 +287,10 @@
 					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
 					$.query("html")[0]._removeClass("show")._addClass("show");
 					$.router("/getaside?id=article_aside");
+					$.render("my-share", {
+						like: false,
+						title: args.title
+					}, $.query("#article_share"));
 					$.router("/closeloading");
 				});
 			});

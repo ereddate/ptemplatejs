@@ -11,6 +11,8 @@
 					{{content}}
 					<p class="article_author">author: {{author}}</p>
 				</div>
+				<div id="article_share">
+				</div>
 			</article>
 			<aside class="aside">
 				<h2 class="aside_title">aside:</h2>

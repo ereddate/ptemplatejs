@@ -830,7 +830,7 @@
 			_toggleClass(name) {
 				var then = this;
 				name.split(' ').forEach((n) => {
-					mod.has(then.className, n) ? then._removeClass(n) : then._addClass(n);
+					then.className != "" && mod.has(then.className, n) ? then._removeClass(n) : then._addClass(n);
 				});
 				return this;
 			},

@@ -1,0 +1,20 @@
+<template p-template="my-share">
+	<div class="share">
+		<a href="#" p-router:href="/like?id=my-share" class="{{like == true ? 'good' : ''}}">good</a>
+		<a href="#" p-router:href="/comment?title={{title | limitTo : 10}}">comment</a>
+		<a href="#" p-router:href="/share">share</a>
+	</div>
+</template>
+<style>
+	.share{
+		a{
+			margin-right:0.3864rem;
+			color:rgb(255,102,0);
+			text-decoration:none;
+			&.good{
+				color:rgb(255,69,0);
+				font-weight:700;
+			}
+		}
+	}
+</style>
