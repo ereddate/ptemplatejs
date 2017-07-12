@@ -9,7 +9,7 @@ module.exports = {
       count = 0;
     paths.forEach(function(p) {
       files = grunt.file.expand(pkg.configs.build.path + v + p);
-      //console.log(files)
+      console.log(files)
       if (files.length > 0) {
         files.forEach(function(f) {
           var content = grunt.file.read(f);

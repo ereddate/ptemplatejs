@@ -124,14 +124,14 @@ module.exports = function(grunt) {
       dest: "./" + distPath + c.projectName + "/libs/" + c.version + "/" + pkg.name + "." + c.version + ".js"
     });
     var tasks = ["pjsloader:" + c.projectName, "lessToStyle:" + c.projectName, "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName];
-    if (c.uglifyjs === true) {
+    if (c.build && c.build.uglifyjs === true) {
       tasks.push("uglifyjs:" + c.projectName);
     }
     _watch[c.projectName] = {
       files: ["./" + basePath + c.projectName + "/**/*.pjs", "package.json", "./" + basePath + c.projectName + "/**/*.js", "./" + basePath + "app.js", "gruntfile.js", "./" + basePath + c.projectName + "/**/*.html", "./" + basePath + c.projectName + "/**/*.less", "./" + basePath + c.projectName + "/**/*.css"],
       tasks: tasks,
       options: {
-        livereload: true
+        livereload: (pkg.configs.server.autoreload || true)
       }
     };
     /*gruntConfigs.uglify[c.projectName] = {
