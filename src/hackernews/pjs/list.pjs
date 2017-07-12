@@ -3,7 +3,7 @@
 		<li p-express:for="item in data" class="page_main_list">
 			<i class="page_main_list_item good">{{good}}</i>
 			<article class="page_main_list_item content">
-				<h1><a href="#" target="_blank" p-router:href="/article?id={{id}}&title={{title}}">{{title}}</a> (<a href="#" target="_blank" class="media">{{media}}</a>)</h1>
+				<h1><a href="#" target="_blank" p-router:href="/article?id={{id}}&title={{title}}">{{title}}</a> (<a href="#" target="_blank" class="media" p-router:href="/external?url={{media}}">{{media}}</a>)</h1>
 				<p>by <a href="#" target="_blank" p-router:href="/usinfo?id={{id}}&isme=false">{{author}}</a> {{time}} | <a href="#" p-router:href="/comment?count={{comment_count}}&id={{id}}&title={{title | limitTo : 10}}" target="_blank">{{comment_count}} comments</a></p>
 			</article>
 		</li>

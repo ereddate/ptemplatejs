@@ -237,6 +237,22 @@
 				like: true
 			});
 		},
+		"/external": function(e, args){
+			$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
+			$.render("my-dialog",{
+				type: "alert",
+				title: "tip",
+				content: "Do you want to open an external link?",
+				handle:{
+					handleEnterClick: function(e){
+						$.router("/closexdialog");
+						location.href = args.url;
+					}
+				}
+			}, $.createDom("div", {}), function(elem){
+				$.query("body")[0]._append(elem.children[0]);
+			});
+		},
 		"/share": function(e, args){
 			$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
 			/*$.render("my-dialog",{

@@ -8,7 +8,7 @@
 				<div class="content">
 					{{content}}
 				</div>
-				<a href="#" p-router:href="/closexdialog" class="close">close</a>
+				<a href="#" p-handle:click="handleEnterClick" class="close">Enter</a> <a href="#" p-router:href="/closexdialog" class="close">Cancel</a>
 			</article>
 		</div>
 		<div class="bottom_dialog" p-express:if="'{{type}}' == 'bottomdialog'">
@@ -25,6 +25,15 @@
 		</div>
 	</div>
 </template>
+<script>
+	$.update("my-dialog", {
+		handle:{
+			handleEnterClick: function(e){
+
+			}
+		}
+	});
+</script>
 <style>
 	.alert{
 		position:fixed;
@@ -57,11 +66,11 @@
 				&.close{
 					color:rgb(255,255,255);
 					text-decoration:none;
-					display:block;
+					display:inline-block;
 					background: rgb(102,102,102);
-					border-radius: 0.7728rem;
-					margin: 0.3864rem 0 0;
-					padding: 0.1932rem 0;
+					border-radius: 0.1932rem;
+					margin: 0.3864rem 0.1932rem 0 0.1932rem;
+					padding: 0.1932rem;
 				}
 			}
 		}
