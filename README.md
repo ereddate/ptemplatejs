@@ -1,6 +1,7 @@
 # pTemplateJs
 模板、数据绑定、数据过滤、事件处理、条件及列表渲染、样式控制等等。
-<p><a href="http://img.hexun.com/2016/ereddate/hackernews/html/0.0.1/index.html" target="_blank">在线demo</a></p>
+<p><a href="http://img.hexun.com/2016/ereddate/hackernews/html/0.0.1/index.html" target="_blank">在线demo</a> 
+(兼容android\ios系统下, safari\chrome\firefox\opera\猎豹浏览器)</p>
 
 # 交流
 QQ群：9786575
