@@ -35,10 +35,11 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					if (routers[1]) {
 						routers[1] = $.__mod__.toArgs(routers[1], data);
 					}
-					obj._attr(type, a.value)._off("click")._on("click", function(e, args) {
+					obj._attr(type, a.value)._removeAttr(a.name);
+					obj._off("click")._on("click", function(e, args) {
 						e.preventDefault();
 						result.call(this, e, args);
-					}, routers[1])._removeAttr(a.name);
+					}, routers[1]);
 					return;
 				}
 				var params = $.__mod__.jsonToUrlString(result.params || {}, "&"),

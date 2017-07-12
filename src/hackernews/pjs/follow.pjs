@@ -1,0 +1,28 @@
+<template p-template="my-follow">
+	<div class="follow">
+		<a href="#" p-router:href="/follow" class="{{good == true ? 'good' : 'none'}}">Follow</a>
+	</div>
+</template>
+<style>
+	.follow{
+		text-align:center;
+		a{
+			font-size:0.5410rem;
+			text-decoration:none;
+			border-radius: 0.1159rem;
+			border: 0.03864rem solid rgba(27,31,35,0.2);
+			user-select: none;
+			cursor: pointer;
+			white-space: nowrap;
+			padding: 0.2318rem 0.4367rem;
+			&.none{
+				background-color:rgb(255,102,0);
+				color:rgb(255,255,255);
+			}
+			&.good{
+				color:rgb(255,69,0);
+				background-color:rgb(255,255,255);
+			}
+		}
+	}
+</style>

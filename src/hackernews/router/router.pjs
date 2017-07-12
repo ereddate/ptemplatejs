@@ -146,7 +146,7 @@
 			$.render("my-loading", {}, $.query("body"));
 		},
 		"/closeloading": function(e, args){
-			$.query("#loading")[0]._toggleClass("show hide");
+			$.query("#loading")[0] && $.query("#loading")[0]._toggleClass("show hide");
 			timeout && clearTimeout(timeout);
 			timeout = setTimeout(function() {
 				$.query("#loading").forEach(function(n){
@@ -328,6 +328,32 @@
 					}
 				}
 			});
+		},
+		"/teacher": function(e, args){
+			toggleDialog(function(next){
+				var data = [];
+				for (var i=0;i<5;i++) data.push({
+					title: "Fixing bugs like it's 1988_"+(i+1),
+					media: "abs.com",
+					author: "xxx",
+					time: "2017-07-06",
+					comment_count: 10,
+					good: (Math.random(10)*100).toFixed(0),
+					id: i
+				});
+				next(data);
+			}, function(data){
+				$.clone("my-list", "my-teachlist").render("my-teacher", $.extend({
+					usheader:"http://p2.gexing.com/G1/M00/EC/0A/rBACJlbt9uDDksMDAAAaBCieY0s711_200x200_3.jpg?recache=20131108",
+					usname:args.title,
+					good:false,
+					content: "teacher content...",
+					data: data
+				}, args), $.createDom("div", {}), function(elem){
+					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+					$.query("html")[0]._removeClass("show")._addClass("show");
+				});
+			}, args.bool);
 		},
 		"/article": function(e, args){
 			$.router("/loading");

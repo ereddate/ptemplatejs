@@ -1,0 +1,42 @@
+<template p-template="my-teacher">
+	<div class="teacher hide dialog_page">
+		<my-dialogheader title="{{title}}"></my-dialogheader>
+		<div class="main">
+			<my-teacheader usheader="{{usheader}}" usname="{{usname}}" good="{{good}}" content="{{content}}"></my-teacheader>
+			<article class="teacher_aside">
+				<header>
+					<h1 class="teacher_aside_header">aside</h1>
+				</header>
+				<my-teachlist p-bindData="data"></my-teachlist>
+			</article>
+		</div>
+	</div>
+</template>
+<style>
+	.teacher{
+		background:rgb(244,245,247);
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		overflow:auto;
+		overflow-x:hidden;
+		animation: moveToRight .5s ease both;
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		&.hide{
+			animation: moveToRight .5s ease both;
+		}
+		.main{
+			margin:1.7388rem 0.3864rem 0 0.3864rem;
+			.teacher_aside{
+				margin:0.3864rem 0 0;
+				.teacher_aside_header{
+					font-size:0.5410rem;
+				}
+			}
+		}
+	}
+</style>

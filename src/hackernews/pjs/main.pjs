@@ -1,8 +1,18 @@
 <template p-template="my-mainpage">
 	<div class="page">
 		<my-header type="{{type}}" islogin="{{islogin}}" usname="{{usname}}"></my-header>
-		<div class="page_main clearfix" p-express:if="'{{type}}' == 'home'" id="main">
-			home
+		<div class="page_main clearfix home" p-express:if="'{{type}}' == 'home'">
+			<div class="recommend">
+				<span p-express:for="i in users">
+					<a href="#" p-router:href="/teacher?id={{id}}&title={{teach_name}}">
+						<img p-custom:src="{{teach_header}}" alt="{{teach_name}}" />
+					</a>
+					{{teach_name}}
+				</span>
+			</div>
+			<div id="main">
+				home
+			</div>
 		</div>
 		<div class="page_main clearfix doc" p-express:if="'{{type}}' == 'doc'" id="doc">
 			doc
@@ -20,12 +30,27 @@
 </template>
 <script>
 	callbacks.add(function(next){
+		$.render("my-dialog", {
+			type:"addialog"
+		},$.createDom("div", {}), function(elem){
+			$.query("body")[0]._append(elem.children[0]);
+			setTimeout(function(){
+				$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
+			}, 3000);
+		});
+		var users=[];
+		for (var i=0;i<5;i++) users.push({
+			id: i,
+			teach_name: "usname_"+i,
+			teach_header: "http://p2.gexing.com/G1/M00/EC/0A/rBACJlbt9uDDksMDAAAaBCieY0s711_200x200_3.jpg?recache=20131108"
+		});
 		$.render("my-mainpage", {
 			type: "home",
 			title:"pTemplatejs",
 			islogin: false,
 			usname: "",
 			desc: "模板、数据绑定、数据过滤、事件处理、条件及列表渲染、样式控制、路由等等",
+			users:users,
 			created: function(){
 				switch(this.type){
 					case "home":
@@ -44,6 +69,33 @@
 	.page{
 		.page_main{
 			margin:2.8980rem 0.3864rem 0 0.3864rem;
+			&.home{
+				.recommend{
+					padding:0.3864rem 0;
+					font-size:0.5410rem;
+					text-align:center;
+					display:flex;
+					flex-flow: row;
+					span{
+						width:20%;
+						text-align:center;
+						a{
+							margin:0 auto;
+							text-decoration: none;
+							color:rgb(0,0,0);
+							width:1.8545rem;
+							height:1.8545rem;
+							overflow:hidden;
+							border-radius:1.8545rem;
+							display:block;
+							img{
+								width:100%;
+								display:block;
+							}
+						}
+					}
+				}
+			}
 			&.doc{
 				margin:1.7388rem 0.3864rem 0 0.3864rem;
 			}

@@ -1,0 +1,57 @@
+<template p-template="my-teacheader">
+	<article class="teacher_info">
+		<header class="teacher_header">
+			<h1><a href="#" p-router:href="/usinfo?isme=false"><img src="{{usheader}}" alt="{{usname}}" /></a></h1>
+			<my-follow good="{{good}}"></my-follow>
+		</header>
+		<article class="teacher_desc">
+			<header>
+				<h1 class="teacher_desc_name">{{usname}}</h1>
+			</header>
+			<div>
+				{{content}}
+			</div>
+		</article>
+	</article>
+</template>
+<script>
+	$.update("my-teacheader", {
+		usheader:"",
+		usname:"usname",
+		good:false,
+		content: "content"
+	});
+</script>
+<style>
+	.teacher_info{
+		display:flex;
+		flex-flow: row;
+		padding:0.3864rem 0;
+		.teacher_header{
+			width:30%;
+			h1{
+				text-align:center;
+				a{
+					margin:0 auto;
+					width:3.8639rem;
+					height:3.8639rem;
+					overflow:hidden;
+					border-radius:3.8639rem;
+					display:block;
+					img{
+						width:100%;
+					}
+				}
+			}
+		}
+		.teacher_desc{
+			margin:0 0 0 0.3864rem;
+			width:70%;
+			font-size:0.5410rem;
+			.teacher_desc_name{
+				font-size:0.5410rem;
+				padding:0.3864rem 0;
+			}
+		}
+	}
+</style>

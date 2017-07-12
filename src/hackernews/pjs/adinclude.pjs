@@ -1,0 +1,11 @@
+<template p-template="my-adinclude">
+	<div class="adinclude">
+		ad-include
+	</div>
+</template>
+<style>
+	.adinclude{
+		color:rgb(255,255,255);
+		font-size:0.5410rem;
+	}
+</style>

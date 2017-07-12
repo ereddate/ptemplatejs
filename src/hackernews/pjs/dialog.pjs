@@ -8,7 +8,7 @@
 				<div class="content">
 					{{content}}
 				</div>
-				<a href="#" p-handle:click="handleEnterClick" class="close">Enter</a> <a href="#" p-router:href="/closexdialog" class="close">Cancel</a>
+				<a href="#" p-handle:click.prevent="handleEnterClick" class="enter">Enter</a> <a href="#" p-router:href="/closexdialog" class="close">Cancel</a>
 			</article>
 		</div>
 		<div class="bottom_dialog" p-express:if="'{{type}}' == 'bottomdialog'">
@@ -17,6 +17,11 @@
 					<a href="#" p-router:href="{{url}}" p-express:for="i in buttons">{{title}}</a>
 				</div>
 				<a href="#" p-router:href="/closexdialog" class="close">close</a>
+			</div>
+		</div>
+		<div class="ad_dialog" p-express:if="'{{type}}' == 'addialog'">
+			<div class="main hide">
+				<my-adinclude></my-adinclude>
 			</div>
 		</div>
 		<div class="tip hide" p-express:if="'{{type}}' == 'tip'">
@@ -63,14 +68,18 @@
 				text-align:left;
 			}
 			a{
+				text-decoration:none;
+				display:inline-block;
+				border-radius: 0.1932rem;
+				margin: 0.3864rem 0.1932rem 0 0.1932rem;
+				padding: 0.1932rem;
 				&.close{
 					color:rgb(255,255,255);
-					text-decoration:none;
-					display:inline-block;
 					background: rgb(102,102,102);
-					border-radius: 0.1932rem;
-					margin: 0.3864rem 0.1932rem 0 0.1932rem;
-					padding: 0.1932rem;
+				}
+				&.enter{
+					color:rgb(255,255,255);
+					background: rgb(255,102,0);
 				}
 			}
 		}
@@ -143,6 +152,34 @@
 			width:10%;
 			color:rgb(255,255,255);
 			text-decoration:none;
+		}
+	}
+	.ad_dialog{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(255,255,255,.1);
+		z-index:999999;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
+		.main{
+			background-color:rgba(0,0,0,.8);
+			border-radius:0.1932rem;
+			padding:0.3864rem;
+			display:block;
+			align-self: auto;
+			&.show{
+				animation: moveFromBottom .5s ease both;
+			}
+			&.hide{
+				animation: moveToBottom .5s ease both;
+			}
 		}
 	}
 </style>

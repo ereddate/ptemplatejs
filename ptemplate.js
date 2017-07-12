@@ -299,7 +299,11 @@
 							newObj = {},
 							mData = {};
 						mod.each(attr, function(i, b) {
-							newObj[b.name] = b.value;
+							if (b.name == "p-binddata") {
+								newObj[b.value] = data[b.value];
+							} else {
+								newObj[b.name] = b.value;
+							}
 						});
 						mData = mod.extend(mod.templates[obj.tagName.toLowerCase()].data, newObj);
 						pTemplate.render(obj.tagName.toLowerCase(), mData, [pTemplate.createDom("div", {})], function(parent) {
@@ -343,8 +347,8 @@
 											vname.forEach((n) => {
 												!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
 											});
-											obj._removeAttr(a.name);
 										}
+										obj._removeAttr(a.name);
 									}
 								});
 							});
@@ -384,18 +388,19 @@
 				eventName = eventName.split(' ');
 				eventName.forEach((ev) => {
 					var fn = (e) => {
-						that.nextTick(then, callback, [e, args]);
-					};
+							that.nextTick(then, callback, [e, args]);
+						},
+						eventObj = {
+							element: then,
+							eventName: ev,
+							factory: fn
+						};
 					if (then.addEventListener) {
 						then.addEventListener(ev, fn, bool || false);
 					} else if (then.attachEvent) {
 						then.attachEvent("on" + ev, fn);
 					}
-					mod.eventData.push({
-						element: then,
-						eventName: ev,
-						factory: fn
-					});
+					mod.eventData.push(eventObj);
 				});
 				return this;
 			},
@@ -490,13 +495,18 @@
 			extend: function(a, b) {
 				return Object.assign(a, b);
 			},
-			has: function(target, obj) {
+			has: function(target, obj, filter) {
 				var hasIn = false;
 
 				if (mod.isArray(target)) {
 					var i = -1;
 					target.forEach((t) => {
-						if (t === obj) hasIn = i + 1;
+						if (filter) {
+							var r = filter(t, obj);
+							if (r == true) hasIn = i + 1;
+						} else {
+							if (t === obj) hasIn = i + 1;
+						}
 						i += 1;
 					});
 					return hasIn;
@@ -937,7 +947,7 @@
 				this["scrollTop"] = value;
 				return this;
 			},
-			_query(selector){
+			_query(selector) {
 				var elems = mod.findNode(selector, this);
 				mod.mixElement(elems);
 				return elems;
@@ -1005,7 +1015,12 @@
 			return this;
 		},
 		clone: function(from, to) {
-			var toTmpl = mod.extend({}, mod.templates[from]);
+			var content = mod.templates[from].content;
+			var toTmpl = {
+				parent: undefined,
+				content: content,
+				data: {}
+			};
 			mod.templates[to] = toTmpl;
 			return this;
 		},
