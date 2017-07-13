@@ -139,10 +139,12 @@ p-html="模板名称"，插入模板的html代码，忽略数据渲染
 p-bind="名称"，标签的绑定名称
 p-for="名称"，标签连接绑定标签的名称
 p-style:属性名（json|text|class) = "属性值", 样式
+p-binddata="数据名"，模板引用模板时，为被引用模板绑定当前模板的数据
 
 注：
 p-handle:事件名(keyup)专用修饰符(enter|delete|esc|space|up|down|left|right)
 p-handle,增加新的touch事件(pinched|swipe|tap)
+p-binddata,绑定当前模板全部数据时数据名为this
 
 2）模板的嵌套，如下：
 <script type="text/html" p-template="my-template">
