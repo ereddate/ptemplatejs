@@ -7,5 +7,6 @@
 	.adinclude{
 		color:rgb(255,255,255);
 		font-size:0.5410rem;
+		z-index:9999;
 	}
 </style>

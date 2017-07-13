@@ -32,10 +32,18 @@
 				type: "doc"
 			});
 		},
+		"/download": function(e, args){
+			this._set("my-mainpage",{
+				type: "download"
+			});
+		},
 		"/aboutus": function(e, args){
 			this._set("my-mainpage",{
 				type: "aboutus"
 			});
+		},
+		"/downloadlink": function(e, args){
+			location.href = "https://github.com/ereddate/ptemplatejs/archive/master.zip";
 		},
 		"/login": function(e, args){
 			var that = this;
@@ -357,7 +365,7 @@
 		},
 		"/article": function(e, args){
 			$.router("/loading");
-			var p = new Promise((resolve, reject) => {
+			toggleDialog(function(next){
 				var data = [];
 				for (var i=0;i<5;i++) data.push({
 					title: "Fixing bugs like it's 1988_"+(i+1),
@@ -368,7 +376,7 @@
 					good: (Math.random(10)*100).toFixed(0),
 					id: i
 				});
-				resolve({
+				next({
 					title: args.title,
 					id: args.id,
 					media: "abs.com",
@@ -378,10 +386,8 @@
 					time: "2017-07-06",
 					content: "随着北京（楼盘）楼市存量趋势加深和政策调控趋严，今年上半年，北京新房市场大幅下滑，网签量跌破两万套，创下历史新低；二手房交易量减少逾三成，已经跌近谷底，房价也由区域性回落逐步转为普遍回落。<br />4月13日上午，一年一度的北京春季房展会在北京展览馆开幕，本次房展会展期四天。根组委会提供的数据显示，本次展会共有国内外400余个房地产项目参展。<br />据伟业我爱我家(博客,微博)集团市场研究院数据统计，上半年，北京新建商品住宅(不含保障房)共网签16332套，环比2016年下半年下滑48.6%，同比2016年上半年下滑38.6%。<br />从2010年到2016年，北京新建商品住宅(不含保障房)的半年网签量一直保持在两万套以上，最低点为2014年上半年的2.3万套，当时全国楼市都处于低谷之中。而今年上半年，北京新房网签量比这一低点还低出近三成，创下历史新低。<br />有业内人士认为，上半年北京新房市场交易量的大幅下滑，既有市场规律因素，也有政策调控因素，两种力量联合作用下，促使北京新房市场",
 					data: data
-				})
-			});
-			p.then(function(result){
-				$.query(".dialog_page")[0] && $.query(".dialog_page")[0]._remove();
+				});
+			}, function(result){
 				$.clone("my-list", "my-asidelist").render("my-article", $.extend(result, args), $.createDom("div", {}), function(elem){
 					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
 					$.query("html")[0]._removeClass("show")._addClass("show");
@@ -392,6 +398,9 @@
 					$.router("/closeloading");
 				});
 			});
+		},
+		"/gotop": function(e, args){
+			window.scrollTo(1,1);
 		}
 	});
 </script>

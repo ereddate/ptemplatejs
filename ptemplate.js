@@ -300,8 +300,10 @@
 							mData = {};
 						mod.each(attr, function(i, b) {
 							if (b.name == "p-binddata") {
+								obj.removeAttribute(b.name);
 								if (b.value == "this"){
-									$.extend(newObj, data);
+									!mod.isEmptyObject(data) && $.extend(newObj, data);
+									"created" in newObj && delete newObj.created;
 								}else{
 									newObj[b.value] = data[b.value];
 								}

@@ -1,5 +1,5 @@
 <template p-template="my-dialogheader">
-	<header class="header">
+	<header class="dialogheader">
 		<div class="header_list header_a">
 			<a href="#" p-router:href="/goback" class="goback">&lt; goback</a>
 			<span class="title">{{title}}...</span>
@@ -7,7 +7,7 @@
 	</header>
 </template>
 <style>
-	.header{
+	.dialogheader{
 		position:fixed;
 		top:0;
 		left:0;

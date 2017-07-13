@@ -1,9 +1,9 @@
 <template p-template="my-header">
 	<header class="header">
+		<div class="header_logo">
+			<h1 class="logo_box">Logo</h1>
+		</div>
 		<div class="header_list" p-express:if="'{{type}}' != 'page'">
-			<div class="header_list_item logo">
-				<h1 class="logo_box">Logo</h1>
-			</div>
 			<div class="header_list_item nav">
 				<my-nav type="{{type}}"></my-nav>
 			</div>
@@ -25,8 +25,16 @@
 		a{
 			text-decoration:none;
 		}
-		.header_list{
+		.header_logo{
 			background-color:rgb(255,102,0);
+			text-align:center;
+			padding:0.3864rem 0;
+			.logo_box{
+				font-size: 0.5410rem;
+			}
+		}
+		.header_list{
+			background-color:rgba(255,102,0,.8);
 			display:flex;
 			flex-flow: row;
 			font-size: 0.5410rem;
@@ -34,17 +42,10 @@
 			.header_list_item{
 				width:33.33%;
 				&.logo, &.nav{
-					text-align:left;
-				}
-				&.logo{
-					width:23.33%;
-					.logo_box{
-						font-size: 0.5410rem;
-						margin:0 0.3864rem;
-					}
+					text-align:center;
 				}
 				&.nav{
-					width:56.33%;
+					width:80.33%;
 				}
 				&.power{
 					width:20.33%;

@@ -10,8 +10,11 @@
 		<div class="page_main clearfix doc" p-express:if="'{{type}}' == 'doc'" id="doc">
 			doc
 		</div>
+		<div class="page_main clearfix download" p-express:if="'{{type}}' == 'download'">
+			<my-download p-binddata="this"></my-download>
+		</div>
 		<div class="page_main clearfix aboutus" p-express:if="'{{type}}' == 'aboutus'">
-			<article>
+			<article class="main">
 				<header>
 					<h1 class="title">{{title}}</h1>
 					<p class="desc">{{desc}}</p>
@@ -31,11 +34,19 @@
 				$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
 			}, 3000);
 		});
+		$.render("my-gotop", {}, $.createDom("div", {}), function(elem){
+			$.query("body")[0]._append(elem.children[0]);
+		});
 		var users=[];
 		for (var i=0;i<5;i++) users.push({
 			id: i,
 			teach_name: "usname_"+i,
 			teach_header: "http://p2.gexing.com/G1/M00/EC/0A/rBACJlbt9uDDksMDAAAaBCieY0s711_200x200_3.jpg?recache=20131108"
+		});
+		var data = [];
+		for (var i=0;i<5;i++) data.push({
+			menutitle: "menu title",
+			url: "/usmenu?id="+i
 		});
 		$.render("my-mainpage", {
 			type: "home",
@@ -43,7 +54,9 @@
 			islogin: false,
 			usname: "",
 			desc: "模板、数据绑定、数据过滤、事件处理、条件及列表渲染、样式控制、路由等等",
+			version: "0.0.1",
 			users:users,
+			menus:data,
 			created: function(){
 				switch(this.type){
 					case "home":
@@ -61,22 +74,30 @@
 <style>
 	.page{
 		.page_main{
-			margin:2.8980rem 0.3864rem 0 0.3864rem;
+			margin:4.2504rem 0.3864rem 0 0.3864rem;
 			&.home{
 				
 			}
 			&.doc{
-				margin:1.7388rem 0.3864rem 0 0.3864rem;
+				margin:3.4776rem 0.3864rem 0 0.3864rem;
+			}
+			&.download{
+				margin:3.4776rem 0 0;
 			}
 			&.aboutus{
-				margin:1.7388rem 0.3864rem 0 0.3864rem;
-				.title{
-					font-size:1rem;
-					line-height:1.5456rem;
-				}
-				.desc{
-					font-size:.5rem;
-					margin:0.3864rem 0;
+				margin:3.4776rem 0.3864rem 0 0.3864rem;
+				.main{
+					padding:0.3864rem;
+					background-color:rgb(255,255,255);
+					min-height:19.3199rem;
+					.title{
+						font-size:1rem;
+						line-height:1.5456rem;
+					}
+					.desc{
+						font-size:.5rem;
+						margin:0.3864rem 0;
+					}
 				}
 			}
 		}
