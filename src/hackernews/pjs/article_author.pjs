@@ -1,0 +1,37 @@
+<template p-template="my-articleauthor">
+	<div class="article_author">
+		<div>
+			<a href="#" p-router:href="/teacher?id={{author_id}}&title={{author_name}}">
+				<img src="{{author_header}}" alt="{{author_name}}" />
+			</a>
+		</div>
+		<div>
+			author:
+			<h2>{{author_name}}</h2>
+		</div>
+	</div>
+</template>
+<style>
+	.article_author{
+		display:flex;
+		flex-flow: row;
+		font-size: 0.5410rem;
+		padding: 0.3864rem 0 0;
+		div{
+			width:15%;
+			a{
+				width:1.8545rem;
+				height:1.8545rem;
+				overflow:hidden;
+				border-radius:1.8545rem;
+				display:block;
+				img{
+					width:100%;
+				}
+			}
+			&:last-child{
+				width:70%;
+			}
+		}
+	}
+</style>

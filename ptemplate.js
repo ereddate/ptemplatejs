@@ -300,7 +300,11 @@
 							mData = {};
 						mod.each(attr, function(i, b) {
 							if (b.name == "p-binddata") {
-								newObj[b.value] = data[b.value];
+								if (b.value == "this"){
+									$.extend(newObj, data);
+								}else{
+									newObj[b.value] = data[b.value];
+								}
 							} else {
 								newObj[b.name] = b.value;
 							}

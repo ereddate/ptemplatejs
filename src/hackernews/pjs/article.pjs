@@ -7,17 +7,16 @@
 					<h1 class="article_title">{{title}}</h1>
 					<p class="article_desc">{{media}} {{time}}</p>
 				</header>
+				<my-articleauthor p-binddata="this"></my-articleauthor>
 				<div class="article_content">
 					{{content}}
-					<p class="article_author">author: {{author}}</p>
 				</div>
 				<div id="article_share">
 				</div>
 			</article>
 			<aside class="aside">
 				<h2 class="aside_title">aside:</h2>
-				<div id="article_aside">
-				</div>
+				<my-asidelist p-bindData="data"></my-asidelist>
 			</aside>
 		</div>
 	</div>
@@ -57,12 +56,6 @@
 					font-size: 0.5410rem;
 					padding: 0.3864rem 0;
 					line-height: 1.1592rem;
-					.article_author{
-						font-size: 0.5410rem;
-						padding: 0.3864rem 0;
-						text-align:right;
-						color:rgb(169,169,169);
-					}
 				}
 			}
 			.aside{
