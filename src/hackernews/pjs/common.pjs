@@ -14,6 +14,21 @@
 		from { opacity:0; }
 		to { opacity:1; }
 	}
+	@-webkit-keyframes scaleDownCenter {
+		from { }
+		to { opacity: 0; -webkit-transform: scale(.7); }
+	}
+	@keyframes scaleDownCenter {
+		from { }
+		to { opacity: 0; -webkit-transform: scale(.7); transform: scale(.7); }
+	}
+
+	@-webkit-keyframes scaleUpCenter {
+		from { opacity: 0; -webkit-transform: scale(.7); }
+	}
+	@keyframes scaleUpCenter {
+		from { opacity: 0; -webkit-transform: scale(.7); transform: scale(.7); }
+	}
 	@-webkit-keyframes moveFromRight {
 		from { -webkit-transform: translateX(100%); }
 	}

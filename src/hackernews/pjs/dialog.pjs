@@ -1,7 +1,7 @@
 <template p-template="my-dialog">
 	<div class="xdialog">
 		<div class="alert" p-express:if="'{{type}}' == 'alert'">
-			<article class="main">
+			<article class="main hide">
 				<header>
 					<h1>{{title}}</h1>
 				</header>
@@ -56,6 +56,12 @@
 		align-content: center;
 		align-items: center;
 		.main{
+			&.show{
+				animation: scaleUpCenter .5s ease both;
+			}
+			&.hide{
+				animation: scaleDownCenter .5s ease both;
+			}
 			min-width:7.7279rem;
 			display:block;
 			align-self: auto;
@@ -175,10 +181,10 @@
 			display:block;
 			align-self: auto;
 			&.show{
-				animation: moveFromBottom .5s ease both;
+				animation: scaleDownCenter .5s ease both;
 			}
 			&.hide{
-				animation: moveToBottom .5s ease both;
+				animation: scaleUpCenter .5s ease both;
 			}
 		}
 	}

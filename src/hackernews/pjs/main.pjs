@@ -29,7 +29,9 @@
 		$.render("my-dialog", {
 			type:"addialog"
 		},$.createDom("div", {}), function(elem){
-			$.query("body")[0]._append(elem.children[0]);
+			var p = elem.children[0];
+			$.query("body")[0]._append(p);
+			p._query(".main")[0]._removeClass("hide")._addClass("show");
 			setTimeout(function(){
 				$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
 			}, 3000);

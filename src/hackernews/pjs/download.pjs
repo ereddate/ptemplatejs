@@ -31,7 +31,7 @@
 					<tr p-express:for="i in table.tbody">
 						<td>{{newtitle}}</td>
 						<td>{{newurl}}</td>
-						<td>{{description}}</td>
+						<td class="input"><input type="text" value="{{description}}" /></td>
 						<td>{{media}}</td>
 						<td>{{author}}</td>
 						<td>{{time}}</td>
@@ -123,6 +123,14 @@
 								border:0;
 							}
 							padding:0.3684rem;
+							&.input{
+								text-align:center;
+								input{
+									margin:0 auto;
+									width:1.5456rem;
+									text-align:left;
+								}
+							}
 						}
 					}
 				}
