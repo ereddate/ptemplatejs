@@ -101,24 +101,23 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							var html = obj._removeAttr("p-express:" + type).outerHTML,
 								name = /\./.test(cmd[2]) ? cmd[2].split('.')[0] : cmd[2],
 								f = pTemplate.createDom("docmentfragment", {}),
-								t = 'var html =[], len = ' + cmd[2] + '.length;for (var ' + cmd[0] + '=0;' + cmd[0] + '<len;' + cmd[0] + '++){var x_data = ' + cmd[2] + '[' + cmd[0] + ']; html.push(pTemplate.createDom("div", {"p-index": ' + cmd[0] + '+1,html:pTemplate.tmpl(\'' + html.replace(/"/gim, "\\\"").replace(/'/gim, "\\\'").replace(/\r|\n/gim, "") + '\', x_data)}))}return html;',
+								t = 'var html =[];if(' + cmd[2] + '){var len = ' + cmd[2] + '.length;for (var ' + cmd[0] + '=0;' + cmd[0] + '<len;' + cmd[0] + '++){var x_data = ' + cmd[2] + '[' + cmd[0] + ']; html.push(pTemplate.tmpl(\'' + html.replace(/"/gim, "\\\"").replace(/'/gim, "\\\'").replace(/\r|\n/gim, "") + '\', x_data))}}return html;',
 								r = new Function(name, t)(result[name] || {});
-							r.forEach(function(e) {
-								f.appendChild(pTemplate.__mod__.mixElement(e.children[0])._attr("p-index", e._attr("p-index")));
-							});
-							pTemplate.tmpl(f, result);
 							if (_parent) {
-								_parent.innerHTML = "";
-								_parent.appendChild(f);
+								_parent.innerHTML = r.join('');
+								$.__mod__.each([].slice.call(_parent.children), function(i, e) {
+									$.query(e)[0]._attr("p-index", i + 1);
+								});
+								pTemplate.tmpl(_parent, data);
 							}
 						},
 						findSubObject = function(obj, selector) {
-							var reslut = obj;
+							var r = obj;
 							selector = selector.split('.');
 							selector.forEach(function(s) {
-								reslut = reslut[s];
+								typeof r[s] != "undefined" && (r = r[s]);
 							});
-							return reslut;
+							return r;
 						};
 					var result = /\./.test(cmd[2]) ? findSubObject(data, cmd[2]) : data[cmd[2]];
 					if (result) {

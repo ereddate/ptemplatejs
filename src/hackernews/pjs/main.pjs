@@ -16,8 +16,8 @@
 		<div class="page_main clearfix aboutus" p-express:if="'{{type}}' == 'aboutus'">
 			<article class="main">
 				<header>
-					<h1 class="title">{{title}}</h1>
-					<p class="desc">{{desc}}</p>
+					<h1 class="title">{{object_title}}</h1>
+					<p class="desc">{{object_desc}}</p>
 				</header>
 			</article>
 		</div>
@@ -48,15 +48,62 @@
 			menutitle: "menu title",
 			url: "/usmenu?id="+i
 		});
+		var table = {
+			thead:[{
+				newtitle: "title",
+				newurl: "url",
+				description: "title1",
+				media: "url1",
+				author: "title2",
+				time: "url2"
+			}],
+			tbody:[{
+				newtitle: "title",
+				newurl: "url",
+				description: "title1",
+				media: "url1",
+				author: "title2",
+				time: "url2"
+			},{
+				newtitle: "title",
+				newurl: "url",
+				description: "title1",
+				media: "url1",
+				author: "title2",
+				time: "url2"
+			},{
+				newtitle: "title",
+				newurl: "url",
+				description: "title1",
+				media: "url1",
+				author: "title2",
+				time: "url2"
+			},{
+				newtitle: "title",
+				newurl: "url",
+				description: "title1",
+				media: "url1",
+				author: "title2",
+				time: "url2"
+			},{
+				newtitle: "title",
+				newurl: "url",
+				description: "title1",
+				media: "url1",
+				author: "title2",
+				time: "url2"
+			}]
+		};
 		$.render("my-mainpage", {
 			type: "home",
-			title:"pTemplatejs",
 			islogin: false,
 			usname: "",
-			desc: "模板、数据绑定、数据过滤、事件处理、条件及列表渲染、样式控制、路由等等",
-			version: "0.0.1",
+			object_title:"pTemplatejs",
+			object_version: "0.0.1",
+			object_desc: "模板、数据绑定、数据过滤、事件处理、条件及列表渲染、样式控制、路由等等",
 			users:users,
 			menus:data,
+			table:table,
 			created: function(){
 				switch(this.type){
 					case "home":
