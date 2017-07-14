@@ -5,6 +5,12 @@
 		<a href="#" p-router:href="/share">share</a>
 	</div>
 </template>
+<script>
+	$.update("my-share", {
+		like: false,
+		title:""
+	});
+</script>
 <style>
 	.share{
 		a{

@@ -389,12 +389,13 @@
 				});
 			}, function(result){
 				$.clone("my-list", "my-asidelist").render("my-article", $.extend(result, args), $.createDom("div", {}), function(elem){
-					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+					var p = elem.children[0];
+					$.query("body")[0]._append(p._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
 					$.query("html")[0]._removeClass("show")._addClass("show");
 					$.render("my-share", {
 						like: false,
 						title: args.title
-					}, $.query("#article_share"));
+					}, $.query(".article_share", p));
 					$.router("/closeloading");
 				});
 			});

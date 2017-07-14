@@ -11,7 +11,7 @@
 				<div class="article_content">
 					{{content}}
 				</div>
-				<div id="article_share">
+				<div class="article_share">
 				</div>
 			</article>
 			<aside class="aside">

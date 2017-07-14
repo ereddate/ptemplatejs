@@ -301,10 +301,10 @@
 						mod.each(attr, function(i, b) {
 							if (b.name == "p-binddata") {
 								obj.removeAttribute(b.name);
-								if (b.value == "this"){
+								if (b.value == "this") {
 									!mod.isEmptyObject(data) && $.extend(newObj, data);
 									"created" in newObj && delete newObj.created;
-								}else{
+								} else {
 									newObj[b.value] = data[b.value];
 								}
 							} else {
@@ -1017,6 +1017,7 @@
 			}
 		},
 		update: function(name, data) {
+			var that = this;
 			mod.templates[name] && mod.extend(mod.templates[name].data, data);
 			return this;
 		},
