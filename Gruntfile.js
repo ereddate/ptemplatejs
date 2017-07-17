@@ -208,7 +208,7 @@ module.exports = function(grunt) {
           f.split(' ').forEach(function(m) {
             // console.log("206", m)
             m = m.split('.');
-            c && g.push("var l = {exports:{}}; function __" + m[0] + "(exports){");
+            c && g.push("var __" + m[0] + "_l = {exports:{}}; function __" + m[0] + "(exports){");
             if (m.length === 1) {
               templates.modules[m[0]] && (!isCssFile ? g.push((templates.modules[m[0]].style || "") + (templates.modules[m[0]].template || "") + (templates.modules[m[0]].script || "")) : (h.push(templates.modules[m[0]].style || ""), g.push((templates.modules[m[0]].template || "") + (templates.modules[m[0]].script || ""))));
             } else {
@@ -220,7 +220,7 @@ module.exports = function(grunt) {
                 }
               }
             }
-            c && g.push("}\r\n__" + m[0] + "(l.exports);var " + c + " = l.exports");
+            c && g.push("}\r\n__" + m[0] + "(__" + m[0] + "_l.exports);var " + c + " = __" + m[0] + "_l.exports");
           });
           for (var i = 0; i < g.length; i++) g[i] = readContent(g[i], projectName, file, true).join('');
           a = g.join('');
