@@ -37,6 +37,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					}
 					obj._attr(type, a.value)._removeAttr(a.name);
 					obj._off("click")._on("click", function(e, args) {
+						this._targetData = data;
 						e.preventDefault();
 						result.call(this, e, args);
 					}, routers[1]);
@@ -185,7 +186,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						if (e.target.nodeType === 1) {
 							e.target._trigger && e.target._trigger("watch");
 						}
-					})._on(type[0], function(e, args) {
+					})._off(type[0])._on(type[0], function(e, args) {
+						this._targetData = data;
 						if (type[1]) {
 							filter(type, e);
 						}
@@ -197,11 +199,13 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					if (data.handle) {
 						if (type[1]) {
 							obj._off(type.join('.'))._on(type.join('.'), function(e, args) {
+								this._targetData = data;
 								data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
 								mixins(this, handle[0], e, args);
 							});
 						}
 						obj._off("keyup")._on("keyup", function(e, args) {
+							this._targetData = data;
 							var name = "";
 							switch (e.keyCode) {
 								case 13:
@@ -255,6 +259,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					break;
 				default:
 					data.handle && (obj._off(type[0])._on(type[0], function(e, args) {
+						this._targetData = data;
 						if (type[1]) {
 							filter(type, e);
 							if (type[1] == "self") {

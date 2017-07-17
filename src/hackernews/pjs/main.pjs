@@ -61,35 +61,35 @@
 				time: "url2"
 			}],
 			tbody:[{
-				newtitle: "title",
+				newtitle: "title1",
 				newurl: "url",
 				description: "title1",
 				media: "url1",
 				author: "title2",
 				time: "url2"
 			},{
-				newtitle: "title",
+				newtitle: "title2",
 				newurl: "url",
 				description: "title1",
 				media: "url1",
 				author: "title2",
 				time: "url2"
 			},{
-				newtitle: "title",
+				newtitle: "title3",
 				newurl: "url",
 				description: "title1",
 				media: "url1",
 				author: "title2",
 				time: "url2"
 			},{
-				newtitle: "title",
+				newtitle: "title4",
 				newurl: "url",
 				description: "title1",
 				media: "url1",
 				author: "title2",
 				time: "url2"
 			},{
-				newtitle: "title",
+				newtitle: "title5",
 				newurl: "url",
 				description: "title1",
 				media: "url1",
@@ -107,6 +107,18 @@
 			users:users,
 			menus:data,
 			table:table,
+			handle:{
+				handleTableThClick: function(e){
+					var type = this._data("type") || "reverse";
+					var table = $.extend($.extend({}, this._targetData.table), {
+						tbody: this._targetData.table.tbody[type]()
+					});
+					this._data("type", type);
+					this._set("my-mainpage", {
+						table: table
+					});
+				}
+			},
 			created: function(){
 				switch(this.type){
 					case "home":

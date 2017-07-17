@@ -19,7 +19,7 @@
 			<table class="table">
 				<thead>
 					<tr p-express:for="i in table.thead">
-						<th>{{newtitle}}</th>
+						<th p-handle:click="handleTableThClick">{{newtitle}}</th>
 						<th>{{newurl}}</th>
 						<th>{{description}}</th>
 						<th>{{media}}</th>
@@ -41,6 +41,15 @@
 		</div>
 	</div>
 </template>
+<script>
+	$.update("my-download", {
+		handle:{
+			handleTableThClick: function(e){
+
+			}
+		}
+	});
+</script>
 <style>
 	.xdownload{
 		min-height:19.3199rem;
