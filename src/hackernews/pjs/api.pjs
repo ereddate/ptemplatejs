@@ -1,6 +1,7 @@
 <script>
+	import {key} from "key";
 	exports.api = {
-		apiurl: "//localhost:8080/"
+		apiurl: "//localhost:8080/"+key
 	};
 	exports.apiB = {
 		apiurl: "//localhost:8080/"
