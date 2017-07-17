@@ -57,13 +57,13 @@ module.exports = function(grunt) {
                 templates.modules[n].style = text;
               };
             if (obj.style && obj.style != "") {
-               less.render(obj.style, function(e, output) {
-                  if (e) {
-                    console.log(e);
-                  }
-                  var text = output.css;
-                  then(text);
-                });
+              less.render(obj.style, function(e, output) {
+                if (e) {
+                  console.log(e);
+                }
+                var text = output.css;
+                then(text);
+              });
               /*obj.style = obj.style.replace(/\@import\s+['"]+([^'"]+)['"]+;/gim, function(a, b) {
                 if (b) {
                   imports.push(b);
@@ -177,10 +177,12 @@ module.exports = function(grunt) {
     });
     var isCssFile = ("projectName" in pconfig) && pconfig.build && pconfig.build.css && pconfig.build.css.isfile;
     //console.log(isCssFile)
-    function readContent(r, projectName, file) {
-      var content = ["/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"],
-        h = [];
-      r = r.replace(/{{\s*require\(['"]([^{}'"\(\)]+)['"]\)\s*}}/gim, function(a, b) {
+    var h = [];
+
+    function readContent(r, projectName, file, bool) {
+      var content = [];
+      r = r.replace(/{{\s*require\(['"]([^{}'"\(\)]+)['"]\)\s*}}|import\s*(.+)\s*from\s*['"]([^'"]+)['"]|import\s*['"]([^'"]+)['"]/gim, function(a, b, c, d, e) {
+        //console.log(a, b, c, d, e)
         if (b) {
           b = b.split(' ');
           var g = [];
@@ -199,12 +201,35 @@ module.exports = function(grunt) {
             }
           });
           a = g.join('');
+        } else if (d || e) {
+          //console.log(a, c, d, e)
+          var g = [],
+            f = d || e;
+          f.split(' ').forEach(function(m) {
+            // console.log("206", m)
+            m = m.split('.');
+            c && g.push("var l = {exports:{}}; function __" + m[0] + "(exports){");
+            if (m.length === 1) {
+              templates.modules[m[0]] && (!isCssFile ? g.push((templates.modules[m[0]].style || "") + (templates.modules[m[0]].template || "") + (templates.modules[m[0]].script || "")) : (h.push(templates.modules[m[0]].style || ""), g.push((templates.modules[m[0]].template || "") + (templates.modules[m[0]].script || ""))));
+            } else {
+              if (templates.modules[m[0]] && templates.modules[m[0]][m[1]]) {
+                if (m[1] == "style" && !isCssFile || m[1] != "style") {
+                  g.push(templates.modules[m[0]][m[1]]);
+                } else {
+                  h.push(templates.modules[m[0]][m[1]]);
+                }
+              }
+            }
+            c && g.push("}\r\n__" + m[0] + "(l.exports);var " + c + " = l.exports");
+          });
+          for (var i = 0; i < g.length; i++) g[i] = readContent(g[i], projectName, file, true).join('');
+          a = g.join('');
         }
         return a;
       });
-      content.push(r);
-      content.push("})(this, pTemplate);");
-      if (h.length > 0) {
+      content.push(r.replace(/;;/gim, ";"));
+      //content.push("})(this, pTemplate);");
+      if (h.length > 0 && bool != true) {
         grunt.file.write(file.replace(/\/js\//gim, "/css/").replace(/\.js/gim, ".css"), h.join(''));
       }
       return content;
@@ -234,6 +259,8 @@ module.exports = function(grunt) {
               var r = grunt.file.read(path.resolve(f[n]));
               var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + n + ".js";
               var content = readContent(r, projectName, file);
+              content.splice(0, 0, ("/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"));
+              content.push("})(this, pTemplate);");
               savefile(file, content.join(''));
             }
           });
@@ -243,6 +270,8 @@ module.exports = function(grunt) {
             var r = grunt.file.read(path.resolve(f));
             var file = f.replace(basePath, pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
             var content = readContent(r, projectName, file);
+            content.splice(0, 0, ("/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"));
+            content.push("})(this, pTemplate);");
             savefile(file, content.join(''));
           })
         }

@@ -15,6 +15,9 @@
 		</div>
 	</header>
 </template>
+<script>
+	import "nav login reg";
+</script>
 <style>
 	.header{
 		position:fixed;

@@ -12,6 +12,9 @@
 		</div>
 	</div>
 </template>
+<script>
+	import "teacheader";
+</script>
 <style>
 	.teacher{
 		background:rgb(244,245,247);

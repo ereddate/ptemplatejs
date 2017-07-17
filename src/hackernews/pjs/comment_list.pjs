@@ -1,7 +1,7 @@
 <template p-template="my-commentlist">
 	<ul>
-		<li p-express:for="item in data" class="page_main_list {{id < 3 ? 'show' : 'hide'}}">
-			<article class="page_main_list_item">
+		<li p-express:for="item in data" class="comment_list {{id < 3 ? 'show' : 'hide'}}">
+			<article class="comment_list_item">
 				<p class="content">{{contents | limitTo : 100}}</p>
 				<p class="desc">by <a href="#" target="_blank" p-router:href="/usinfo?id={{id}}&isme=false">{{author}}</a> {{time}}</p>
 			</article>
@@ -15,7 +15,7 @@
 	});
 </script>
 <style>
-	.page_main_list{
+	.comment_list{
 		padding:0.7728rem 0;
 		margin:0.3864rem 0;
 		background-color:rgb(255,255,255);
@@ -25,7 +25,7 @@
 		&.hide{
 			display:none;
 		}
-		.page_main_list_item{
+		.comment_list_item{
 			width: 100%;
 			font-size:0.5410rem;
 			line-height:0.7728rem;

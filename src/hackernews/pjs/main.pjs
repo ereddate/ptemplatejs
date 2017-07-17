@@ -25,6 +25,7 @@
 	</div>
 </template>
 <script>
+	import "header recommend download footer list";
 	callbacks.add(function(next){
 		$.render("my-dialog", {
 			type:"addialog"

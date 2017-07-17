@@ -80,7 +80,7 @@
 						break;
 					case "handle":
 						for (var n in value) {
-							elem._on(n, value[n]);
+							elem._off(n)._on(n, value[n]);
 						}
 						break;
 					case "css":

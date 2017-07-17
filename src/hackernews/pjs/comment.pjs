@@ -8,6 +8,9 @@
 		</div>
 	</div>
 </template>
+<script>
+	import "comment_list comment_input";
+</script>
 <style>
 	.comment{
 		background:rgb(244,245,247);

@@ -304,8 +304,8 @@
 		"/goback": function(e, args){
 			var a = this._parents(".dialog_page");
 			a._addClass("hide");
-			timeout && clearTimeout(timeout);
-			timeout = setTimeout(function() {
+			this.timeout && clearTimeout(this.timeout);
+			this.timeout = setTimeout(function() {
 				a._remove();
 				if (!$.query(".dialog_page")[0]){
 					$.query("body")[0]._toggleClass("show");
@@ -321,7 +321,7 @@
 		},
 		"/more": function(e, args){
 			var parent = this._parents("."+args.id),
-				elems = parent._query(".page_main_list"),
+				elems = parent._query(".comment_list"),
 				len = elems.length,
 				max = parseInt(args.len),
 				n = 0;

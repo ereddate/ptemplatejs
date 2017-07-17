@@ -1,0 +1,8 @@
+<script>
+	exports.api = {
+		apiurl: "//localhost:8080/"
+	};
+	exports.apiB = {
+		apiurl: "//localhost:8080/"
+	};
+</script>

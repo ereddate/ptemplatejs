@@ -1,8 +1,11 @@
 $.setBaseFontSize(16);
 var callbacks = $.Callbacks();
 
-{{ require("common adinclude loading dialog router.script header login reg footer nav list dialogheader") }}
-{{ require("comment_list comment_input comment usinfo share article_author article teacheader teacher follow recommend gotop download") }}
-{{ require("main") }}
+import {api, apiB} from "api";
+console.log(api, apiB);
+
+import "common adinclude loading dialog router.script follow gotop dialogheader";
+import "comment usinfo article teacher";
+import "main";
 
 callbacks.done();

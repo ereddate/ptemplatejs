@@ -21,6 +21,9 @@
 		</div>
 	</div>
 </template>
+<script>
+	import "article_author asidelist share";
+</script>
 <style>
 	.article{
 		background:rgb(244,245,247);
