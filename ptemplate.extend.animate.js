@@ -96,7 +96,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 
 	$.extend($.__mod__, {
 		animate: function(elem, ops, speed, callback, ease) {
-			new animate().play(elem, ops, speed, callback, ease);
+			return new animate().play(elem, ops, speed, callback, ease);
 		}
 	});
 
@@ -109,8 +109,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 
 	$.extend($, {
 		animate: function(elem, ops, speed, callback, ease) {
-			$.__mod__.animate(elem, ops, speed, callback, ease);
-			return this;
+			return $.__mod__.animate(elem, ops, speed, callback, ease);
 		}
 	});
 })(this, pTemplate)
