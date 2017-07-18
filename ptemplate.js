@@ -39,7 +39,376 @@
 				elem.detachEvent(name, handle);
 			}
 		};
-	var mod = {
+	var pSubClass = {
+			_set(n, ops) {
+				mod.set(n, ops);
+				return this;
+			},
+			_watch(key, callback) {
+				mod.watch(this, key, this._val(), callback);
+				return this;
+			},
+			_findNode(selector) {
+				var then = this,
+					result = [];
+				selector.split(' ').forEach((e) => {
+					result = result.concat(mod.findNode(then, e));
+				});
+				return result;
+			},
+			_length(bool) {
+				return bool ? this.childNodes.length : this._children().length;
+			},
+			_map(callback, arg) {
+				return mod.map(this._children(), callback, arg);
+			},
+			_contents() {
+				var elem = this;
+				return elem.tagName && elem.tagName.toLowerCase() == "iframe" ? elem.contentDocument || elem.contentWindow.document : elem.childNodes && [].slice.call(elem.childNodes) || [];
+			},
+			_empty() {
+				var element = this;
+				[].slice.call(element.childNodes).forEach((e) => {
+					e._remove();
+				});
+				return this;
+			},
+			_parents(selector) {
+				var then = this;
+				return mod.parents(then, selector);
+			},
+			_attr(name, value) {
+				var then = this;
+				if (typeof value != "undefined")
+					typeof name != "string" && [].slice.call(name).forEach((e) => {
+						then.setAttribute(e.name, e.value);
+						then[e.name] = e.value;
+					}) || typeof value != "undefined" && ((then[name] = value), then.setAttribute(name, value));
+				else {
+					return then.getAttribute(name);
+				}
+				return this;
+			},
+			_children(selector) {
+				if (selector) {
+					return [].slice.call(this.querySelectorAll(selector))
+				} else {
+					return [].slice.call(this.children);
+				}
+			},
+			_removeAttr(name) {
+				name.split(' ').forEach((n) => {
+					this.removeAttribute(n);
+				});
+				return this;
+			},
+			_text(value) {
+				var then = this,
+					nodeType = then.nodeType;
+				if (nodeType) {
+					if ((nodeType === 1 || nodeType === 9 || nodeType === 11) && typeof then.textContent === "string") {
+						if (typeof value != "undefined") {
+							then.textContent = value;
+							return this;
+						} else {
+							return then.textContent;
+						}
+					} else if (nodeType === 3 || nodeType === 4) {
+						if (typeof value != "undefined") {
+							then.nodeValue = value;
+							return this;
+						} else {
+							return then.nodeValue;
+						}
+					} else {
+						return typeof value != "undefined" ? this : "";
+					}
+				} else {
+					return typeof value != "undefined" ? this : "";
+				}
+			},
+			_html(value) {
+				var then = this;
+				if (typeof value != "undefined" && typeof value != "boolean") {
+					if (typeof value == "string") {
+						then.innerHTML = value;
+					} else if (typeof value != "undefined" && value.nodeType) {
+						then._append(value);
+					} else if (typeof value == "function") {
+						then._html(value());
+					} else {
+						then.innerHTML = value;
+					}
+					return then;
+				} else if (value === true) {
+					return then.outerHTML;
+				}
+				return then.innerHTML;
+			},
+			_val(value) {
+				if (Reflect.has(this, "value")) {
+					if (typeof value != "undefined") {
+						this._attr("value", value);
+					} else {
+						return this.value;
+					}
+				} else if (typeof value != "undefined") {
+					this._html(value);
+				} else {
+					return this._html();
+				}
+				return this;
+			},
+			_clone(bool) {
+				var nE = this.cloneNode(!mod.is(typeof bool, "undefined") ? bool : true);
+				return nE;
+			},
+			_on(eventName, fn, args, bool) {
+				mod.on(this, eventName, fn, args, bool, false);
+				return this;
+			},
+			_off(eventName) {
+				mod.off(this, eventName);
+				return this;
+			},
+			_trigger(eventName, args) {
+				mod.trigger(this, eventName, args);
+				return this;
+			},
+			/*_once(eventName, fn) {
+				mod.on(this, eventName, fn, undefined, false, true);
+				return this;
+			},*/
+			_remove(element) {
+				element && element.nodeType && this.removeChild(element) || this.parentNode && this.parentNode.removeChild(this);
+				return this;
+			},
+			_append(element) {
+				if (mod.is(typeof element, "string")) {
+					var n = doc.createElement("div"),
+						f = doc.createDocumentFragment();
+					n.innerHTML = element;
+					[].slice.call(n.childNodes).forEach(function(b) {
+						f.appendChild(b)
+					});
+					this.appendChild(f);
+				} else if (mod.is(typeof element, "function")) {
+					element(this);
+				} else {
+					this.appendChild(element);
+				}
+				return this;
+			},
+			_appendTo(element) {
+				element.appendChild(this);
+				return this;
+			},
+			_first() {
+				return this._children()._eq(0)
+			},
+			_last() {
+				return this._children()._eq(-1)
+			},
+			_prepend(element) {
+				var previous = this.firstChild;
+				previous && this.insertBefore(element, previous) || this.appendChild(element);
+				return this;
+			},
+			_prependTo(element) {
+				element._prepend(this);
+				return this;
+			},
+			_after(element) {
+				var next = this[i].nextElementSibling || this[i].nextSibling;
+				next && this.parentNode.insertBefore(element, next) || this.parentNode.appendChild(element);
+				return this;
+			},
+			_css(name, value) {
+				var args = arguments,
+					len = args.length;
+				if (len === 0) {
+					return this;
+				} else if (len === 1) {
+					if ("style" in this) {
+						if (mod.is(typeof name, "string")) {
+							var f = [],
+								then = this;
+							name.split(' ').forEach((n) => {
+								f.push(then.style[n]);
+							});
+							return f.length > 1 ? f : f.join('');
+						} else if (mod.isPlainObject(name)) {
+							for (var n in name) {
+								this.style[n] = name[n]
+							}
+							return this;
+						}
+					} else {
+						return this;
+					}
+				} else {
+					this.style[name] = value;
+					return this;
+				}
+			},
+			_addClass(name) {
+				var then = this;
+				name.split(' ').forEach((n) => {
+					then._removeClass(n);
+					then.className += " " + n;
+				});
+				return this;
+			},
+			_removeClass(name) {
+				var then = this;
+				name.split(' ').forEach((n) => {
+					mod.has(then.className.split(' '), n) && (then.className = then.className.replace(new RegExp("\\s*" + n, "gim"), ""));
+				});
+				return this;
+			},
+			_prop(name, value) {
+				if (typeof value != "undefined") {
+					this[name] = typeof value == "function" ? value.call(this, name, this) : value;
+					return this;
+				} else {
+					return this[name];
+				}
+			},
+			_data(name, value) {
+				if (/^data-/.test(name)) {
+					return this._attr(name, value);
+				}!this._elementData && (this._elementData = {});
+				if (typeof value != "undefined") {
+					this._elementData[name] = value;
+					return this;
+				} else {
+					return this._elementData[name];
+				}
+			},
+			_removeData(name) {
+				if (/^data-/.test(name)) {
+					return this._removeAttr(name);
+				}
+				this._elementData && this._elementData[name] && (delete this._elementData[name]);
+				return this;
+			},
+			_toggleClass(name) {
+				var then = this;
+				name.split(' ').forEach((n) => {
+					then.className != "" && mod.has(then.className, n) ? then._removeClass(n) : then._addClass(n);
+				});
+				return this;
+			},
+			_hasClass(name) {
+				var then = this,
+					bool = [];
+				name.split(' ').forEach((n) => {
+					bool.push(mod.has(then.className, n));
+				});
+				return bool.length === 0 ? false : bool.length === 1 ? bool[0] : bool;
+			},
+			_width(value) {
+				var getStyle = window.getComputedStyle(this, null);
+				if (value) {
+					return this.offsetWidth +
+						parseFloat(getStyle.getPropertyValue('border-left-width')) +
+						parseFloat(getStyle.getPropertyValue('margin-left')) +
+						parseFloat(getStyle.getPropertyValue('margin-right')) +
+						parseFloat(getStyle.getPropertyValue('padding-left')) +
+						parseFloat(getStyle.getPropertyValue('padding-right')) +
+						parseFloat(getStyle.getPropertyValue('border-right-width'))
+				} else if (value != undefined) {
+					this.style.width = value;
+				} else {
+					return this.offsetWidth -
+						parseFloat(getStyle.getPropertyValue('border-left-width')) -
+						parseFloat(getStyle.getPropertyValue('padding-left')) -
+						parseFloat(getStyle.getPropertyValue('padding-right')) -
+						parseFloat(getStyle.getPropertyValue('border-right-width'));
+				}
+				return this;
+			},
+			_show() {
+				this._css({
+					display: "block"
+				});
+				return this;
+			},
+			_hide() {
+				this._css({
+					display: "none"
+				});
+				return this;
+			},
+			_height(value) {
+				var getStyle = window.getComputedStyle(this, null);
+				if (value) {
+					return this.offsetHeight +
+						parseFloat(getStyle.getPropertyValue('border-top-width')) +
+						parseFloat(getStyle.getPropertyValue('margin-top')) +
+						parseFloat(getStyle.getPropertyValue('margin-bottom')) +
+						parseFloat(getStyle.getPropertyValue('padding-top')) +
+						parseFloat(getStyle.getPropertyValue('padding-bottom')) +
+						parseFloat(getStyle.getPropertyValue('border-bottom-width'))
+				} else if (value != undefined) {
+					this.style.height = value;
+				} else {
+					return this.offsetHeight -
+						parseFloat(getStyle.getPropertyValue('border-top-width')) -
+						parseFloat(getStyle.getPropertyValue('padding-top')) -
+						parseFloat(getStyle.getPropertyValue('padding-bottom')) -
+						parseFloat(getStyle.getPropertyValue('border-bottom-width'));
+				}
+				return this;
+			},
+			_tmpl(data) {
+				return mod.tmpl(this.innerHTML, data);
+			},
+			_offset() {
+				return {
+					top: this.offsetTop,
+					left: this.offsetLeft
+				}
+			},
+			_index() {
+				return this.parentNode ? this._prevAll().length : -1;
+			},
+			_prevAll() {
+				return mod.dir(this, "previousElementSibling");
+			},
+			_nextAll() {
+				return mod.dir(this, "nextElementSibling");
+			},
+			_previous() {
+				return this.previousElementSibling;
+			},
+			_next() {
+				return this.nextElementSibling;
+			},
+			_has(a, b) {
+				return mod.has(a, b);
+			},
+			_scrollLeft(value) {
+				if (val === undefined) {
+					return this.window == this ? ("pageXOffset" in win) ? win["pageXOffset"] : this.document.documentElement["scrollTop"] : this["scrollLeft"];
+				}
+				this["scrollLeft"] = val;
+				return this;
+			},
+			_scrollTop(value) {
+				if (value === undefined) {
+					return this.window == this ? ("pageYOffset" in win) ? win["pageYOffset"] : this.document.documentElement["scrollTop"] : this["scrollTop"];
+				}
+				this["scrollTop"] = value;
+				return this;
+			},
+			_query(selector) {
+				var elems = mod.findNode(selector, this);
+				mod.mixElement(elems);
+				return elems;
+			}
+		},
+		mod = {
 			templates: {},
 			tmplThesaurus: {},
 			tmplAttributes: {},
@@ -590,375 +959,6 @@
 			return function(o) {
 				return (o instanceof _constructor);
 			};
-		},
-		pSubClass = {
-			_set(n, ops) {
-				mod.set(n, ops);
-				return this;
-			},
-			_watch(key, callback) {
-				mod.watch(this, key, this._val(), callback);
-				return this;
-			},
-			_findNode(selector) {
-				var then = this,
-					result = [];
-				selector.split(' ').forEach((e) => {
-					result = result.concat(mod.findNode(then, e));
-				});
-				return result;
-			},
-			_length(bool) {
-				return bool ? this.childNodes.length : this._children().length;
-			},
-			_map(callback, arg) {
-				return mod.map(this._children(), callback, arg);
-			},
-			_contents() {
-				var elem = this;
-				return elem.tagName && elem.tagName.toLowerCase() == "iframe" ? elem.contentDocument || elem.contentWindow.document : elem.childNodes && [].slice.call(elem.childNodes) || [];
-			},
-			_empty() {
-				var element = this;
-				[].slice.call(element.childNodes).forEach((e) => {
-					e._remove();
-				});
-				return this;
-			},
-			_parents(selector) {
-				var then = this;
-				return mod.parents(then, selector);
-			},
-			_attr(name, value) {
-				var then = this;
-				if (typeof value != "undefined")
-					typeof name != "string" && [].slice.call(name).forEach((e) => {
-						then.setAttribute(e.name, e.value);
-						then[e.name] = e.value;
-					}) || typeof value != "undefined" && ((then[name] = value), then.setAttribute(name, value));
-				else {
-					return then.getAttribute(name);
-				}
-				return this;
-			},
-			_children(selector) {
-				if (selector) {
-					return [].slice.call(this.querySelectorAll(selector))
-				} else {
-					return [].slice.call(this.children);
-				}
-			},
-			_removeAttr(name) {
-				name.split(' ').forEach((n) => {
-					this.removeAttribute(n);
-				});
-				return this;
-			},
-			_text(value) {
-				var then = this,
-					nodeType = then.nodeType;
-				if (nodeType) {
-					if ((nodeType === 1 || nodeType === 9 || nodeType === 11) && typeof then.textContent === "string") {
-						if (typeof value != "undefined") {
-							then.textContent = value;
-							return this;
-						} else {
-							return then.textContent;
-						}
-					} else if (nodeType === 3 || nodeType === 4) {
-						if (typeof value != "undefined") {
-							then.nodeValue = value;
-							return this;
-						} else {
-							return then.nodeValue;
-						}
-					} else {
-						return typeof value != "undefined" ? this : "";
-					}
-				} else {
-					return typeof value != "undefined" ? this : "";
-				}
-			},
-			_html(value) {
-				var then = this;
-				if (typeof value != "undefined" && typeof value != "boolean") {
-					if (typeof value == "string") {
-						then.innerHTML = value;
-					} else if (typeof value != "undefined" && value.nodeType) {
-						then._append(value);
-					} else if (typeof value == "function") {
-						then._html(value());
-					} else {
-						then.innerHTML = value;
-					}
-					return then;
-				} else if (value === true) {
-					return then.outerHTML;
-				}
-				return then.innerHTML;
-			},
-			_val(value) {
-				if (Reflect.has(this, "value")) {
-					if (typeof value != "undefined") {
-						this._attr("value", value);
-					} else {
-						return this.value;
-					}
-				} else if (typeof value != "undefined") {
-					this._html(value);
-				} else {
-					return this._html();
-				}
-				return this;
-			},
-			_clone(bool) {
-				var nE = this.cloneNode(!mod.is(typeof bool, "undefined") ? bool : true);
-				return nE;
-			},
-			_on(eventName, fn, args, bool) {
-				mod.on(this, eventName, fn, args, bool, false);
-				return this;
-			},
-			_off(eventName) {
-				mod.off(this, eventName);
-				return this;
-			},
-			_trigger(eventName, args) {
-				mod.trigger(this, eventName, args);
-				return this;
-			},
-			/*_once(eventName, fn) {
-				mod.on(this, eventName, fn, undefined, false, true);
-				return this;
-			},*/
-			_remove(element) {
-				element && element.nodeType && this.removeChild(element) || this.parentNode && this.parentNode.removeChild(this);
-				return this;
-			},
-			_append(element) {
-				if (mod.is(typeof element, "string")) {
-					var n = doc.createElement("div"),
-						f = doc.createDocumentFragment();
-					n.innerHTML = element;
-					[].slice.call(n.childNodes).forEach(function(b) {
-						f.appendChild(b)
-					});
-					this.appendChild(f);
-				} else if (mod.is(typeof element, "function")) {
-					element(this);
-				} else {
-					this.appendChild(element);
-				}
-				return this;
-			},
-			_appendTo(element) {
-				element.appendChild(this);
-				return this;
-			},
-			_first() {
-				return this._children()._eq(0)
-			},
-			_last() {
-				return this._children()._eq(-1)
-			},
-			_prepend(element) {
-				var previous = this.firstChild;
-				previous && this.insertBefore(element, previous) || this.appendChild(element);
-				return this;
-			},
-			_prependTo(element) {
-				element._prepend(this);
-				return this;
-			},
-			_after(element) {
-				var next = this[i].nextElementSibling || this[i].nextSibling;
-				next && this.parentNode.insertBefore(element, next) || this.parentNode.appendChild(element);
-				return this;
-			},
-			_css(name, value) {
-				var args = arguments,
-					len = args.length;
-				if (len === 0) {
-					return this;
-				} else if (len === 1) {
-					if ("style" in this) {
-						if (mod.is(typeof name, "string")) {
-							var f = [],
-								then = this;
-							name.split(' ').forEach((n) => {
-								f.push(then.style[n]);
-							});
-							return f.length > 1 ? f : f.join('');
-						} else if (mod.isPlainObject(name)) {
-							for (var n in name) {
-								this.style[n] = name[n]
-							}
-							return this;
-						}
-					} else {
-						return this;
-					}
-				} else {
-					this.style[name] = value;
-					return this;
-				}
-			},
-			_addClass(name) {
-				var then = this;
-				name.split(' ').forEach((n) => {
-					then._removeClass(n);
-					then.className += " " + n;
-				});
-				return this;
-			},
-			_removeClass(name) {
-				var then = this;
-				name.split(' ').forEach((n) => {
-					mod.has(then.className.split(' '), n) && (then.className = then.className.replace(new RegExp("\\s*" + n, "gim"), ""));
-				});
-				return this;
-			},
-			_prop(name, value) {
-				if (typeof value != "undefined") {
-					this[name] = typeof value == "function" ? value.call(this, name, this) : value;
-					return this;
-				} else {
-					return this[name];
-				}
-			},
-			_data(name, value) {
-				if (/^data-/.test(name)) {
-					return this._attr(name, value);
-				}!this._elementData && (this._elementData = {});
-				if (typeof value != "undefined") {
-					this._elementData[name] = value;
-					return this;
-				} else {
-					return this._elementData[name];
-				}
-			},
-			_removeData(name) {
-				if (/^data-/.test(name)) {
-					return this._removeAttr(name);
-				}
-				this._elementData && this._elementData[name] && (delete this._elementData[name]);
-				return this;
-			},
-			_toggleClass(name) {
-				var then = this;
-				name.split(' ').forEach((n) => {
-					then.className != "" && mod.has(then.className, n) ? then._removeClass(n) : then._addClass(n);
-				});
-				return this;
-			},
-			_hasClass(name) {
-				var then = this,
-					bool = [];
-				name.split(' ').forEach((n) => {
-					bool.push(mod.has(then.className, n));
-				});
-				return bool.length === 0 ? false : bool.length === 1 ? bool[0] : bool;
-			},
-			_width(value) {
-				var getStyle = window.getComputedStyle(this, null);
-				if (value) {
-					return this.offsetWidth +
-						parseFloat(getStyle.getPropertyValue('border-left-width')) +
-						parseFloat(getStyle.getPropertyValue('margin-left')) +
-						parseFloat(getStyle.getPropertyValue('margin-right')) +
-						parseFloat(getStyle.getPropertyValue('padding-left')) +
-						parseFloat(getStyle.getPropertyValue('padding-right')) +
-						parseFloat(getStyle.getPropertyValue('border-right-width'))
-				} else if (value != undefined) {
-					this.style.width = value;
-				} else {
-					return this.offsetWidth -
-						parseFloat(getStyle.getPropertyValue('border-left-width')) -
-						parseFloat(getStyle.getPropertyValue('padding-left')) -
-						parseFloat(getStyle.getPropertyValue('padding-right')) -
-						parseFloat(getStyle.getPropertyValue('border-right-width'));
-				}
-				return this;
-			},
-			_show() {
-				this._css({
-					display: "block"
-				});
-				return this;
-			},
-			_hide() {
-				this._css({
-					display: "none"
-				});
-				return this;
-			},
-			_height(value) {
-				var getStyle = window.getComputedStyle(this, null);
-				if (value) {
-					return this.offsetHeight +
-						parseFloat(getStyle.getPropertyValue('border-top-width')) +
-						parseFloat(getStyle.getPropertyValue('margin-top')) +
-						parseFloat(getStyle.getPropertyValue('margin-bottom')) +
-						parseFloat(getStyle.getPropertyValue('padding-top')) +
-						parseFloat(getStyle.getPropertyValue('padding-bottom')) +
-						parseFloat(getStyle.getPropertyValue('border-bottom-width'))
-				} else if (value != undefined) {
-					this.style.height = value;
-				} else {
-					return this.offsetHeight -
-						parseFloat(getStyle.getPropertyValue('border-top-width')) -
-						parseFloat(getStyle.getPropertyValue('padding-top')) -
-						parseFloat(getStyle.getPropertyValue('padding-bottom')) -
-						parseFloat(getStyle.getPropertyValue('border-bottom-width'));
-				}
-				return this;
-			},
-			_tmpl(data) {
-				return mod.tmpl(this.innerHTML, data);
-			},
-			_offset() {
-				return {
-					top: this.offsetTop,
-					left: this.offsetLeft
-				}
-			},
-			_index() {
-				return this.parentNode ? this._prevAll().length : -1;
-			},
-			_prevAll() {
-				return mod.dir(this, "previousElementSibling");
-			},
-			_nextAll() {
-				return mod.dir(this, "nextElementSibling");
-			},
-			_previous() {
-				return this.previousElementSibling;
-			},
-			_next() {
-				return this.nextElementSibling;
-			},
-			_has(a, b) {
-				return mod.has(a, b);
-			},
-			_scrollLeft(value) {
-				if (val === undefined) {
-					return this.window == this ? ("pageXOffset" in win) ? win["pageXOffset"] : this.document.documentElement["scrollTop"] : this["scrollLeft"];
-				}
-				this["scrollLeft"] = val;
-				return this;
-			},
-			_scrollTop(value) {
-				if (value === undefined) {
-					return this.window == this ? ("pageYOffset" in win) ? win["pageYOffset"] : this.document.documentElement["scrollTop"] : this["scrollTop"];
-				}
-				this["scrollTop"] = value;
-				return this;
-			},
-			_query(selector) {
-				var elems = mod.findNode(selector, this);
-				mod.mixElement(elems);
-				return elems;
-			}
 		};
 	var pTemplate = {
 		__mod__: mod,
@@ -1147,84 +1147,4 @@
 		}
 	};
 	win.$ = win.pTemplate = pTemplate;
-
-	class animate {
-		constructor() {
-			this.endEventNames = 'webkitAnimationEnd oAnimationEnd MSAnimationEnd animationend';
-		}
-		play(elem, ops, speed, callback, ease) {
-			var that = this;
-			this.options = {
-				elem: elem,
-				ops: ops,
-				speed: speed,
-				callback: callback,
-				ease: ease || "ease"
-			};
-			var getStyle = win.getComputedStyle(elem, null),
-				p = [],
-				e = [];
-			for (var i in ops) {
-				var val = getStyle.getPropertyValue(i);
-				p.push(i + ":" + val);
-				e.push(i + ":" + ops[i] + (!/px/.test(ops[i]) && /px/.test(val) ? "px" : ""));
-			}
-			var id = ("ptemplatejs_animate_" + (Math.random(100) * 100)).replace(/\./gim, ""),
-				a = $.createDom("style", {
-					html: " ._current{animation: " + id + " " + (speed / 1000) + "s " + this.options.ease + " both;} @-webkit-keyframes " + id + " {from {" + p.join(';') + "} to {" + e.join(';') + "}}",
-					id: id
-				});
-			$.query("head")[0]._append(a);
-			elem._addClass('_current');
-			elem._attr("animate_id", id);
-			elem._off(this.endEventNames)._on(this.endEventNames, function() {
-				this.style.cssText = e.join(';');
-				this._removeClass("_current");
-				$.query("#" + this._attr("animate_id"))[0] && $.query("#" + this._attr("animate_id"))[0]._remove();
-				this._removeAttr("animate_id")._off(that.endEventNames);
-				callback && callback();
-			});
-			return this;
-		}
-		delay(time){
-			var that = this, p = [];
-			this.stop(true);
-			for (var i in this.options) p.push(this.options[i]);
-			this.timeout = setTimeout(function(){
-				that.play.apply(that, p);
-			}, time || 500);
-		}
-		stop(bool) {
-			var ops = $.extend({}, this.options.ops);
-			console.log(ops)
-			for (var i in ops) {
-				var val = win.getComputedStyle(this.options.elem, null).getPropertyValue(i);
-				ops[i] = bool ? val : ops[i] + (!/px/.test(ops[i]) && /px/.test(val) ? "px" : "");
-			}
-			console.log(ops)
-			this.options.elem._off(this.endEventNames)._removeClass("_current")._css(ops);
-			$.query("#" + this.options.elem._attr("animate_id"))[0] && $.query("#" + this.options.elem._attr("animate_id"))[0]._remove();
-			this.options.elem._removeAttr("animate_id");
-			!bool && this.options.callback && this.options.callback();
-			return this;
-		}
-	}
-
-	$.extend(mod, {
-		animate: function(elem, ops, speed, callback, ease) {
-			return new animate().play(elem, ops, speed, callback, ease);
-		}
-	});
-
-	$.extend(pSubClass, {
-		_animate: function(ops, speed, callback, ease) {
-			return mod.animate(this, ops, speed, callback, ease);
-		}
-	});
-
-	$.extend($, {
-		animate: function(elem, ops, speed, callback, ease) {
-			return mod.animate(elem, ops, speed, callback, ease);
-		}
-	});
 })(this);
