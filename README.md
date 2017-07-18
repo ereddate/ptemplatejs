@@ -444,4 +444,7 @@ _watch
 _query
 私有选择器
 
+_animate 动画配置并执行
+  _animate(options, speed, callback, ease);
+
 ```
