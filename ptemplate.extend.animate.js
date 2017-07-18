@@ -10,9 +10,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		ops = ops.split(";");
 		ops.forEach(function(o) {
 			o = o.split(':');
-			if ($.__mod__.isPlainObject(a)){
+			if ($.__mod__.isPlainObject(a)) {
 				a[o[0]] = o[1];
-			}else{
+			} else {
 				a.push(o);
 			}
 		});
@@ -37,21 +37,11 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			};
 			var p = [],
 				e = [];
-			if (elem._attr("start")) {
-				p = toJson(elem._attr("start"), []);
-				for (var i in ops) {
-					var val = win.getComputedStyle(elem, null).getPropertyValue(i);
-					e.push(i + ":" + ops[i] + (!/px/.test(ops[i]) && /px/.test(val) ? "px" : ""));
-				}
-				elem._removeAttr("style");
-			} else {
-				for (var i in ops) {
-					var val = win.getComputedStyle(elem, null).getPropertyValue(i);
-					p.push(i + ":" + val);
-					e.push(i + ":" + ops[i] + (!/px/.test(ops[i]) && /px/.test(val) ? "px" : ""));
-				}
+			for (var i in ops) {
+				var val = win.getComputedStyle(elem, null).getPropertyValue(i);
+				p.push(i + ":" + val);
+				e.push(i + ":" + ops[i] + (!/px/.test(ops[i]) && /px/.test(val) ? "px" : ""));
 			}
-			!elem._attr("start") && elem._attr("start", p.join(';'));
 			var id = this.options.id = ("ptemplatejs_animate_" + (Math.random(100) * 100)).replace(/\./gim, ""),
 				a = this.options.styleElem = $.createDom("style", {
 					html: " ._current{animation: " + id + " " + (speed / 1000) + "s " + this.options.ease + " both;} @-webkit-keyframes " + id + " {from {" + p.join(';') + "} to {" + e.join(';') + "}} @keyframes " + id + " {from {" + p.join(';') + "} to {" + e.join(';') + "}}",
