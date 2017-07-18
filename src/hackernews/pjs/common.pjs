@@ -71,4 +71,18 @@
 	@keyframes moveFromTop {
 		from { -webkit-transform: translateY(-100%); transform: translateY(-100%); }
 	}
+	@-webkit-keyframes moveFromLeft {
+		from { -webkit-transform: translateX(-100%); }
+	}
+	@keyframes moveFromLeft {
+		from { -webkit-transform: translateX(-100%); transform: translateX(-100%); }
+	}
+	@-webkit-keyframes moveToLeft {
+		from { }
+		to { -webkit-transform: translateX(-100%); }
+	}
+	@keyframes moveToLeft {
+		from { }
+		to { -webkit-transform: translateX(-100%); transform: translateX(-100%); }
+	}
 </style>

@@ -1,5 +1,5 @@
 <template p-template="my-list">
-	<ul>
+	<ul class="mylist show">
 		<li p-express:for="item in data" class="page_main_list">
 			<i class="page_main_list_item good">{{good}}</i>
 			<article class="page_main_list_item content">
@@ -15,42 +15,47 @@
 	});
 </script>
 <style>
-	.page_main_list{
-		padding:0.7728rem 0;
-		margin:0.3864rem 0;
-		background-color:rgb(255,255,255);
-		display:flex;
-		flex-flow: row;
-		.page_main_list_item{
-			width:33.33%;
-			font-size:0.5410rem;
-			line-height:0.7728rem;
-			&.good{
-				width:10.33%;
-				padding:0.3864rem;
-				font-style: initial;
-				text-align:center;
-				color:rgb(255,102,0);
-				font-weight:700;
-			}
-			&.content{
-				width:99.33%;
-			}
-			h1{
+	.mylist{
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		.page_main_list{
+			padding:0.7728rem 0;
+			margin:0.3864rem 0;
+			background-color:rgb(255,255,255);
+			display:flex;
+			flex-flow: row;
+			.page_main_list_item{
+				width:33.33%;
 				font-size:0.5410rem;
-				font-weight:400;
-				a{
-					color:rgb(0,0,0);
-					text-decoration:none;
-					&.media{
-						color:rgb(169,169,169);
+				line-height:0.7728rem;
+				&.good{
+					width:10.33%;
+					padding:0.3864rem;
+					font-style: initial;
+					text-align:center;
+					color:rgb(255,102,0);
+					font-weight:700;
+				}
+				&.content{
+					width:99.33%;
+				}
+				h1{
+					font-size:0.5410rem;
+					font-weight:400;
+					a{
+						color:rgb(0,0,0);
+						text-decoration:none;
+						&.media{
+							color:rgb(169,169,169);
+						}
 					}
 				}
-			}
-			p{
-				color:rgb(169,169,169);
-				a{
+				p{
 					color:rgb(169,169,169);
+					a{
+						color:rgb(169,169,169);
+					}
 				}
 			}
 		}

@@ -54,7 +54,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			!elem._attr("start") && elem._attr("start", p.join(';'));
 			var id = this.options.id = ("ptemplatejs_animate_" + (Math.random(100) * 100)).replace(/\./gim, ""),
 				a = this.options.styleElem = $.createDom("style", {
-					html: " ._current{animation: " + id + " " + (speed / 1000) + "s " + this.options.ease + " both;} @-webkit-keyframes " + id + " {from {" + p.join(';') + "} to {" + e.join(';') + "}}",
+					html: " ._current{animation: " + id + " " + (speed / 1000) + "s " + this.options.ease + " both;} @-webkit-keyframes " + id + " {from {" + p.join(';') + "} to {" + e.join(';') + "}} @keyframes " + id + " {from {" + p.join(';') + "} to {" + e.join(';') + "}}",
 					id: id
 				});
 			$.query("head")[0]._append(a);

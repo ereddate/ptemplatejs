@@ -1,5 +1,5 @@
 <template p-template="my-recommend">
-	<div class="recommend">
+	<div class="recommend show">
 		<span p-express:for="i in users">
 			<a href="#" p-router:href="/teacher?id={{id}}&title={{teach_name}}">
 				<img src="{{teach_header}}" alt="{{teach_name}}" />
@@ -19,6 +19,9 @@
 </script>
 <style>
 	.recommend{
+		&.show{
+			animation: moveFromLeft .5s ease both;
+		}
 		padding:0.3864rem 0;
 		font-size:0.5410rem;
 		text-align:center;
