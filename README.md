@@ -274,6 +274,16 @@ set(name, data)
 
 mixElement(element)
 扩展标签的私有方法，返回标签本身
+
+animate 动画配置并执行
+  animate(element, options, speed, callback, ease);
+play 动画执行
+  play(element, options, speed, callback, ease);
+stop 动画停止
+  stop();
+delay 动画暂停并等待执行或延迟
+  delay(time);
+
 ```
 
 # Element对象私有方法，支持伪类选择器（例如："div:contents","div:parents","div:children","div:text"等等）。
