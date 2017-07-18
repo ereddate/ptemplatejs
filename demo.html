@@ -10,6 +10,7 @@
 		<script src="ptemplate.extend.jsonp.js"></script>
 		<script src="ptemplate.extend.ajax.js"></script>
 		<script src="ptemplate.extend.touchs.js"></script>
+		<script src="ptemplate.extend.animate.js"></script>
 		<style>
 			body {
 				background: #f4f5f7;
@@ -23,6 +24,11 @@
 			.pstyle{
 				font-size:1rem;
 				color:rgb(255,69,0);
+			}
+			.animate{
+				width:200px;
+				height:150px;
+				background-color:rgb(0,0,0);
 			}
 		</style>
 	</head>
@@ -52,6 +58,10 @@
 			</article>
 		</script>
 		<div p-template="test">
+			<animate end="width:100px;height:50px" speed="1000" callback="handleAnimateEnd">
+				<div class="animate"></div>
+			</animate>
+			<button p-handle:click="buttonAnimateHandle">play</button>
 			<h1 p-custom:title="('header_title_'+'{{title | lowercase}}').toUpperCase()" p-custom:data-custom="{{title | custom : 123}}">header_{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
@@ -205,6 +215,12 @@
 							}
 						},
 						handle: {
+							buttonAnimateHandle: function(e){
+								this._parents()[0]._query(".animate")[0]._trigger("animate");
+							},
+							handleAnimateEnd: function(e){
+								console.log("animate end")
+							},
 							handleButtonTap: function(e, type){
 								console.log(e, type)
 							},
