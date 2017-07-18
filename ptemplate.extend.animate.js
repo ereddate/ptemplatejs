@@ -52,22 +52,23 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				}
 			}
 			!elem._attr("start") && elem._attr("start", p.join(';'));
-			var id = ("ptemplatejs_animate_" + (Math.random(100) * 100)).replace(/\./gim, ""),
-				a = $.createDom("style", {
+			var id = this.options.id = ("ptemplatejs_animate_" + (Math.random(100) * 100)).replace(/\./gim, ""),
+				a = this.options.styleElem = $.createDom("style", {
 					html: " ._current{animation: " + id + " " + (speed / 1000) + "s " + this.options.ease + " both;} @-webkit-keyframes " + id + " {from {" + p.join(';') + "} to {" + e.join(';') + "}}",
 					id: id
 				});
 			$.query("head")[0]._append(a);
 			elem._addClass('_current');
 			elem._attr("animate_id", id);
-			elem._off(this.endEventNames)._on(this.endEventNames, function() {
-				this.style.cssText = e.join(';');
-				this._removeClass("_current");
-				$.query("#" + this._attr("animate_id"))[0] && $.query("#" + this._attr("animate_id"))[0]._remove();
-				this._removeAttr("animate_id")._off(that.endEventNames);
-				this._currentAnimate && (this._currentAnimate = null);
+			var then = function() {
+				var elem = that.options.elem;
+				elem.style.cssText = e.join(';');
+				elem._removeClass("_current");
+				$.query("#" + that.options.id)[0] && $.query("#" + that.options.id)[0]._remove();
+				elem._off(that.endEventNames)._removeAttr("animate_id");
 				callback && callback();
-			});
+			};
+			elem._off(this.endEventNames)._on(this.endEventNames, then);
 			return this;
 		}
 		delay(time) {
@@ -85,10 +86,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				var val = win.getComputedStyle(this.options.elem, null).getPropertyValue(i);
 				ops[i] = bool ? val : ops[i] + (!/px/.test(ops[i]) && /px/.test(val) ? "px" : "");
 			}
-			this.options.elem._off(this.endEventNames)._removeClass("_current")._css(ops);
+			this.options.elem._removeClass("_current")._css(ops);
 			$.query("#" + this.options.elem._attr("animate_id"))[0] && $.query("#" + this.options.elem._attr("animate_id"))[0]._remove();
-			this.options.elem._removeAttr("animate_id");
-			this.options.elem._currentAnimate && (this.options.elem._currentAnimate = null);
+			this.options.elem._off(this.endEventNames)._removeAttr("animate_id");
 			!bool && this.options.callback && this.options.callback();
 			return this;
 		}
@@ -96,22 +96,21 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 
 	$.extend($.__mod__, {
 		animate: function(elem, ops, speed, callback, ease) {
-			return new animate().play(elem, ops, speed, callback, ease);
+			new animate().play(elem, ops, speed, callback, ease);
 		}
 	});
 
 	$.extend($.__mod__.pSubClass, {
 		_animate: function(ops, speed, callback, ease) {
-			$.extend(this, {
-				_currentAnimate: $.__mod__.animate(this, ops, speed, callback, ease)
-			});
+			$.__mod__.animate(this, ops, speed, callback, ease);
 			return this;
 		}
 	});
 
 	$.extend($, {
 		animate: function(elem, ops, speed, callback, ease) {
-			return $.__mod__.animate(elem, ops, speed, callback, ease);
+			$.__mod__.animate(elem, ops, speed, callback, ease);
+			return this;
 		}
 	});
 })(this, pTemplate)
