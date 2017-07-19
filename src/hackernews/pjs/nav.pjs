@@ -4,6 +4,7 @@
 		<a href="#" p-style:express="'{{type}}' == 'doc' ? 'font-weight:700' : 'font-weight:400'" p-router:href="/doc">doc</a>
 		<a href="#" p-style:express="'{{type}}' == 'download' ? 'font-weight:700' : 'font-weight:400'" p-router:href="/download">download</a>
 		<a href="#" p-style:express="'{{type}}' == 'aboutus' ? 'font-weight:700' : 'font-weight:400'" p-router:href="/aboutus">aboutus</a>
+		<a href="#" p-router:href="/moremenu">more</a>
 	</span>
 </template>
 <style>

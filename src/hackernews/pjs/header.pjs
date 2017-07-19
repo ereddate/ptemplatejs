@@ -16,7 +16,7 @@
 	</header>
 </template>
 <script>
-	import "nav login reg";
+	import "nav login reg moremenu";
 </script>
 <style>
 	.header{
@@ -118,11 +118,11 @@
 	}
 	@-webkit-keyframes autonav {
 		from { opacity:.5; position:absolute;top:0.3864rem;left:50%;}
-		to { opacity:1; position:absolute; top:0.3864rem; left:20%; width:30%; }
+		to { opacity:1; position:absolute; top:0.3864rem; left:17%; width:66%; overflow:scroll; overflow-y:hidden; }
 	}
 	keyframes autonav {
 		from {opacity:.5; position:absolute;top:0.3864rem;left:50%;}
-		to { opacity:1;position:absolute; top:0.3864rem; left:20%; width:30%; }
+		to { opacity:1;position:absolute; top:0.3864rem; left:17%; width:66%; overflow:scroll; overflow-y:hidden; }
 	}
 	@-webkit-keyframes autopower {
 		from { opacity:.5;position:absolute; top:0.3864rem; left:100%;}

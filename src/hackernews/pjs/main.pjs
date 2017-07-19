@@ -134,7 +134,59 @@
 	});
 </script>
 <style>
+	body{
+		background-color:rgb(105,105,105);
+		&.menu{
+			background-color:rgb(105,105,105);
+			overflow:hidden;
+			width:100%;
+			height:100%;
+			#app{
+				.page{
+					background-color:rgb(244,245,247);
+					&.show{
+						animation: pageMoveToRight .5s ease both;
+						height:80%;
+						width:100%;
+						overflow:hidden;
+						.header{
+							position:absolute;
+						}
+						.page_main {
+							margin: 4.2504rem 0.3864rem 0 0.3864rem;
+						}
+					}
+					&.hide{
+						animation: pageMoveToLeft .5s ease both;
+						.header{
+							position:absolute;
+						}
+						.page_main {
+							margin: 4.2504rem 0.3864rem 0 0.3864rem;
+						}
+					}
+				}
+			}
+		}
+	}
+	@-webkit-keyframes pageMoveToLeft {
+		from { position:absolute; top:10%; left:60%; height:80%; width:100%;}
+		to { position:absolute; top:0; left:0; height:100%; width:100%;}
+	}
+	@keyframes pageMoveToLeft {
+		from { position:absolute; top:10%; left:60%; height:80%; width:100%;}
+		to { position:absolute; top:0; left:0; height:100%; width:100%;}
+	}
+	@-webkit-keyframes pageMoveToRight {
+		from { position:absolute; top:0;	left:0; height:auto;}
+		to {  position:absolute; top:10%;	left:60%; height:80%;}
+	}
+	@keyframes pageMoveToRight {
+		from {  position:absolute; top:0;	left:0; height:auto;}
+		to {  position:absolute; top:10%;	left:60%; height:80%;}
+	}
 	.page{
+		background-color:rgb(244,245,247);
 		.page_main{
 			margin:4.2504rem 0.3864rem 0 0.3864rem;
 			&.home{

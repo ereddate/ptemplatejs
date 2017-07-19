@@ -42,6 +42,41 @@
 				type: "aboutus"
 			});
 		},
+		"/moremenu": function(e, args){
+			var moremenu = [];
+			for (var i=0;i<5;i++) moremenu.push({
+				menutitle:"menu",
+				menuurl: "/menu"
+			});
+			moremenu.push({
+				menutitle: "return",
+				menuurl: "/closemore"
+			});
+			$.query(".moremenu").forEach(function(n){
+				n._remove();
+			});
+			$.query("body")[0]._toggleClass("menu");
+			$.query(".page")[0]._removeClass("hide")._addClass("show");
+			$.render("my-moremenu", {
+				moremenu:moremenu
+			}, $.createDom("div", {}), function(elem){
+				$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"));
+			});
+		},
+		"/closemore": function(e, args){
+			$.query(".moremenu")[0]._toggleClass("show hide");
+			$.query(".page")[0]._removeClass("show")._addClass("hide");
+			this.timeout && clearTimeout(this.timeout);
+			this.timeout = setTimeout(function(){
+				$.query("body")[0]._toggleClass("menu");
+				$.query(".moremenu").forEach(function(n){
+					n._remove();
+				});
+			}, 500);
+		},
+		"/menu": function(e, args){
+			
+		},
 		"/downloadlink": function(e, args){
 			location.href = "https://github.com/ereddate/ptemplatejs/archive/master.zip";
 		},

@@ -1,0 +1,61 @@
+<template p-template="my-moremenu">
+	<div class="moremenu hide">
+		<div class="moremenu_main">
+			<ul>
+				<li p-express:for="i in moremenu">
+					<a href="#" p-router:href="{{menuurl}}">{{menutitle}}</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</template>
+<style>
+	.moremenu{
+		position:absolute;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		padding:10% 0 0;
+		background-color:rgba(105,105,105,.5);
+		.moremenu_main{
+			animation: moveFromLeft .5s ease both;
+			ul{
+				li{
+					padding:0.1932rem 0;
+					a{
+						color:rgb(255,255,255);
+						font-size:0.5410rem;
+						text-decoration:none;
+						display:block;
+						padding:0.1932rem 0 0.1932rem 10%;
+						width:50%;
+						overflow:hidden;
+					}
+				}
+			}
+		}
+		&.show{
+			animation: moreopacity .5s ease both;
+		}
+		&.hide{
+			animation: moreMoveToLeft .2s ease both;
+		}
+	}
+	@-webkit-keyframes moreopacity {
+		from { opacity: 0;}
+		to { opacity: 1; }
+	}
+	@keyframes moreopacity {
+		from { opacity: 0;}
+		to { opacity: 1; }
+	}
+	@-webkit-keyframes moreMoveToLeft {
+		from { opacity: 1;}
+		to {  opacity: 0; }
+	}
+	@keyframes moreMoveToLeft {
+		from {opacity: 1; }
+		to {  opacity: 0; }
+	}
+</style>
