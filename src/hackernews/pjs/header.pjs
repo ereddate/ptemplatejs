@@ -34,6 +34,7 @@
 			padding:0.3864rem 0;
 			.logo_box{
 				font-size: 0.5410rem;
+				color:rgb(255,255,255);
 			}
 		}
 		.header_list{
@@ -49,10 +50,14 @@
 				}
 				&.nav{
 					width:80.33%;
+					.nav{
+						position:initial;
+					}
 				}
 				&.power{
 					width:20.33%;
 					text-align:center;
+					position:initial;
 					a{
 						color:rgb(255,255,255);
 					}
@@ -71,34 +76,68 @@
 		}
 		&.scroll{
 			.header_logo{
-				background-color:rgba(255,102,0,.8);
+				animation: headerlogo 3s ease both;
 				.logo_box{
-					width:20%;
+					animation: minlogobox .5s ease both;
 				}
 			}
 			.header_list{
-				height:0;
 				overflow:hidden;
-				padding:0;
+				animation: hidelist .5s ease both;
 				.header_list_item{
 					&.nav{
 						.nav{
-							position:absolute;
-							top:0.3864rem;
-							left:20%;
-							width:30%;
+							animation: autonav .5s ease both;
 							a{
 								
 							}
 						}
 					}
 					&.power{
-						position:absolute;
-						top:0.3864rem;
-						left:80%;
+						animation: autopower .5s ease both;
 					}
 				}
 			}
 		}
+	}
+	@-webkit-keyframes headerlogo {
+		from {background-color:rgba(255,102,0,1); }
+		to { background-color:rgba(255,102,0,.7); }
+	}
+	keyframes headerlogo {
+		from {background-color:rgba(255,102,0,1); }
+		to { background-color:rgba(255,102,0,.7); }
+	}
+	@-webkit-keyframes minlogobox {
+		from { width:100%;color:rgba(255,255,255,1);}
+		to { width:20%; color:rgba(255,255,255, .2); }
+	}
+	keyframes minlogobox {
+		from {width:100%;color:rgba(255,255,255,1); }
+		to { width:20%; color:rgba(255,255,255, .2); }
+	}
+	@-webkit-keyframes autonav {
+		from { opacity:.5; position:absolute;top:0.3864rem;left:50%;}
+		to { opacity:1; position:absolute; top:0.3864rem; left:20%; width:30%; }
+	}
+	keyframes autonav {
+		from {opacity:.5; position:absolute;top:0.3864rem;left:50%;}
+		to { opacity:1;position:absolute; top:0.3864rem; left:20%; width:30%; }
+	}
+	@-webkit-keyframes autopower {
+		from { opacity:.5;position:absolute; top:0.3864rem; left:100%;}
+		to { opacity:1;position:absolute; top:0.3864rem; left:80%; }
+	}
+	keyframes autopower {
+		from { opacity:.5;position:absolute; top:0.3864rem; left:100%;}
+		to { opacity:1;position:absolute; top:0.3864rem; left:80%; }
+	}
+	@-webkit-keyframes hidelist {
+		from { }
+		to { height:0; padding:0; }
+	}
+	keyframes hidelist {
+		from { }
+		to { height:0; padding:0; }
 	}
 </style>

@@ -7,10 +7,10 @@
 	$.query(window)._on("scroll", function(e){
 		if (this._scrollTop() < screen.height/2){
 			$.query(".gotop")[0]._addClass('hide');
-			$.query(".header")[0]._removeClass('scroll');
+			$.query(".header")[0]._hasClass("scroll") && $.query(".header")[0]._removeClass('scroll');
 		}else{
 			$.query(".gotop")[0]._removeClass('hide');
-			$.query(".header")[0]._addClass('scroll');
+			!$.query(".header")[0]._hasClass("scroll") && $.query(".header")[0]._addClass('scroll');
 		}
 	});
 </script>
