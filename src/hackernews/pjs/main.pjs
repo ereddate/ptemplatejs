@@ -146,7 +146,7 @@
 					background-color:rgb(244,245,247);
 					&.show{
 						animation: pageMoveToRight .5s ease both;
-						height:80%;
+						height:100%;
 						width:100%;
 						overflow:hidden;
 						.header{
@@ -178,11 +178,11 @@
 		to { position:absolute; top:0; left:0; height:100%; width:100%;}
 	}
 	@-webkit-keyframes pageMoveToRight {
-		from { position:absolute; top:0;	left:0; height:auto;}
+		from { position:absolute; top:0;	left:0; height:100%;}
 		to {  position:absolute; top:10%;	left:60%; height:80%;}
 	}
 	@keyframes pageMoveToRight {
-		from {  position:absolute; top:0;	left:0; height:auto;}
+		from {  position:absolute; top:0;	left:0; height:100%;}
 		to {  position:absolute; top:10%;	left:60%; height:80%;}
 	}
 	.page{
