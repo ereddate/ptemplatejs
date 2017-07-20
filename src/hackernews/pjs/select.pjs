@@ -1,0 +1,42 @@
+<template p-template="my-select">
+	<div class="xselect {{type}}">
+		<div p-express:if="'{{type}}' == 'all'" class="list">
+			<a href="#" p-express:for="i in ages" p-handle:click.prevent="handleAgeClick : {{age}}" class="item" p-style:class="'{{current}}' == '{{age}}' ? 'on' : ''">{{age}}</a>
+		</div>
+		<div p-express:if="'{{type}}' != 'all'">
+			<a href="#" p-express:for="i in ages" p-handle:click.prevent="handleAgeClick : {{age}}" p-express:if="'{{current}}' == '{{age}}'" class="current">{{age}}</a>
+		</div>
+	</div>
+</template>
+<style>
+	.xselect{
+		div{
+			a{
+				&.current{
+					display:block;
+				}
+				&.item{
+					text-decoration:none;
+					display:block;
+					background-color:rgb(220,220,220);
+					padding:0 0.3864rem;
+					&.on{
+						background-color:rgb(255,102,0);
+						color:rgb(255,255,255);
+					}
+					&:first-child{
+						border-top-left-radius:0.3864rem;
+						border-top-right-radius:0.3864rem;
+					}
+					&:last-child{
+						border-bottom-left-radius:0.3864rem;
+						border-bottom-right-radius:0.3864rem;
+					}
+				}
+			}
+			&.list{
+				padding:0.3864rem 0;
+			}
+		}
+	}
+</style>

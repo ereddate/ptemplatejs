@@ -118,18 +118,35 @@
 		},
 		"/join": function(e, args){
 			var that = this;
+			var ages = [];
+			for (var i=16;i<26;i++) ages.push({age: i});
 			toggleDialog(function(next){
 				next({});
 			}, function(data){
-				$.render("my-signup", $.extend({
+				$.clone("my-select", "my-ageselect").render("my-signup", $.extend({
 					handle:{
 						handleInputChange: function(e, args){
 							console.log(this._val())
 						}
 					}
 				}, args), $.createDom("div", {}), function(elem){
-					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+					var p = elem.children[0];
+					$.query("body")[0]._append(p._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
 					$.query("html")[0]._removeClass("show")._addClass("show");
+					$.render("my-ageselect", {
+						ages:ages,
+						type: "item",
+						current: 18,
+						handle:{
+							handleAgeClick: function(e, msg){
+								var all = this._parents(".xselect")._hasClass("all");
+								this._set("my-ageselect", {
+									type: !all ? "all" : "item",
+									current: parseInt(msg)
+								});
+							}
+						}
+					}, p._query("#ageselect")[0]);
 				});
 			}, true);
 		},

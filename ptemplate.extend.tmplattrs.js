@@ -79,14 +79,19 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					b && (obj.style.cssText = b);
 					break;
 				case "class":
-					var b = a.value.split(' ');
-					b.forEach(function(c) {
-						if ($.getStyle(c)) {
-							obj.style.cssText += $.getStyle(c);
-						} else {
-							obj._addClass(c)
-						}
-					});
+					var d = isExpress(a);
+					if (d) {
+						obj._addClass(d);
+					} else {
+						var b = a.value.split(' ');
+						b.forEach(function(c) {
+							if ($.getStyle(c)) {
+								obj.style.cssText += $.getStyle(c);
+							} else {
+								obj._addClass(c)
+							}
+						});
+					}
 					break;
 				default:
 					obj.style.cssText = a.value;

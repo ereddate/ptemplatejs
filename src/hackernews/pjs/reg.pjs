@@ -2,14 +2,33 @@
 	<div class="signup hide dialog_page">
 		<my-dialogheader title="{{title}}"></my-dialogheader>
 		<div class="main">
-			<label><span>Username or email address:</span><input type="text" name="usname" value="" p-handle:change="handleInputChange : usname" /></label>
+			<label><span>Username or email address: </span><input type="text" name="usname" value="" p-handle:change="handleInputChange : usname" /></label>
 			<label><span>Email: </span><input type="text" name="email" value="" p-handle:change="handleInputChange : email" /></label>
 			<label><span>Password: </span><input type="password" name="password" value="" p-handle:change="handleInputChange : password" /></label>
+			<label class="other"><span>age: </span>
+				<div id="ageselect" class="ageselect"></div>
+			</label>
 			<label><a href="#" p-router:href="/send_Reg" class="submit">Create an account</a></label>
 			<label>Own account? <a href="#" p-router:href="/login?title=sign in">Sign in</a></label>
 		</div>
 	</div>
 </template>
+<script>
+	import "select";
+	$.update("my-signup", {
+		type: "item",
+		current: 18,
+		ages:[],
+		handle:{
+			handleInputChange: function(e){
+
+			},
+			handleAgeClick:function(e){
+
+			}
+		}
+	});
+</script>
 <style>
 	.signup{
 		background:rgb(244,245,247);
@@ -37,14 +56,14 @@
 				display:block;
 				font-size:0.5410rem;
 				line-height:1.5456rem;
-				.other{
+				&.other{
 					display:flex;
 					flex-flow: row;
-					span, a{
-						width:50%;
+					span{
+						width:20%;
 					}
-					a{
-						text-align:right;
+					.ageselect{
+						width:80%;
 					}
 				}
 				input{
