@@ -5,7 +5,7 @@
 			<label><span>Username or email address: </span><input type="text" name="usname" value="" p-handle:change="handleInputChange : usname" /></label>
 			<label><span>Email: </span><input type="text" name="email" value="" p-handle:change="handleInputChange : email" /></label>
 			<label><span>Password: </span><input type="password" name="password" value="" p-handle:change="handleInputChange : password" /></label>
-			<label class="other"><span>age: </span>
+			<label><span>age: </span>
 				<div id="ageselect" class="ageselect"></div>
 			</label>
 			<label><a href="#" p-router:href="/send_Reg" class="submit">Create an account</a></label>
@@ -88,6 +88,10 @@
 						padding: 0.2318rem 0.4367rem;
 						background-color:rgb(255,102,0);
 						color:rgb(255,255,255);
+					}
+					&.current{
+						width:20%;
+						text-align:center;
 					}
 				}
 			}
