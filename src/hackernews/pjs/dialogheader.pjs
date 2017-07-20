@@ -31,7 +31,7 @@
 					}
 				}
 				.title{
-					width:33.33%;
+					width:63.33%;
 					margin-left:0.3864rem;
 					text-indent:0.3684rem;
 				}

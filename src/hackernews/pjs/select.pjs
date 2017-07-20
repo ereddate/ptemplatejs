@@ -1,7 +1,7 @@
 <template p-template="my-select">
 	<div class="xselect {{type}}">
 		<div p-express:if="'{{type}}' == 'all'" class="list">
-			<a href="#" p-express:for="i in ages" p-handle:click.prevent="handleAgeClick : {{age}}" class="item" p-style:class="'{{current}}' == '{{age}}' ? 'on' : ''">{{age}}</a>
+			<a href="#" p-express:for="i in ages" p-handle:click.prevent="handleAgeClick : {{age}}" class="item" p-style:class="'{{current}}' == '{{age}}' ? 'on' : 'off'">{{age}}</a>
 		</div>
 		<div p-express:if="'{{type}}' != 'all'" class="item">
 			<a href="#" p-express:for="i in ages" p-handle:click.prevent="handleAgeClick : {{age}}" p-express:if="'{{current}}' == '{{age}}'" class="current">{{age}}</a>
