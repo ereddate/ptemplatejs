@@ -209,6 +209,9 @@ module.exports = function(grunt) {
             // console.log("206", m)
             m = m.split('.');
             c && g.push("var __" + m[0] + "_l = {exports:{}}; function __" + m[0] + "(exports){");
+            if (!pconfig.uglifyjs) {
+              g.push("/* " + m.join('.') + " start */");
+            }
             if (m.length === 1) {
               templates.modules[m[0]] && (!isCssFile ? g.push((templates.modules[m[0]].style || "") + (templates.modules[m[0]].template || "") + (templates.modules[m[0]].script || "")) : (h.push(templates.modules[m[0]].style || ""), g.push((templates.modules[m[0]].template || "") + (templates.modules[m[0]].script || ""))));
             } else {
@@ -221,6 +224,9 @@ module.exports = function(grunt) {
               }
             }
             c && g.push("}\r\n__" + m[0] + "(__" + m[0] + "_l.exports);var " + c + " = __" + m[0] + "_l.exports");
+            if (!pconfig.uglifyjs) {
+              g.push("/* " + m.join('.') + " end */");
+            }
           });
           for (var i = 0; i < g.length; i++) g[i] = readContent(g[i], projectName, file, true).join('');
           a = g.join('');
@@ -259,7 +265,7 @@ module.exports = function(grunt) {
               var r = grunt.file.read(path.resolve(f[n]));
               var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + n + ".js";
               var content = readContent(r, projectName, file);
-              content.splice(0, 0, ("/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"));
+              content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, $){"));
               content.push("})(this, pTemplate);");
               savefile(file, content.join(''));
             }
@@ -270,7 +276,7 @@ module.exports = function(grunt) {
             var r = grunt.file.read(path.resolve(f));
             var file = f.replace(basePath, pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
             var content = readContent(r, projectName, file);
-            content.splice(0, 0, ("/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */'use strict';(function(win, $){"));
+            content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, $){"));
             content.push("})(this, pTemplate);");
             savefile(file, content.join(''));
           })
