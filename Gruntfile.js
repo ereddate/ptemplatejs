@@ -21,7 +21,8 @@ module.exports = function(grunt) {
           includesDir: "./"
         }
       },
-      watch: _watch
+      watch: _watch,
+      zip: {}
     },
     concats = [];
   /*uglify: {
@@ -29,6 +30,20 @@ module.exports = function(grunt) {
             report: "gzip"
           }
         },*/
+  app.configs.forEach(function(a) {
+    gruntConfigs.zip[a.projectName] = {
+      expand: true,
+      src: [
+        "dist/" + a.projectName + "/css/" + a.version + "/**/*.css",
+        "dist/" + a.projectName + "/imgs/*.{jpg,png,gif}",
+        "dist/" + a.projectName + "/html/" + a.version + "/**/*.html",
+        "dist/" + a.projectName + "/js/" + a.version + "/**/*.js",
+        "dist/" + a.projectName + "/libs/" + a.version + "/**/*.js"
+      ],
+      dest: "dist/" + a.projectName + "/zip/" + a.projectName.replace("/", "_") + "." + a.version + "." + grunt.template.today('yyyymmddhhmmss') + ".zip"
+    };
+  })
+
   grunt.registerTask("pjsloader", "pjs loader", function(v) {
     templates = a.getData(v);
   });
@@ -123,7 +138,7 @@ module.exports = function(grunt) {
       src: libConcats,
       dest: "./" + distPath + c.projectName + "/libs/" + c.version + "/" + pkg.name + "." + c.version + ".js"
     });
-    var tasks = ["pjsloader:" + c.projectName, "lessToStyle:" + c.projectName, "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName];
+    var tasks = ["pjsloader:" + c.projectName, "lessToStyle:" + c.projectName, "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName, "zip:" + c.projectName];
     if (c.build && c.build.uglifyjs === true) {
       tasks.push("uglifyjs:" + c.projectName);
     }
@@ -291,6 +306,7 @@ module.exports = function(grunt) {
   grunt.initConfig(gruntConfigs);
 
   //grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks("grunt-zip");
   grunt.loadNpmTasks("grunt-cmd-concat");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.registerTask('default', 'watch');
