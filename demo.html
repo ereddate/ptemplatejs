@@ -98,7 +98,7 @@
 			</article>
 		</script>
 		<div p-template="test">
-			<videoplay src="video.mp4" controls="false"></videoplay>
+			<videoplay src="{{videourl}}" controls="false"></videoplay>
 			<animate end="width:100px;height:50px" speed="1000" callback="handleAnimateEnd">
 				<div class="animate"></div>
 			</animate>
@@ -253,6 +253,7 @@
 						buttonText: "alert window",
 						open: false,
 						a: 1,
+						videourl:"video.mp4",
 						data:[{
 							newstitle: "1 news item title ...",
 							url: "/ccc"

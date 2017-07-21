@@ -51,11 +51,11 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					var src = dom.getAttribute("src") || "",
 						width = dom.getAttribute("width") || "100%",
 						height = dom.getAttribute("height") || "240",
-						autoplay = dom.getAttribute("autoplay") || "true",
-						controls = dom.getAttribute("controls") || "controls",
-						loop = dom.getAttribute("loop") || "loop";
+						autoplay = dom.getAttribute("autoplay") || "false",
+						controls = dom.getAttribute("controls") || "false",
+						loop = dom.getAttribute("loop") || "false";
 					src = src.split(' ');
-					dom.innerHTML = '<video id="videoplay" width="' + width + '" height="' + height + '" ' + (controls == "false" ? "controls" : "") + '" autoplay="' + autoplay + '" loop="' + loop + '"></video><span id="videostatus" class="videostatus"></span><span id="status" class="netstate"></span>';
+					dom.innerHTML = '<video id="videoplay" width="' + width + '" height="' + height + '" ' + (controls == "false" ? "" : "controls") + ' ' + (autoplay == "false" ? "" : "autoplay") + ' ' + (loop == "false" ? "" : "loop") + '></video><span id="videostatus" class="videostatus"></span><span id="status" class="netstate"></span>';
 					var video = dom.getElementsByTagName("video")[0],
 						videostatus = document.getElementById("videostatus"),
 						netstate = document.getElementById("status"),
