@@ -22,6 +22,12 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				return elem;
 			}
 		},
+		videoplay: function(obj, data){
+			var result = $.video(obj);
+			if (result.nodeType){
+				return result;
+			}
+		},
 		"if-group": function(obj, data) {
 			var p = [];
 			[].slice.call(obj.children).forEach(function(n) {
