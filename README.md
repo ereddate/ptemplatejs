@@ -30,7 +30,9 @@ pTemplate.render(
     console.log("创建完成");
   }
 );
-
+```
+# 其他
+```
 详细，请查看下面的 wiki说明 和 demo.html
 
 链式写法：pTemplate.createTemplate("name")
