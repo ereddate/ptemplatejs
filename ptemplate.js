@@ -417,6 +417,7 @@
 			templates: {},
 			tmplThesaurus: {},
 			tmplAttributes: {},
+			tmplTags:{},
 			routes: {},
 			eventData: [],
 			Styles: {},
@@ -689,19 +690,9 @@
 						pTemplate.render(obj.tagName.toLowerCase(), mData, [pTemplate.createDom("div", {})], function(parent) {
 							obj.parentNode && obj.parentNode.replaceChild(parent.children[0], obj);
 						});
-					} else if (/animate/.test(obj.tagName.toLowerCase())) {
-						var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
-						if (attrs) {
-							var p = {};
-							attrs.forEach(function(a) {
-								p[a.name] = a.value;
-							});
-							var elem = obj.children[0];
-							obj.parentNode.replaceChild(elem, obj);
-							elem._attr(p)._on("animate", function() {
-								mod.animate && mod.animate(this, this._attr("end") || {}, this._attr("speed") || 500, this._attr("callback") && data.handle && data.handle[this._attr("callback")]);
-							});
-						}
+					} else if (obj.tagName && mod.tmplTags && mod.tmplTags[obj.tagName.toLowerCase()]) {
+						var newElem = mod.tmplTags[obj.tagName.toLowerCase()](obj, data);
+						newElem && obj.parentNode.replaceChild(newElem, obj);
 					} else {
 						mod.mixElement(obj);
 						var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;

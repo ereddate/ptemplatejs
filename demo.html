@@ -7,6 +7,7 @@
 		<script src="ptemplate.js"></script>
 		<script src="ptemplate.extend.tmplattrs.js"></script>
 		<script src="ptemplate.extend.tmplfilter.js"></script>
+		<script src="ptemplate.extend.tmpltags.js"></script>
 		<script src="ptemplate.extend.jsonp.js"></script>
 		<script src="ptemplate.extend.ajax.js"></script>
 		<script src="ptemplate.extend.touchs.js"></script>
@@ -62,6 +63,20 @@
 			<animate end="width:100px;height:50px" speed="1000" callback="handleAnimateEnd">
 				<div class="animate"></div>
 			</animate>
+			<if-group>
+				<if express="{{a}} == 3">
+					<b>a</b>
+				</if>
+				<else-if express="{{a}} == 2">
+					<b>b</b>
+				</else-if>
+				<else>
+					<b>c</b>
+				</else>
+			</if-group>
+			<if express="{{a}} == 1">
+				<b>a</b>
+			</if>
 			<button p-handle:click="buttonAnimateHandle">play</button>
 			<h1 p-custom:title="('header_title_'+'{{title | lowercase}}').toUpperCase()" p-custom:data-custom="{{title | custom : 123}}">header_{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
@@ -194,6 +209,7 @@
 						style: styles.alink,
 						buttonText: "alert window",
 						open: false,
+						a: 1,
 						data:[{
 							newstitle: "1 news item title ...",
 							url: "/ccc"

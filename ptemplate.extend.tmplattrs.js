@@ -16,7 +16,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		} catch (e) {
 			isExpress = false;
 		}
-		return typeof isExpress != "undefined" ? fn(data) : null;
+		return typeof isExpress != "undefined" && isExpress ? fn(data) : null;
 	}
 	$.__mod__.toArgs = function(result) {
 		var b = {};
