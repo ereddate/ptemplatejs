@@ -63,21 +63,25 @@
 			<animate end="width:100px;height:50px" speed="1000" callback="handleAnimateEnd">
 				<div class="animate"></div>
 			</animate>
-			<if-group>
-				<if express="{{a}} == 3">
+			<button p-handle:click="buttonAnimateHandle">play</button>
+			<div class="ifgroup_demo">
+				{{a}}
+				<if-group>
+					<if express="{{a}} == 3">
+						<b>a</b>
+					</if>
+					<else-if express="{{a}} == 2">
+						<b>b</b>
+					</else-if>
+					<else>
+						<b>c</b>
+					</else>
+				</if-group>
+				<if express="{{a}} == 1">
 					<b>a</b>
 				</if>
-				<else-if express="{{a}} == 2">
-					<b>b</b>
-				</else-if>
-				<else>
-					<b>c</b>
-				</else>
-			</if-group>
-			<if express="{{a}} == 1">
-				<b>a</b>
-			</if>
-			<button p-handle:click="buttonAnimateHandle">play</button>
+				<input type="text" value="{{a}}" p-handle:change="handleIfgroupChange" />
+			</div>
 			<h1 p-custom:title="('header_title_'+'{{title | lowercase}}').toUpperCase()" p-custom:data-custom="{{title | custom : 123}}">header_{{title | lowercase}}</h1>
 			<a p-router:href="/test" target="_blank" p-handle:click="handleClickFn" p-handle:watch="handleWatchFn : {{title}}">{{title | lowercase}}</a><br />
 			<input type="text" value="{{title | uppercase}}" p-handle:change="handleChangeFn" />
@@ -232,6 +236,11 @@
 							}
 						},
 						handle: {
+							handleIfgroupChange: function(e){
+								this._set("test", {
+									a: this._val()
+								});
+							},
 							buttonAnimateHandle: function(e){
 								this._parents()[0]._query(".animate")[0]._trigger("animate");
 							},
