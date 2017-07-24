@@ -6,6 +6,84 @@
  */
 'use strict';
 typeof window.pTemplate != "undefined" && (function(win, $) {
+	function toJson(a, b) {
+		if (a.length) {
+			for (var i = 0; i < a.length; i++) b[a[i].name] = a[i].value;
+		}
+		return b;
+	}
+	var validData = {
+		empty: function(elem, t, value) {
+			switch (t) {
+				case 1:
+				case 2:
+				case 3:
+					var val = $.__mod__.trim(elem._val());
+					return /\s+/.test(val) || val == "";
+					break;
+			}
+		},
+		max: function(elem, t, value) {
+			switch (t) {
+				case 1:
+				case 2:
+				case 3:
+					var val = $.__mod__.trim(elem._val());
+					return !(new RegExp("^." + (value && value.replace(/-/gim, ",") || "") + "$")).test(val);
+					break;
+			}
+		},
+		number: function(elem, t, value){
+			switch (t) {
+				case 1:
+				case 2:
+				case 3:
+					var val = $.__mod__.trim(elem._val());
+					return !/^\d+$/.test(val);
+					break;
+			}
+		},
+		cn: function(elem, t, value){
+			switch (t) {
+				case 1:
+				case 2:
+				case 3:
+					var val = $.__mod__.trim(elem._val());
+					return !/^[\u4E00-\u9FA5\uf900-\ufa2d]+$/.test(val);
+					break;
+			}
+		},
+		mobile: function(elem, t, value){
+			switch (t) {
+				case 1:
+				case 2:
+				case 3:
+					var val = $.__mod__.trim(elem._val());
+					return !/^13[0-9]{9}$|14[0-9]{9}|15[0-9]{9}$|18[0-9]{9}$/.test(val);
+					break;
+			}
+		},
+		email: function(elem, t, value){
+			switch (t) {
+				case 1:
+				case 2:
+				case 3:
+					var val = $.__mod__.trim(elem._val());
+					return !/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(val);
+					break;
+			}
+		},
+		url: function(elem, t, value){
+			switch (t) {
+				case 1:
+				case 2:
+				case 3:
+					var val = $.__mod__.trim(elem._val());
+					return !/^(\w+:\/\/)?\w+(\.\w+)+.*$/.test(val);
+					break;
+			}
+		}
+	};
 	!$.__mod__.tmplTags && ($.__mod__.tmplTags = {});
 	$.extend($.__mod__.tmplTags, {
 		animate: function(obj, data) {
@@ -22,11 +100,73 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				return elem;
 			}
 		},
-		videoplay: function(obj, data){
+		videoplay: function(obj, data) {
 			var result = $.video(obj);
-			if (result.nodeType){
+			if (result.nodeType) {
 				return result;
 			}
+		},
+		validform: function(obj, data) {
+			var valid = function(form) {
+				var result = true,
+					errElem, errType;
+				$.each("input select textarea".split(' '), function(i, name) {
+					var elems = form._query(name);
+					if (elems && elems.length > 0 && result) {
+						$.each(form._query(name), function(x, e) {
+							var v = e._attr("datatype");
+							v = v.split(' ');
+							if (result) {
+								$.each(v, function(i, val) {
+									val = val.split(':');
+									var r = validData[val[0]](e, 1, val[1]);
+									if (r == true) {
+										result = false;
+										errElem = e;
+										errType = val[0];
+										return false;
+									}
+								});
+							} else {
+								return false;
+							}
+						});
+					} else {
+						return false;
+					}
+				});
+				return {
+					r: result,
+					e: errElem,
+					v: errType
+				};
+			};
+			var attrs = obj.attributes,
+				a = toJson(attrs, {}),
+				isForm = a.submithandle,
+				b = $.createDom("div", {
+					html: obj._html(),
+					class: "validform"
+				});
+			b._query("button[datatype=submit]")[0]._on("click", function(e) {
+				e.preventDefault();
+				var result = valid(b);
+				if (result.r) {
+					var form = $.createDom("form", $.extend(a, {
+						html: b._html(),
+						style: "display:none"
+					}));
+					$.query("body")[0]._append(form);
+					form._on("submit", function(e, args) {
+						!isForm ? this.submit() : data.handle && a.submithandle && data.handle[a.submithandle] && data.handle[a.submithandle].call(this, e, args);
+						form._remove();
+					});
+					form._trigger("submit");
+				} else {
+					data.handle && a.errorhandle && data.handle[a.errorhandle] && data.handle[a.errorhandle].call(this, e, result.e, result.v);
+				}
+			});
+			return b;
 		},
 		"if-group": function(obj, data) {
 			var p = [];
@@ -61,7 +201,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					return $.createDom("div", {
 						html: html
 					}).children[0];
-				}else{
+				} else {
 					obj._remove();
 				}
 			} catch (e) {

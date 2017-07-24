@@ -102,7 +102,13 @@
 				}
 			},
 			_removeAttr(name) {
-				name.split(' ').forEach((n) => {
+				if (mod.isArray(name) || typeof name != "string" && "length" in name){
+					var n = [];
+					for (var i =0;i<name.length;i++) n.push(name[i].name);
+					name = n.join(' ');
+				}
+				typeof name == "string" && (name = name.split(' '));
+				name.forEach((n) => {
 					this.removeAttribute(n);
 				});
 				return this;

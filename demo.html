@@ -73,6 +73,18 @@
 		</style>
 	</head>
 	<body>
+		<div p-template="valid_form">
+			<validform action="/" method="get" target="_target" submithandle="handleValidForm" errorhandle="handleValidFormError">
+				empty: <input type="text" name="usname" value="" datatype="empty" empty_msg="1" error_msg="2" />
+				max: <input type="text" name="usname" value="" datatype="max:{6-16}" empty_msg="1" error_msg="2" />
+				number max:<input type="text" name="usname" value="" datatype="number max:{6-16}" empty_msg="1" error_msg="2" />
+				cn max:<input type="text" name="usname" value="" datatype="cn max:{6-16}" empty_msg="1" error_msg="2" />
+				mobile max:<input type="text" name="usname" value="" datatype="mobile" empty_msg="1" error_msg="2" />
+				email max:<input type="text" name="usname" value="" datatype="email" empty_msg="1" error_msg="2" />
+				url max:<input type="text" name="usname" value="" datatype="url" empty_msg="1" error_msg="2" />
+				<button type="button" datatype="submit">send form</button>
+			</validform>
+		</div>
 		<script type="text/html" p-template="my-component">
 			<article>
 				<header>
@@ -204,6 +216,17 @@
 							}
 						}
 					};
+
+					$.render("valid_form", {
+						handle:{
+							handleValidForm: function(e){
+								console.log("ajax")
+							},
+							handleValidFormError: function(e, errorElem, errorType){
+								console.log("error", errorElem, errorType)
+							}
+						}
+					});
 
 					$.render("forin", {
 						data:{
