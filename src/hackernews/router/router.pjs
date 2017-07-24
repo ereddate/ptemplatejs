@@ -80,6 +80,19 @@
 		"/downloadlink": function(e, args){
 			location.href = "https://github.com/ereddate/ptemplatejs/archive/master.zip";
 		},
+		"/tip": function(e, args){
+			$.render("my-dialog",{
+				type: "tip",
+				content: args.msg
+			}, $.createDom("div", {}), function(elem){
+				var p = elem.children[0];
+				p.timeout = setTimeout(function(){
+					p._remove();
+				},3000);
+				$.query("body")[0]._append(p);
+				$.query(".tip")[0]._removeClass("hide")._addClass("show");
+			});
+		},
 		"/login": function(e, args){
 			var that = this;
 			toggleDialog(function(next){
@@ -87,8 +100,28 @@
 			}, function(data){
 				$.render("my-login", $.extend({
 					handle:{
-						handleInputChange: function(e, args){
-							console.log(this._val())
+						handleLoginSubmit: function(e){
+							console.log("ajax");
+							var us = $.mixElement(this.usname)._val();
+							$.router("/loading");
+							var that = this;
+							toggleDialog(function(next){
+								next({});
+							}, function(data){
+								$.router("/closeloading");
+								that._set("my-mainpage",{
+									islogin: true,
+									usname: us
+								});
+							}, true);
+						},
+						handleLoginError: function(e, errorElem, errorType){
+							console.log("error", errorElem, errorType);
+							$.router("/tip?msg="+errorElem._attr(errorType=="empty" ? "empty_msg": "error_msg"));
+							errorElem._parents(".main")._query("input").forEach(function(n){
+								n._removeClass("formerror");
+							});
+							errorElem._removeClass("formerror")._addClass("formerror");
 						}
 					}
 				}, args), $.createDom("div", {}), function(elem){

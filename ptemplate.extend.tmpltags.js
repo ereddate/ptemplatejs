@@ -43,6 +43,16 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					break;
 			}
 		},
+		ns: function(elem, t, value){
+			switch (t) {
+				case 1:
+				case 2:
+				case 3:
+					var val = $.__mod__.trim(elem._val());
+					return !/^[a-zA-Z0-9]+$/.test(val);
+					break;
+			}
+		},
 		cn: function(elem, t, value){
 			switch (t) {
 				case 1:
@@ -144,24 +154,18 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			var attrs = obj.attributes,
 				a = toJson(attrs, {}),
 				isForm = a.submithandle,
-				b = $.createDom("div", {
+				b = $.createDom("form", {
 					html: obj._html(),
 					class: "validform"
 				});
-			b._query("button[datatype=submit]")[0]._on("click", function(e) {
+			b._query("button[datatype=submit]").length>0 && b._query("button[datatype=submit]")[0]._on("click", function(e) {
 				e.preventDefault();
 				var result = valid(b);
 				if (result.r) {
-					var form = $.createDom("form", $.extend(a, {
-						html: b._html(),
-						style: "display:none"
-					}));
-					$.query("body")[0]._append(form);
-					form._on("submit", function(e, args) {
+					b._on("submit", function(e, args) {
 						!isForm ? this.submit() : data.handle && a.submithandle && data.handle[a.submithandle] && data.handle[a.submithandle].call(this, e, args);
-						form._remove();
 					});
-					form._trigger("submit");
+					b._trigger("submit");
 				} else {
 					data.handle && a.errorhandle && data.handle[a.errorhandle] && data.handle[a.errorhandle].call(this, e, result.e, result.v);
 				}
