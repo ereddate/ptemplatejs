@@ -16,6 +16,21 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		empty: function(elem, t, value) {
 			switch (t) {
 				case 1:
+					if (elem.type == "radio") {
+						var v = false;
+						$.query("input[name=" + elem.name + "]").forEach(function(e) {
+							!!e.checked && (v = e.value)
+						});
+						if (v) {
+							v = $.__mod__.trim(v);
+							return /\s+/.test(v) || v == "";
+						}
+						return v;
+					} else {
+						var val = $.__mod__.trim(elem._val());
+						return /\s+/.test(val) || val == "";
+					}
+					break;
 				case 2:
 				case 3:
 					var val = $.__mod__.trim(elem._val());
@@ -26,14 +41,13 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		max: function(elem, t, value) {
 			switch (t) {
 				case 1:
-				case 2:
 				case 3:
 					var val = $.__mod__.trim(elem._val());
 					return !(new RegExp("^." + (value && value.replace(/-/gim, ",") || "") + "$")).test(val);
 					break;
 			}
 		},
-		number: function(elem, t, value){
+		number: function(elem, t, value) {
 			switch (t) {
 				case 1:
 				case 2:
@@ -43,17 +57,16 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					break;
 			}
 		},
-		ns: function(elem, t, value){
+		ns: function(elem, t, value) {
 			switch (t) {
 				case 1:
-				case 2:
 				case 3:
 					var val = $.__mod__.trim(elem._val());
 					return !/^[a-zA-Z0-9]+$/.test(val);
 					break;
 			}
 		},
-		cn: function(elem, t, value){
+		cn: function(elem, t, value) {
 			switch (t) {
 				case 1:
 				case 2:
@@ -63,30 +76,47 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					break;
 			}
 		},
-		mobile: function(elem, t, value){
+		selected: function(elem, t, value) {
 			switch (t) {
 				case 1:
+					if (elem.type == "radio") {
+						var v = false;
+						$.query("input[name=" + elem.name + "]").forEach(function(e) {
+							!!e.checked && (v = true);
+						});
+						return !v ? true : false;
+					}else{
+						return !elem.checked;
+					}
+					break;
 				case 2:
-				case 3:
+					var selected = false;
+					[].slice.call(elem.children).forEach(function(e) {
+						!e.selected && (selected = true);
+					});
+					return selected;
+					break;
+			}
+		},
+		mobile: function(elem, t, value) {
+			switch (t) {
+				case 1:
 					var val = $.__mod__.trim(elem._val());
 					return !/^13[0-9]{9}$|14[0-9]{9}|15[0-9]{9}$|18[0-9]{9}$/.test(val);
 					break;
 			}
 		},
-		email: function(elem, t, value){
+		email: function(elem, t, value) {
 			switch (t) {
 				case 1:
-				case 2:
-				case 3:
 					var val = $.__mod__.trim(elem._val());
 					return !/^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/.test(val);
 					break;
 			}
 		},
-		url: function(elem, t, value){
+		url: function(elem, t, value) {
 			switch (t) {
 				case 1:
-				case 2:
 				case 3:
 					var val = $.__mod__.trim(elem._val());
 					return !/^(\w+:\/\/)?\w+(\.\w+)+.*$/.test(val);
@@ -123,13 +153,13 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				$.each("input select textarea".split(' '), function(i, name) {
 					var elems = form._query(name);
 					if (elems && elems.length > 0 && result) {
-						$.each(form._query(name), function(x, e) {
+						$.each(elems, function(x, e) {
 							var v = e._attr("datatype");
 							v = v.split(' ');
 							if (result) {
-								$.each(v, function(i, val) {
+								$.each(v, function(x, val) {
 									val = val.split(':');
-									var r = validData[val[0]](e, 1, val[1]);
+									var r = validData[val[0]](e, i + 1, val[1]);
 									if (r == true) {
 										result = false;
 										errElem = e;
@@ -158,7 +188,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					html: obj._html(),
 					class: "validform"
 				});
-			b._query("button[datatype=submit]").length>0 && b._query("button[datatype=submit]")[0]._on("click", function(e) {
+			b._query("button[datatype=submit]").length > 0 && b._query("button[datatype=submit]")[0]._on("click", function(e) {
 				e.preventDefault();
 				var result = valid(b);
 				if (result.r) {
