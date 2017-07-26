@@ -85,7 +85,7 @@
 						then[e.name] = e.value;
 					}) || typeof value != "undefined" && ((then[name] = value), then.setAttribute(name, value));
 				else if (typeof value == "undefined" && mod.isPlainObject(name)) {
-					for (var i in name) {
+					for (var i in name){
 						then.setAttribute(i, name[i]);
 						then[i] = name[i];
 					}
@@ -102,9 +102,9 @@
 				}
 			},
 			_removeAttr(name) {
-				if (mod.isArray(name) || typeof name != "string" && "length" in name) {
+				if (mod.isArray(name) || typeof name != "string" && "length" in name){
 					var n = [];
-					for (var i = 0; i < name.length; i++) n.push(name[i].name);
+					for (var i =0;i<name.length;i++) n.push(name[i].name);
 					name = n.join(' ');
 				}
 				typeof name == "string" && (name = name.split(' '));
@@ -423,7 +423,7 @@
 			templates: {},
 			tmplThesaurus: {},
 			tmplAttributes: {},
-			tmplTags: {},
+			tmplTags:{},
 			routes: {},
 			eventData: [],
 			Styles: {},
@@ -696,11 +696,11 @@
 						pTemplate.render(obj.tagName.toLowerCase(), mData, [pTemplate.createDom("div", {})], function(parent) {
 							obj.parentNode && obj.parentNode.replaceChild(parent.children[0], obj);
 						});
+					} else if (obj.tagName && mod.tmplTags && mod.tmplTags[obj.tagName.toLowerCase()]) {
+						var newElem = mod.tmplTags[obj.tagName.toLowerCase()](obj, data);
+						newElem && obj.parentNode.replaceChild(newElem, obj);
+						mod.tmpl(newElem, data);
 					} else {
-						if (obj.tagName && mod.tmplTags && mod.tmplTags[obj.tagName.toLowerCase()]) {
-							var newElem = mod.tmplTags[obj.tagName.toLowerCase()](obj, data);
-							newElem && (obj.parentNode.replaceChild(newElem, obj), obj = newElem);
-						}
 						mod.mixElement(obj);
 						var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
 						if (attrs) {
@@ -932,7 +932,7 @@
 					} else if (/template\:/.test(selector)) {
 						var nodes = element.querySelectorAll("[p-" + selector.replace(":", "=") + "]");
 						return [].slice.call(nodes);
-					} else if (/^tagname=/.test(selector)) {
+					} else if (/^tagname=/.test(selector)){
 						var children = element.getElementsByTagName && element.getElementsByTagName(selector.toLowerCase().replace(/^tagname=/gim, ""));
 						if (children) {
 							return [].slice.call(children);
