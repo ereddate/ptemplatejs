@@ -699,6 +699,7 @@
 					} else if (obj.tagName && mod.tmplTags && mod.tmplTags[obj.tagName.toLowerCase()]) {
 						var newElem = mod.tmplTags[obj.tagName.toLowerCase()](obj, data);
 						newElem && obj.parentNode.replaceChild(newElem, obj);
+						mod.tmpl(newElem, data);
 					} else {
 						mod.mixElement(obj);
 						var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
