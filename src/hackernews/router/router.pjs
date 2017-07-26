@@ -118,7 +118,7 @@
 						handleLoginError: function(e, errorElem, errorType){
 							console.log("error", errorElem, errorType);
 							$.router("/tip?msg="+errorElem._attr(errorType=="empty" ? "empty_msg": "error_msg"));
-							errorElem._parents(".main")._query("input").forEach(function(n){
+							errorElem._parents(".validform")._query("input").forEach(function(n){
 								n._removeClass("formerror");
 							});
 							errorElem._removeClass("formerror")._addClass("formerror");
@@ -158,8 +158,28 @@
 			}, function(data){
 				$.clone("my-select", "my-ageselect").render("my-signup", $.extend({
 					handle:{
-						handleInputChange: function(e, args){
-							console.log(this._val())
+						handleLoginSubmit: function(e){
+							console.log("ajax");
+							var us = $.mixElement(this.usname)._val();
+							$.router("/loading");
+							var that = this;
+							toggleDialog(function(next){
+								next({});
+							}, function(data){
+								$.router("/closeloading");
+								that._set("my-mainpage",{
+									islogin: true,
+									usname: us
+								});
+							}, true);
+						},
+						handleLoginError: function(e, errorElem, errorType){
+							console.log("error", errorElem, errorType);
+							$.router("/tip?msg="+errorElem._attr(errorType=="empty" ? "empty_msg": "error_msg"));
+							errorElem._parents(".validform")._query("input").forEach(function(n){
+								n._removeClass("formerror");
+							});
+							errorElem._removeClass("formerror")._addClass("formerror");
 						}
 					}
 				}, args), $.createDom("div", {}), function(elem){
@@ -221,7 +241,7 @@
 				$.render("my-usinfo", $.extend({
 					title: "usinfo",
 					ushead_img:"http://p2.gexing.com/G1/M00/EC/0A/rBACJlbt9uDDksMDAAAaBCieY0s711_200x200_3.jpg?recache=20131108",
-					usname: "ereddate",
+					usname: args.usname || "undefined",
 					data: data
 				}, args), $.createDom("div", {}), function(elem){
 					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");

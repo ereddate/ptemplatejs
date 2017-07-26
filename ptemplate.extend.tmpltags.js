@@ -38,6 +38,21 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					break;
 			}
 		},
+		diff: function(elem, t, value) {
+			switch (t) {
+				case 1:
+				case 3:
+					var val = $.__mod__.trim(elem._val()),
+						next = elem._parents(".validform")._query("name=" + value),
+						nextVal = "";
+					if (next[0]){
+						nextVal = $.__mod__.trim(next[0]._val());
+						return val != nextVal ? true : false;
+					}
+					return true;
+					break;
+			}
+		},
 		max: function(elem, t, value) {
 			switch (t) {
 				case 1:
@@ -85,7 +100,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							!!e.checked && (v = true);
 						});
 						return !v ? true : false;
-					}else{
+					} else {
 						return !elem.checked;
 					}
 					break;

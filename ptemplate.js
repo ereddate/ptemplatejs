@@ -925,13 +925,18 @@
 				element = element || doc;
 				if (typeof selector == "string") {
 					if (/^name=/.test(selector)) {
-						var children = element.getElementsByName && element.getElementsByName(selector.toLowerCase().replace(/^name=/gim, ""));
+						var children = (element.getElementsByName ? element : doc).getElementsByName(selector.toLowerCase().replace(/^name=/gim, ""));
 						if (children) {
 							return [].slice.call(children);
 						}
 					} else if (/template\:/.test(selector)) {
 						var nodes = element.querySelectorAll("[p-" + selector.replace(":", "=") + "]");
 						return [].slice.call(nodes);
+					} else if (/^tagname=/.test(selector)){
+						var children = element.getElementsByTagName && element.getElementsByTagName(selector.toLowerCase().replace(/^tagname=/gim, ""));
+						if (children) {
+							return [].slice.call(children);
+						}
 					} else if (/\[[^\[\]]+\]/.test(selector)) {
 						var reg = /([^\[\]]+)\s*\[([^\[\]]+)\]/.exec(selector);
 						if (reg) {

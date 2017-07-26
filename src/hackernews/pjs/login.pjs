@@ -3,9 +3,9 @@
 		<my-dialogheader title="{{title}}"></my-dialogheader>
 		<div class="main">
 			<validform submithandle="handleLoginSubmit" errorhandle="handleLoginError">
-				<label><span>Username or email address:</span><input type="text" name="usname" value="" datatype="empty ns max:{6,8}" empty_msg="输入的用户名不能为空" error_msg="账户输入有错误" /></label>
-				<label><span class="other"><span>Password: </span><a href="#" p-router:href="/forgot_password">Forgot password?</a></span><input type="password" name="password" value="" datatype="empty number max:{6,16}" empty_msg="输入的密码不能为空" error_msg="密码输入有错误" /></label>
-				<label><button type="button" datatype="submit">Sign in</button><!--a href="#" p-router:href="/send_login" class="submit">Sign in</a--></label>
+				<label><span>Username or email address:</span><input type="text" name="usname" value="" datatype="empty ns max:{6-8}" empty_msg="输入的用户名不能为空" error_msg="账户输入有错误" /></label>
+				<label><span class="other"><span>Password: </span><a href="#" p-router:href="/forgot_password">Forgot password?</a></span><input type="password" name="password" value="" datatype="empty number max:{6-16}" empty_msg="输入的密码不能为空" error_msg="密码输入有错误" /></label>
+				<label><button type="button" datatype="submit" class="submit">Sign in</button><!--a href="#" p-router:href="/send_login" class="submit">Sign in</a--></label>
 				<label>New to Logo ? <a href="#" p-router:href="/join?title=Sign up to Logo">Create an account!</a></label>
 			<validform>
 		</div>
@@ -63,6 +63,8 @@
 				}
 				a{
 					color:rgb(0,0,0);
+				}
+				button{
 					&.submit{
 						text-decoration:none;
 						border-radius: 0.1159rem;

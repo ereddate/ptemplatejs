@@ -2,14 +2,16 @@
 	<div class="signup hide dialog_page">
 		<my-dialogheader title="{{title}}"></my-dialogheader>
 		<div class="main">
-			<label><span>Username or email address: </span><input type="text" name="usname" value="" p-handle:change="handleInputChange : usname" /></label>
-			<label><span>Email: </span><input type="text" name="email" value="" p-handle:change="handleInputChange : email" /></label>
-			<label><span>Password: </span><input type="password" name="password" value="" p-handle:change="handleInputChange : password" /></label>
-			<label><span>age: </span>
-				<div id="ageselect" class="ageselect"></div>
-			</label>
-			<label><a href="#" p-router:href="/send_Reg" class="submit">Create an account</a></label>
-			<label>Own account? <a href="#" p-router:href="/login?title=sign in">Sign in</a></label>
+			<validform submithandle="handleLoginSubmit" errorhandle="handleLoginError">
+				<label><span>Username or email address: </span><input type="text" name="usname" value="" datatype="empty max:{6-8}" empty_msg="输入的用户名不能为空" error_msg="账户输入有错误" /></label>
+				<label><span>Password: </span><input type="password" name="password" value="" datatype="empty number max:{6-16}" empty_msg="输入的密码不能为空" error_msg="密码输入有错误" /></label>
+				<label><span>Confirm password: </span><input type="password" name="repassword" value="" datatype="empty number max:{6-16} diff:password" empty_msg="输入的确认密码不能为空" error_msg="确认密码输入有错误" /></label>
+				<label><span>age: </span>
+					<div id="ageselect" class="ageselect"></div>
+				</label>
+				<label><button type="button" datatype="submit" class="submit">Create an account</button><!--a href="#" p-router:href="/send_Reg" class="submit">Create an account</a--></label>
+				<label>Own account? <a href="#" p-router:href="/login?title=sign in">Sign in</a></label>
+			</validform>
 		</div>
 	</div>
 </template>
@@ -21,10 +23,8 @@
 		ages:[],
 		handle:{
 			handleInputChange: function(e){
-
 			},
 			handleAgeClick:function(e){
-
 			}
 		}
 	});
@@ -52,6 +52,9 @@
 			background-color:rgb(255,255,255);
 			border-radius:0.3864rem;
 			padding:0.3864rem;
+			.formerror{
+				border: 0.03864rem solid rgb(255,69,0);
+			}
 			label{
 				display:block;
 				font-size:0.5410rem;
@@ -78,6 +81,12 @@
 				}
 				a{
 					color:rgb(0,0,0);
+					&.current{
+						width:20%;
+						text-align:center;
+					}
+				}
+				button{
 					&.submit{
 						text-decoration:none;
 						border-radius: 0.1159rem;
@@ -88,10 +97,6 @@
 						padding: 0.2318rem 0.4367rem;
 						background-color:rgb(255,102,0);
 						color:rgb(255,255,255);
-					}
-					&.current{
-						width:20%;
-						text-align:center;
 					}
 				}
 			}
