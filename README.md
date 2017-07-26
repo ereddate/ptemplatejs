@@ -3,6 +3,9 @@
 <p><a href="http://img.hexun.com/2016/ereddate/hackernews/html/0.0.1/index.html" target="_blank">在线demo</a> 
 (兼容android\ios系统下, safari\chrome\firefox\opera\猎豹浏览器)</p>
 
+<p>jQuery.ptemplatejs插件，jQuery专用，用法基本相同。
+<a href="http://git.oschina.net/ereddate2017/jquery-ptemplatejs" target="_blank">详细说明及使用请查看</a> 
+
 # 交流
 QQ群：9786575
 
