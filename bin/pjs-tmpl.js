@@ -134,6 +134,14 @@ module.exports = function(grunt) {
 				var includePath = matches[1];
 				var localVars = matches[3] ? JSON.parse(matches[3]) : {};
 
+				//console.log(localVars)
+				for (var i in localVars){
+					if (/javascript\:/.test(localVars[i])){
+						localVars[i] = new Function("return "+localVars[i].replace(/javascript\:/gim, "")+";")();
+					}
+				}
+				//console.log(localVars)
+
 				if (/^[http|https|files]*\:\/\//.test(includePath)) {
 					contents = contents.replace(match, includePath);
 				} else {
