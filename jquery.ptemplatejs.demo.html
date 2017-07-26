@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<title>jquery.ptemplatejs demo</title>
+		<style>
+			body {
+				background: #f4f5f7;
+				font-family: 微软雅黑;
+			}
+			body, ul, p {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div p-template="test">
+			<h1>{{title}}</h1>
+			<a href="#" p-handle:click="handleAClick">{{title}}</a>
+			<a href="#" p-router:href="/test?a=1">{{title}}1</a>
+			<input type="text" value="{{title}}" p-handle:change="handleInputChange" />
+		</div>
+		<script src="jquery.js"></script>
+		<script src="jquery.ptemplate.js"></script>
+		<script>
+			jQuery.setBaseFontSize(16);
+			jQuery.router({
+				"/test": function(e, args){
+					console.log(args)
+				}
+			}).renderDom("test", {
+				title: "test",
+				handle: {
+					handleAClick: function(e) {
+						e.preventDefault();
+						console.log(e)
+						jQuery.updateDom("test", {
+							title: "test_" + 1
+						})
+					},
+					handleInputChange: function(e) {
+						jQuery.updateDom("test", {
+							title: this.value
+						})
+					}
+				}
+			}, function() {
+				console.log("end")
+			});
+		</script>
+	</body>
+</html>
