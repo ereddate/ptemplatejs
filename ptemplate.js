@@ -631,28 +631,30 @@
 			},
 			tmpl: function(obj, data) {
 				var rp = function(name, val, _object) {
-						var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*|([^{}]+)\\s*)*}}", "gim");
-						if (typeof val != "undefined") {
-							_object = _object.replace(reg, function(a, b) {
-								if (b) {
-									b = b.split(':');
-									if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
-										var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](val, b[1] && b[1].replace(/^\s+/gim, "") || undefined, name);
-										a = typeof c != "undefined" ? c : a;
-									} else {
-										try {
-											var d = new Function(name, "return " + a.replace(/&quot;/gim, "'").replace(/[{}]+/gim, "") + ";");
-											var c = d(val);
-											a = c;
-										} catch (e) {
-											console.log(e, a, name, val)
+						if (typeof name == "string") {
+							var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*|([^{}]+)\\s*)*}}", "gim");
+							if (typeof val != "undefined") {
+								_object = _object.replace(reg, function(a, b) {
+									if (b) {
+										b = b.split(':');
+										if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
+											var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](val, b[1] && b[1].replace(/^\s+/gim, "") || undefined, name);
+											a = typeof c != "undefined" ? c : a;
+										} else if (/[\?\:><\=\!\+\-\*\/]+/.test(a)) {
+											try {
+												var d = new Function(name, "return " + a.replace(/&quot;/gim, "'").replace(/[{}]+/gim, "") + ";");
+												var c = d(val);
+												a = c;
+											} catch (e) {
+												console.log("->", e, reg, a, b, name, val)
+											}
 										}
+									} else {
+										a = val;
 									}
-								} else {
-									a = val;
-								}
-								return a;
-							});
+									return a;
+								});
+							}
 						}
 						return _object;
 					},
