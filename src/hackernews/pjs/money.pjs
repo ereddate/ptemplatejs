@@ -1,0 +1,159 @@
+<template p-template="my-money">
+	<div class="money hide dialog_page">
+		<my-dialogheader title="{{title}}"></my-dialogheader>
+		<div class="main">
+			<article>
+				<header class="moneyhead">
+					<h1>余额</h1>
+					<p>{{moneytype}}<b>{{moneycount | currency}}</b></p>
+				</header>
+				<div>
+					<div class="moneylist">
+						<div p-express:for="i in moneylist">
+							<h2>{{moneylist_type}}</h2>
+							<p>{{moneylist_moneytype}}<b class="{{moneylist_typeid == 1 ? 'up' : ''}}">{{moneylist_moneycount | currency}}</b></p>
+						</div>
+					</div>
+				</div>
+			</article>
+			<div class="moneycanvas"></div>
+			<div class="moneylocus">
+				<ul>
+					<li class="item" p-express:for="i in locus" p-style:class="{{locustypeid == 1 ? 'up' : ''}}">
+						<ol>
+							<li>{{locustype}}</li>
+							<li>{{locusname}}<span class="time">{{locustime}}</span></li>
+							<li>{{locustypeid == 2 ? '-' : ''}}{{locus_moneytype}}<b>{{locusmoney | currency}}</b></li>
+						</ol>
+					</li>
+				</ul>
+				<a href="#" p-router:href="/moneymore?p=1" class="more">more</a>
+			</div>
+		</div>
+	</div>
+</template>
+<style>
+	.money{
+		background:rgb(244,245,247);
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		overflow:auto;
+		overflow-x:hidden;
+		z-index:9999;
+		animation: moveToRight .5s ease both;
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		&.hide{
+			animation: moveToRight .5s ease both;
+		}
+		.main{
+			margin:1.7388rem 0.3864rem 0 0.3864rem;
+			font-size:0.5410rem;
+			article{
+				background-color:rgb(25,25,112);
+				color:rgb(255,255,255);
+				border-radius:0.1932rem;
+				padding:0 0 0.7728rem 0;
+				text-align:center;
+				h1,h2{
+					font-size:0.5410rem;
+					font-weight:400;
+				}
+				.moneyhead{
+					padding:0.7728rem 0;
+					p{
+						b{
+							font-size:1.1592rem;
+						}
+					}
+				}
+				.moneylist{
+					display:flex;
+					flex-flow: row;
+					div{
+						width:33.33%;
+						p{
+							b{
+								font-size:0.7728rem;
+								font-weight:400;
+								&.up{
+									color:rgb(50,205,50);
+								}
+							}
+						}
+						&:last-child{
+							p{
+								b{
+									font-size:0.7728rem;
+									color:rgb(255,215,0);
+								}
+							}
+						}
+					}
+				}
+			}
+			.moneylocus{
+			    margin: 0.3864rem 0;
+			    text-align:center;
+			    .more{
+			    	text-decoration:none;
+			    	padding:0.3864rem 0;
+			    	display:block;
+			    	margin:0.3864rem auto;
+			    	&.hide{
+			    		display:none;
+			    	}
+			    }
+				.item{
+					text-align:left;
+					&.up{
+						background-color:rgb(50,205,50);
+						color:rgb(255,255,255);
+						border-bottom:0.0386rem solid rgb(25,25,112);
+					}
+					background-color:rgb(255,255,255);
+					padding:0.3864rem 0;
+					border-bottom:0.0386rem solid rgb(244,245,247);
+					overflow:hidden;
+				    &:first-child{
+				    	border-top-left-radius: 0.1932rem;
+					    border-top-right-radius: 0.1932rem;
+					}
+				    &:last-child{
+				    	border-bottom-left-radius: 0.1932rem;
+					    border-bottom-right-radius: 0.1932rem;
+					    border:0;
+					}
+					ol{
+						display:flex;
+						flex-flow: row;
+						li{
+							width:50%;
+							height:1.5456rem;
+							overflow:hidden;
+							span{
+								&.time{
+									display:block;
+								}
+							}
+							&:first-child{
+								width:10%;
+								text-align:center;
+								padding: 0 0.3864rem;
+							}
+							&:last-child{
+								width:30%;
+								padding:0 0.3864rem;
+								text-align:right;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+</style>

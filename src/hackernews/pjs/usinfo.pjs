@@ -20,6 +20,9 @@
 		</div>
 	</div>
 </template>
+<script>
+	import "money";
+</script>
 <style>
 	.usinfo{
 		background:rgb(244,245,247);

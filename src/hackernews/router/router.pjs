@@ -232,6 +232,10 @@
 		"/usinfo": function(e, args){
 			toggleDialog(function(next){
 				var data = [];
+				data.push({
+					menutitle: "资产",
+					url: "/money"
+				});
 				for (var i=0;i<5;i++) data.push({
 					menutitle: "menu title",
 					url: "/usmenu?id="+i
@@ -248,6 +252,82 @@
 					$.query("html")[0]._removeClass("show")._addClass("show");
 				});
 			});
+		},
+		"/money": function(e, args){
+			toggleDialog(function(next){
+				next({});
+			}, function(data){
+				$.render("my-money", $.extend({
+					title:"我的资产",
+					moneytype: "￥",
+					moneycount: "200000",
+					moneylist:[{
+						moneylist_typeid: 1,
+						moneylist_type: "收入",
+						moneylist_moneytype: "￥",
+						moneylist_moneycount: "2000"
+					},{
+						moneylist_typeid: 2,
+						moneylist_type: "支出",
+						moneylist_moneytype: "￥",
+						moneylist_moneycount: "2000"
+					},{
+						moneylist_typeid: 3,
+						moneylist_type: "结余",
+						moneylist_moneytype: "￥",
+						moneylist_moneycount: "2000"
+					}],
+					locus: [{
+						locustypeid:2,
+						locustype:"支出",
+						locusname:"xxx商城",
+						locustime:"2017-07-26",
+						locus_moneytype:"￥",
+						locusmoney:"2000"
+					},{
+						locustypeid:1,
+						locustype:"收入",
+						locusname:"工资",
+						locustime:"2017-07-30",
+						locus_moneytype:"￥",
+						locusmoney:"10000"
+					},{
+						locustypeid:2,
+						locustype:"支出",
+						locusname:"xxx商城",
+						locustime:"2017-07-26",
+						locus_moneytype:"￥",
+						locusmoney:"2000"
+					},{
+						locustypeid:1,
+						locustype:"收入",
+						locusname:"工资",
+						locustime:"2017-07-30",
+						locus_moneytype:"￥",
+						locusmoney:"10000"
+					},{
+						locustypeid:2,
+						locustype:"支出",
+						locusname:"xxx商城",
+						locustime:"2017-07-26",
+						locus_moneytype:"￥",
+						locusmoney:"2000"
+					},{
+						locustypeid:1,
+						locustype:"收入",
+						locusname:"工资",
+						locustime:"2017-07-30",
+						locus_moneytype:"￥",
+						locusmoney:"10000"
+					}]
+				}, args), $.createDom("div", {}), function(elem){
+					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+					$.query("html")[0]._removeClass("show")._addClass("show");
+				});
+			});
+		},
+		"/moneymore": function(e, args){
+
 		},
 		"/github": function(e, args){
 			location.href = "https://github.com/ereddate/ptemplatejs";

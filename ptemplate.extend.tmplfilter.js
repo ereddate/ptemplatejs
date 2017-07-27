@@ -80,7 +80,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		_currency = function(val, symbol) {
 			var places, thousand, decimal;
 			places = 2;
-			symbol = symbol !== undefined ? symbol : "$";
+			symbol = symbol !== undefined ? symbol : "";
 			thousand = ",";
 			decimal = ".";
 			var number = val,
@@ -161,7 +161,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return _date(val, filterCondition);
 		},
 		currency: function(val, filterCondition) {
-			return _currency(val);
+			return _currency(val, filterCondition);
 		},
 		empty: function(val, filterCondition) {
 			return (typeof val == "string" && $.__mod__.trim(val) == "" || val == null || typeof val == "undefined" || $.__mod__.is("object", typeof val) && $.__mod__.isEmptyObject(val) || $.__mod__.is("array", typeof val) && val.length == 0) && filterCondition || "";
