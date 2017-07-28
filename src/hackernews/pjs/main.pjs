@@ -2,9 +2,12 @@
 	<div class="page">
 		<my-header type="{{type}}" islogin="{{islogin}}" usname="{{usname}}"></my-header>
 		<div class="page_main clearfix home" p-express:if="'{{type}}' == 'home'">
-			<my-recommend p-binddata="users"></my-recommend>
-			<div id="main">
-				home
+			<div id="scrollbanner"></div>
+			<div class="page_main_box">
+				<my-recommend p-binddata="users"></my-recommend>
+				<div id="main">
+					home
+				</div>
 			</div>
 		</div>
 		<div class="page_main clearfix doc" p-express:if="'{{type}}' == 'doc'" id="doc">
@@ -25,7 +28,7 @@
 	</div>
 </template>
 <script>
-	import "header recommend download footer list";
+	import "header recommend download footer list scrollbanner";
 	callbacks.add(function(next){
 		$.render("my-dialog", {
 			type:"addialog"
@@ -128,6 +131,7 @@
 						$.router("/getnews?type="+this.type+"&id=doc");
 						break;
 				}
+				$.router("/scrollbanner");
 				next();
 			}
 		}, $.query("#app"));
@@ -190,7 +194,10 @@
 		.page_main{
 			margin:4.2504rem 0.3864rem 0 0.3864rem;
 			&.home{
-				
+				margin:4.2504rem 0 0;
+				.page_main_box{
+					margin:0 0.3864rem;
+				}
 			}
 			&.doc{
 				margin:3.4776rem 0.3864rem 0 0.3864rem;

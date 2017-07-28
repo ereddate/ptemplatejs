@@ -45,7 +45,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					var val = $.__mod__.trim(elem._val()),
 						next = elem._parents(".validform")._query("name=" + value),
 						nextVal = "";
-					if (next[0]){
+					if (next[0]) {
 						nextVal = $.__mod__.trim(next[0]._val());
 						return val != nextVal ? true : false;
 					}

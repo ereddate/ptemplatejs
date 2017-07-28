@@ -77,6 +77,76 @@
 		"/menu": function(e, args){
 			
 		},
+		"/scrollbanner": function(){
+			if ($.query("#scrollbanner")[0]) {
+				var data = {};
+				$.render("my-scrollbanner", function(next) {
+					setTimeout(function() {
+						$.extend(data, {
+							banners: [{
+								id: 1,
+								bannerurl: "#",
+								bannerimg: "http://cms-bucket.nosdn.127.net/cbf19dbe3fd344f3abeade63646ec59920170728075724.jpeg?imageView&thumbnail=750y380&quality=45&type=webp&interlace=1&enlarge=1",
+								bannertitle: "武汉59岁老赖为躲债整容成\"少女\"1"
+							}, {
+								id: 2,
+								bannerurl: "#",
+								bannerimg: "http://cms-bucket.nosdn.127.net/cbf19dbe3fd344f3abeade63646ec59920170728075724.jpeg?imageView&thumbnail=750y380&quality=45&type=webp&interlace=1&enlarge=1",
+								bannertitle: "武汉59岁老赖为躲债整容成\"少女\"2"
+							}, {
+								id: 3,
+								bannerurl: "#",
+								bannerimg: "http://cms-bucket.nosdn.127.net/cbf19dbe3fd344f3abeade63646ec59920170728075724.jpeg?imageView&thumbnail=750y380&quality=45&type=webp&interlace=1&enlarge=1",
+								bannertitle: "武汉59岁老赖为躲债整容成\"少女\"3"
+							}]
+						});
+						next(data)
+					}, 3000);
+				}, $.createDom("div", {}), function(elem) {
+					$.query("#scrollbanner")[0]._append(elem.children[0]);
+					var p = $.query(".scrollbanner")[0];
+					var ul = p._query("ul")[0];
+					var lis = ul._css({
+						width: ((data.banners.length + 1) * p._width()) + "px"
+					})._query("li");
+					lis.forEach(function(e) {
+						e._css({
+							width: p._width() + "px"
+						})
+					});
+					var n = 0,
+						interval;
+					ul._append(lis[0]._clone());
+
+					function play(n) {
+						ul._css({
+							width: ((data.banners.length + 1) * p._width()) + "px",
+							transform: "translate3d(-" + (n * p._width()) + "px, 0px, 0px)",
+							"transition-duration": "0.5s"
+						});
+					}
+
+					function start(bool) {
+						interval && clearTimeout(interval);
+						interval = setTimeout(function() {
+							n += 1;
+							play(n);
+							if (n > data.banners.length) {
+								n = 0;
+								ul._css({
+									width: ((data.banners.length + 1) * p._width()) + "px",
+									transform: "translate3d(-" + (n * p._width()) + "px, 0px, 0px)",
+									"transition-duration": "0s"
+								});
+								start(true);
+							}
+							start();
+						}, bool ? 1 : 2000);
+					}
+					start();
+				});
+			}
+		},
 		"/downloadlink": function(e, args){
 			location.href = "https://github.com/ereddate/ptemplatejs/archive/master.zip";
 		},

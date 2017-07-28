@@ -1131,30 +1131,41 @@
 							parent = [parent];
 						}
 						if (parent && parent.length > 0 && parent[0]) {
-							!mod.templates[name] && that.createTemplate(name, {
-								parent: parent[0],
-								content: template[0].innerHTML,
-								data: data
-							}, true) || mod.extend(mod.templates[name], {
-								parent: parent[0],
-								data: data
-							});
-							var fn = function() {
-								that.render(name, data, parent, callback);
+							var next = function(data) {
+								(new Promise((resolve, reject) => {
+									!mod.templates[name] && that.createTemplate(name, {
+										parent: parent[0],
+										content: template[0].innerHTML,
+										data: data
+									}, true) || mod.extend(mod.templates[name], {
+										parent: parent[0],
+										data: data
+									});
+									var fn = function() {
+										that.render(name, data, parent, callback);
+									};
+									mod.each(mod.templates[name].data, function(n, val) {
+										mod.createObject(mod.templates[name].data, n, val, function(a, b) {
+											fn();
+										})
+									});
+									var html = mod.tmpl(mod.templates[name].content, data || {});
+									parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
+										html: html
+									})) : parent[0].tagName.toLowerCase() == "body" ? parent[0]._append($.createDom("div", {
+										html: html
+									}).children[0]) : (parent[0].innerHTML = html);
+									mod.tmpl(parent[0], data);
+									resolve();
+								})).then(function(r) {
+									data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+								});
 							};
-							mod.each(mod.templates[name].data, function(n, val) {
-								mod.createObject(mod.templates[name].data, n, val, function(a, b) {
-									fn();
-								})
-							});
-							var html = mod.tmpl(mod.templates[name].content, data || {});
-							parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
-								html: html
-							})) : parent[0].tagName.toLowerCase() == "body" ? parent[0]._append($.createDom("div", {
-								html: html
-							}).children[0]) : (parent[0].innerHTML = html);
-							mod.tmpl(parent[0], data);
-							data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+							if (typeof data == "function") {
+								mod.promise(data, next);
+							} else {
+								next(data);
+							}
 						}
 					}
 				};
