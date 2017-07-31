@@ -1,6 +1,6 @@
 <template p-template="my-list">
 	<ul class="mylist show">
-		<li p-express:for="item in data" class="page_main_list">
+		<li p-express:for="item in data" class="page_main_list" p-handle:3dtouch="handle3DTouch" data-id="{{id}}">
 			<i class="page_main_list_item good">{{good}}</i>
 			<article class="page_main_list_item content">
 				<h1><a href="#" target="_blank" p-router:href="/article?id={{id}}&title={{title}}">{{title}}</a> (<a href="#" target="_blank" class="media" p-router:href="/external?url={{media}}">{{media}}</a>)</h1>

@@ -428,6 +428,9 @@
 		"/closexdialog": function(e, args){
 			$.query(".xdialog")[0]._remove();
 		},
+		"/touchmenu": function(e, args){
+			console.log(args)
+		},
 		"/getnews": function(e, args){
 			$.router("/loading");
 			var data = [];
@@ -443,6 +446,38 @@
 			window.scrollTo(1,1);
 			$.render("my-list", {
 				data: data,
+				handle:{
+					handle3DTouch:function(e, offset){
+						var lid = this._attr("data-id");
+						if (offset.x+200>screen.width){
+							offset.x = offset.x-200;
+						}
+						$.query(".touchmenu")[0] && $.query(".touchmenu")[0]._remove();
+						$.render("my-touchmenu", {
+							x:offset.x,
+							y:offset.y,
+							lid: lid,
+							touchmenu:[{
+								touchmenuid:0,
+								touchmenuitem: "touchmenuitem"
+							},{
+								touchmenuid:1,
+								touchmenuitem: "touchmenuitem"
+							},{
+								touchmenuid:2,
+								touchmenuitem: "touchmenuitem"
+							}]
+						}, $.createDom("div", {}), function(elem){
+							$.query("body")[0]._append(elem.children[0]);
+						});
+						$.query(document)[0]._off("click")._on("click", function(e){
+							var a = e.target;
+							if (!("nodeType" in a._parents(".touchmenu")) || !a._hasClass("touchmenu")){
+								$.query(".touchmenu")[0] && $.query(".touchmenu")[0]._remove();
+							}
+						});
+					}
+				},
 				created: function(){
 					$.router("/closeloading");
 				}

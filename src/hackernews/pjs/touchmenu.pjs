@@ -1,0 +1,30 @@
+<template p-template="my-touchmenu">
+	<div class="touchmenu" style="top:{{y}}px;left:{{x}}px">
+		<ul>
+			<li p-express:for="i in touchmenu">
+				<a href="#" p-router:href="/touchmenu?id={{touchmenuid}}&lid={{lid}}">{{touchmenuitem}}</a>
+			</li>
+		</ul>
+	</div>
+</template>
+<style>
+	.touchmenu{
+		position:fixed;
+		top:0;
+		left:0;
+		box-shadow: 5px 5px 5px rgb(169,169,169);
+		border:0.0386rem solid rgb(169,169,169);
+		border-radius:0.1932rem;
+		overflow:hidden;
+		width:7.7279rem;
+		z-index:9998;
+		a{
+			display:block;
+			font-size:0.5410rem;
+			text-decoration:none;
+			padding:0.3864rem;
+			background-color:rgb(255,255,255);
+			color:rgb(0,0,0);
+		}
+	}
+</style>
