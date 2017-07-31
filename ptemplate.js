@@ -664,7 +664,11 @@
 					};
 				if (mod.is(typeof obj, "string")) {
 					mod.each(data, function(n, v) {
-						var then = function(u) {
+						if (n != "created") {
+							var u = v;
+							if (typeof v == "function") {
+								u = v();
+							}
 							if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
 								mod.each(u, function(name, val) {
 									obj = rp(name, val.call(data), obj);
@@ -673,8 +677,7 @@
 							} else {
 								obj = rp(n, u, obj);
 							}
-						};
-						n != "created" && mod.promise(v, then);
+						}
 					});
 				} else if (obj.nodeType) {
 					if (obj.tagName && mod.templates[obj.tagName.toLowerCase()]) {
@@ -707,43 +710,40 @@
 						var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
 						if (attrs) {
 							attrs.forEach(function(a) {
-								(new Promise((resolve, reject) => {
-									if (!data || !mod.isEmptyObject(data)) {
-										mod.each(data, function(n, v) {
-											var then = function(u) {
-												if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
-													mod.each(u, function(name, val) {
-														a.value = rp(name, val.call(data), a.value);
-														data.mixins && data.mixins[n.toLowerCase()] && (a.value = rp(name, data.mixins[n.toLowerCase()][name].call(data), a.value));
-													});
-												} else {
-													a.value = rp(n, u, a.value);
-												}
-												resolve();
-											};
-											n != "created" && mod.promise(v, then);
-										});
-									} else {
-										resolve();
-									}
-								})).then(function() {
-									if (/^p-/.test(a.name.toLowerCase())) {
-										var name = a.name.replace(/p\-/gim, "").split(':');
-										if (mod.tmplAttributes[name[0]])
-											mod.tmplAttributes[name[0]](obj, name[1], {
-												name: a.name,
-												value: a.value
-											}, data, obj.parentNode);
-										else {
-											var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") == "for" ? "bind" : "for"],
-												vname = a.value.split(' ');
-											vname.forEach((n) => {
-												!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
-											});
+								if (!data || !mod.isEmptyObject(data)) {
+									mod.each(data, function(n, v) {
+										if (n != "created") {
+											var u = v;
+											if (typeof v == "function") {
+												u = v();
+											}
+											if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
+												mod.each(u, function(name, val) {
+													a.value = rp(name, val.call(data), a.value);
+													data.mixins && data.mixins[n.toLowerCase()] && (a.value = rp(name, data.mixins[n.toLowerCase()][name].call(data), a.value));
+												});
+											} else {
+												a.value = rp(n, u, a.value);
+											}
 										}
-										obj._removeAttr(a.name);
+									});
+								}
+								if (/^p-/.test(a.name.toLowerCase())) {
+									var name = a.name.replace(/p\-/gim, "").split(':');
+									if (mod.tmplAttributes[name[0]])
+										mod.tmplAttributes[name[0]](obj, name[1], {
+											name: a.name,
+											value: a.value
+										}, data, obj.parentNode);
+									else {
+										var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") == "for" ? "bind" : "for"],
+											vname = a.value.split(' ');
+										vname.forEach((n) => {
+											!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
+										});
 									}
-								});
+									obj._removeAttr(a.name);
+								}
 							});
 						}
 						for (var name in bindAttrElement.bind) {
@@ -1160,7 +1160,7 @@
 								})).then(function(r) {
 									data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 								});
-							};
+							}
 							if (typeof data == "function") {
 								mod.promise(data, next);
 							} else {

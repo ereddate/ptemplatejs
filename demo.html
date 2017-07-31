@@ -346,8 +346,8 @@
 						title: "test1",
 						index: 3,
 						style: styles.alink,
-						data: function(ajaxSuccess, ajaxError){
-							ajaxSuccess({data:[{
+						data: function(){
+							return {data:[{
 								newstitle: "1 news item title ...",
 								url: "/ccc"
 							},{
@@ -362,7 +362,7 @@
 							},{
 								newstitle: "5 news item title ...",
 								url: "/ccc"
-							}]});
+							}]};
 						},
 						handle: {
 							handleWatchFn(e){
