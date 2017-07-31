@@ -126,22 +126,30 @@
 						});
 					}
 
+					function startFn(){
+						n += 1;
+						play(n);
+						if (n > data.banners.length) {
+							n = 0;
+							ul._css({
+								width: ((data.banners.length + 1) * p._width()) + "px",
+								transform: "translate3d(-" + (n * p._width()) + "px, 0px, 0px)",
+								"transition-duration": "0s"
+							});
+							start(true);
+						}
+						start();
+					}
+
 					function start(bool) {
 						interval && clearTimeout(interval);
-						interval = setTimeout(function() {
-							n += 1;
-							play(n);
-							if (n > data.banners.length) {
-								n = 0;
-								ul._css({
-									width: ((data.banners.length + 1) * p._width()) + "px",
-									transform: "translate3d(-" + (n * p._width()) + "px, 0px, 0px)",
-									"transition-duration": "0s"
-								});
-								start(true);
-							}
-							start();
-						}, bool ? 1 : 2000);
+						if (!bool){
+							interval = setTimeout(function() {
+								startFn();
+							}, 2000);
+						}else{
+							startFn();
+						}
 					}
 					start();
 				});
