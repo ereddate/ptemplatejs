@@ -7,7 +7,7 @@
 	</div>
 </template>
 <script>
-	import "shopdetail shopitem shopitemdetail";
+	import "shopdetail shopitem shopitemdetail shopbuydialog";
 </script>
 <style>
 	.detail{

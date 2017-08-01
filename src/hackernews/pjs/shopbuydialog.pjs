@@ -1,0 +1,127 @@
+<template p-template="my-buydialog">
+	<div class="buy_dialog">
+		<div class="main hide">
+			<div class="buyitem">
+				<div class="img">
+					<img src="{{itemimg}}" alt="{{itemtitle}}" />
+				</div>
+				<div class="info">
+					<span class="price">￥{{itemprice | currency}}</span>
+					<span class="other">库存{{stockcount}}件</span>
+					<span class="other">已选择：<i class="selectbox"></i></span>
+				</div>
+			</div>
+			<div class="menulist">
+				<ul>
+					<li p-express:for="i in buttons">
+						<a href="#" p-router:href="{{routerurl}}">{{title}}</a>
+					</li>
+				</ul>
+			</div>
+			<div class="menubuttons">
+				<a href="#" p-router:href="/addcart?itemid={{itemid}}" class="addcart">加入购物车</a>
+				<a href="#" p-router:href="/buynow?itemid={{itemid}}" class="buynow">立即购买</a>
+				<a href="#" p-router:href="/closebuydialog" class="close">取消</a>
+			</div>
+		</div>
+	</div>
+</template>
+<style>
+	.buy_dialog{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(255,255,255,.1);
+		z-index:999999;
+		.main{
+			border-top:0.0386rem solid rgb(244,245,247);
+			background-color:rgb(255,255,255);
+			padding:0.3864rem 0 0;
+			position:absolute;
+			bottom:0;
+			left:0;
+			right:0;
+			&.show{
+				animation: moveFromBottom .5s ease both;
+			}
+			&.hide{
+				animation: moveToBottom .5s ease both;
+			}
+			a{
+				font-size:.5rem;
+				text-align:center;
+				display:block;
+				color:rgb(0,0,0);
+				text-decoration:none;
+				display:block;
+				background: rgb(255,255,255);
+				border-radius: 0.7728rem;
+				border:0.0386rem solid rgb(244,245,247);
+				margin: 0.3864rem;
+				padding: 0.1932rem 0;
+				&.on{
+					border:0.0386rem solid rgb(221,39,39);
+				}
+			}
+			.buyitem{
+				.img{
+					position:absolute;
+					top:-1.1592rem;
+					left:0.3864rem;
+					width:3.8640rem;
+					height:3.8640rem;
+					background-color:rgb(255,255,255);
+					border-radius:0.1932rem;
+					border:0.0386rem solid rgb(244,245,247);
+					img{
+						width:100%;
+					}
+				}
+				.info{
+					margin-left:4.6368rem;
+					padding-bottom:0.7728rem;
+					font-size:0.5410rem;
+					span{
+						display:block;
+						color:rgb(153,153,153);
+						&.price{
+							color:rgb(221,39,39);
+						}
+						i{
+							&.selectbox{
+								font-style:initial;
+							}
+						}
+					}
+				}
+			}
+			.menubuttons{
+				display:flex;
+				flex-flow:row;
+				a{
+					width:50%;
+					border-radius: 0;
+					margin:0;
+					padding:0.7728rem 0;
+					border:0;
+					&.addcart{
+						background-color:rgb(255,149,0);
+						color:rgb(255,255,255);
+						width:50%;
+					}
+					&.buynow{
+						width:30%;
+						background-color:rgb(221,39,39);
+						color:rgb(255,255,255);
+					}
+					&.close{
+						width:20%;
+						border-top:0.0386rem solid rgb(244,245,247);
+					}
+				}
+			}
+		}
+	}
+</style>

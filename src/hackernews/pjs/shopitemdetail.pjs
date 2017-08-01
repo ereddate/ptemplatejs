@@ -13,7 +13,7 @@
 			<div class="itemmain">
 				<div class="itemselect">
 					<span>选择：{{selecttip}}</span>
-					<a href="#" p-router:href="/shopitemtype?id={{itemid}}">more</a>
+					<a href="#" p-router:href="/shopitemtype?id={{itemid}}&title={{itemtitle}}">more</a>
 				</div>
 				<div class="itemseller">
 					<div class="sellerinfo">

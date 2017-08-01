@@ -1,7 +1,17 @@
 <script>
 	import "shoplist";
+	var shopitemtype = [], shopitemname = [];
+	Array.prototype.find = function(a){
+		for (var i=0;i< this.length;i++){
+			if (this[i] == a){
+				return i;
+			}
+		}
+		return -1;
+	};
 	$.router({
 		"/openshoplist": function(e, args){
+			$.router("/loading");
 			toggleDialog(function(next){
 				var shoplist = [];
 				for (var i=0;i<30;i++) shoplist.push({
@@ -20,11 +30,13 @@
 				}, $.createDom("div",{}), function(elem){
 					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
 					$.query("html")[0]._removeClass("show")._addClass("show");
+					$.router("/closeloading");
 				})
 			});
 		},
 		"/detail_item": function(e, args){
 			console.log(args);
+			$.router("/loading");
 			toggleDialog(function(next){
 				next({});
 			}, function(data){
@@ -49,7 +61,9 @@
 						m:5,
 						f:5,
 						s:5
-					}), $.query("#shopitem"));
+					}), $.query("#shopitem"), function(){
+						$.router("/closeloading");
+					});
 				})
 			});
 		},
@@ -58,6 +72,45 @@
 		},
 		"/shopitemtype":function(e, args){
 			console.log(args);
+			shopitemtype = [];
+			shopitemname = [];
+			$.query(".buy_dialog")[0] && $.query(".buy_dialog")[0]._remove();
+			$.render("my-buydialog",$.extend({
+				itemid:args.id,
+				itemtitle: args.title,
+				itemimg: "//img.alicdn.com/tps/i4/TB19pfPSpXXXXaiXFXXwu0bFXXX.png_200x200Q90.jpg",
+				itemprice: 3399,
+				stockcount: 31
+			}, {
+				buttons:[{
+					title: "烈焰红",
+					routerurl: "/shopitemselect?id=0"
+				},{
+					title: "官方标配",
+					routerurl: "/shopitemselect?id=1"
+				},{
+					title: "128GB",
+					routerurl: "/shopitemselect?id=2"
+				},{
+					title: "中国大陆",
+					routerurl: "/shopitemselect?id=3"
+				}]
+			}), $.createDom("div", {}), function(elem){
+				$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"));
+			});
+		},
+		"/shopitemselect": function(e, args){
+			var n = shopitemtype.find(args.id);
+			if (n > -1){
+				shopitemtype.splice(n, 1);
+				shopitemname.splice(n, 1);
+				this._removeClass("on");
+			}else{
+				shopitemtype.push(args.id);
+				shopitemname.push(this._val());
+				this._removeClass("on")._addClass("on");
+			}
+			this._parents(".buy_dialog")._query(".selectbox")[0]._html(shopitemname.join(' '));
 		},
 		"/sellerhome":function(e, args){
 			console.log(args);
@@ -70,9 +123,14 @@
 		},
 		"/addcart":function(e, args){
 			console.log(args);
+			$.router("/closebuydialog");
 		},
 		"/buynow":function(e, args){
 			console.log(args);
+			$.router("/closebuydialog");
+		},
+		"/closebuydialog":function(e, args){
+			$.query(".buy_dialog")[0] && $.query(".buy_dialog")[0].remove();
 		}
 	});
 </script>
