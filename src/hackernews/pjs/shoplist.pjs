@@ -1,0 +1,34 @@
+<template p-template="my-shoplist">
+	<div class="detail hide dialog_page">
+		<my-dialogheader title="{{title}}"></my-dialogheader>
+		<div class="main">
+			<my-shoplistdetail p-binddata="this"></my-shoplistdetail>
+		</div>
+	</div>
+</template>
+<script>
+	import "shopdetail shopitem shopitemdetail";
+</script>
+<style>
+	.detail{
+		background:rgb(244,245,247);
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		overflow:auto;
+		overflow-x:hidden;
+		z-index:9999;
+		animation: moveToRight .5s ease both;
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		&.hide{
+			animation: moveToRight .5s ease both;
+		}
+		.main{
+			margin:1.7388rem 0 0;
+		}
+	}
+</style>

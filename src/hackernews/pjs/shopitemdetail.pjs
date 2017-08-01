@@ -1,0 +1,200 @@
+<template p-template="my-shopitemdetail">
+	<div class="shopitemdetail">
+		<img src="{{itemimg}}" alt="{{itemtitle}}" class="itemheader" />
+		<article class="itempage">
+			<header class="iteminfo">
+				<h1><a href="#" p-router:href="/itemdetail?id={{itemid}}">{{itemtitle}}</a></h1>
+				<p>
+					<span>{{logistics}}</span>
+					<span>{{sales}}</span>
+					<span>{{area}}</span>
+				</p>
+			</header>
+			<div class="itemmain">
+				<div class="itemselect">
+					<span>选择：{{selecttip}}</span>
+					<a href="#" p-router:href="/shopitemtype?id={{itemid}}">more</a>
+				</div>
+				<div class="itemseller">
+					<div class="sellerinfo">
+						<a href="#" p-router:href="/sellerhome?id={{sellerid}}&type=all">
+							<img src="{{sellerlogo}}" alt="{{sellername}}" />
+							<span>{{sellername}}</span>
+						</a>
+					</div>
+					<div class="sellergrade">
+						<span>描述相符<i class="up">{{m}}</i></span>
+						<span>服务态度<i class="down">{{f}}</i></span>
+						<span>发货速度<i class="up">{{s}}</i></span>
+					</div>
+					<div class="selleraside">
+						<a href="#" p-router:href="/sellerhome?id={{sellerid}}&type=list">全部商品</a>
+						<a href="#" p-router:href="/sellerhome?id={{sellerid}}&type=all">进入店铺</a>
+					</div>
+				</div>
+			</div>
+		</article>
+		<div class="shopitemtools">
+			<a href="#" p-router:href="/sellerser?id={{sellerid}}&itemid={{itemid}}" class="sellerser">客服</a>
+			<a href="#" p-router:href="/sellerhome?id={{sellerid}}" class="sellerhome">进店</a>
+			<a href="#" p-router:href="/collect?itemid={{itemid}}" class="collect">收藏</a>
+			<a href="#" p-router:href="/addcart?itemid={{itemid}}" class="addcart">加入购物车</a>
+			<a href="#" p-router:href="/buynow?itemid={{itemid}}" class="buynow">立即购买</a>
+		</div>
+	</div>
+</template>
+<style>
+	.shopitemdetail{
+		padding-bottom:2.3184rem;
+		.shopitemtools{
+			position:fixed;
+			bottom:0;
+			left:0;
+			right:0;
+			display:flex;
+			flex-flow:row;
+			border-top:0.03864rem solid rgb(244,245,247);
+			font-size:0.5410rem;
+			background-color:rgb(255,255,255);
+			a{
+				width:20%;
+				display:inline-block;
+				text-decoration:none;
+				color:rgb(153,153,153);
+				text-align:center;
+				padding:0.7728rem 0;
+				&.sellerser{
+					width:10%;
+				}
+				&.sellerhome{
+					width:10%;
+					border-left:0.03864rem solid rgb(244,245,247);
+				}
+				&.collect{
+					width:10%;
+					border-left:0.03864rem solid rgb(244,245,247);
+				}
+				&.addcart{
+					background-color:rgb(255,149,0);
+					color:rgb(255,255,255);
+					width:40%;
+				}
+				&.buynow{
+					width:30%;
+					background-color:rgb(221,39,39);
+					color:rgb(255,255,255);
+				}
+			}
+		}
+		.itemheader{
+			width:100%;
+		}
+		.itempage{
+			a{
+				text-decoration:none;
+				color:rgb(0,0,0);
+			}
+			.iteminfo{
+				margin:0.3864rem 0;
+				padding:0.3864rem;
+				font-size:0.5410rem;
+				background-color:rgb(255,255,255);
+				h1{
+					font-size:0.5410rem;
+				}
+				p{
+					display:flex;
+					flex-flow: row;
+					padding:0.3864rem 0 0;
+					span{
+						width:33.33%;
+						color:rgb(153,153,153);
+						text-align:center;
+						&:first-child{
+							text-align:left;
+						}
+						&:last-child{
+							text-align:right;
+						}
+					}
+				}
+			}
+			.itemmain{
+				font-size:0.5410rem;
+				.itemselect{
+					background-color:rgb(255,255,255);
+					padding:0.3864rem;
+					margin:0.3864rem 0;
+					display:flex;
+					flex-flow: row;
+					span{
+						width:80%;
+					}
+					a{
+						width:20%;
+						text-align:right;
+					}
+				}
+				.itemseller{
+					background-color:rgb(255,255,255);
+					padding:0.3864rem;
+					margin:0.3864rem 0;
+					.sellerinfo{
+						a{
+							display:flex;
+							flex-flow: row;
+							img{
+								width:20%;
+								border:0.0386rem solid rgb(153,153,153);
+							}
+							span{
+								width:80%;
+								padding-left:0.3864rem;
+							}
+						}
+					}
+					.sellergrade{
+						display:flex;
+						flex-flow: row;
+						padding:0.3864rem 0;
+						span{
+							width:33.33%;
+							text-align:center;
+							&:first-child{
+								text-align:left;
+							}
+							&:last-child{
+								text-align:right;
+							}
+							i{
+								font-style:initial;
+								font-weight:700;
+								color:rgb(0,0,0);
+								&.up{
+									color:rgb(255,0,0);
+								}
+								&.down{
+									color:rgb(0,183,139);
+								}
+							}
+						}
+					}
+					.selleraside{
+						display:flex;
+						flex-flow: row;
+						a{
+							width:50%;
+							text-align:center;
+							padding:0.3864rem;
+							border:0.0386rem solid rgb(153,153,153);
+							border-radius:0.1932rem;
+							&:last-child{
+								margin-left:0.3864rem;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+</style>

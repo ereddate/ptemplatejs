@@ -1,0 +1,78 @@
+<script>
+	import "shoplist";
+	$.router({
+		"/openshoplist": function(e, args){
+			toggleDialog(function(next){
+				var shoplist = [];
+				for (var i=0;i<30;i++) shoplist.push({
+					itemid: i,
+					itemimg: "//img.alicdn.com/tps/i4/TB19pfPSpXXXXaiXFXXwu0bFXXX.png_200x200Q90.jpg",
+					itemtitle: "nubia/努比亚 Z17烈焰红无边框变焦双摄6+128GB大内存旗舰新品["+i+"]",
+					itemser:[1,2],
+					itemprice: 3399,
+					itemsales: 2000
+				});
+				next(shoplist);
+			}, function(data){
+				$.render("my-shoplist", {
+					shoplist: data,
+					title: args.title
+				}, $.createDom("div",{}), function(elem){
+					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+					$.query("html")[0]._removeClass("show")._addClass("show");
+				})
+			});
+		},
+		"/detail_item": function(e, args){
+			console.log(args);
+			toggleDialog(function(next){
+				next({});
+			}, function(data){
+				$.render("my-shopitem", {
+					title: args.title,
+					itemid: args.id
+				}, $.createDom("div",{}), function(elem){
+					$.query("body")[0]._append(elem.children[0]._removeClass("hide")._addClass("show"))._removeClass("show")._addClass("show");
+					$.query("html")[0]._removeClass("show")._addClass("show");
+					$.render("my-shopitemdetail", $.extend({
+						itemtitle:args.title,
+						itemid: args.id
+					}, {
+						itemimg: "//img.alicdn.com/bao/uploaded/i4/TB1hcnvSpXXXXXiaVXXXXXXXXXX_!!0-item_pic.jpg_640x640q50.jpg",
+						logistics: "快递包邮",
+						sales:2000,
+						area:"广东深圳",
+						selecttip: "机身颜色/套餐类型/存储容量/版本类型",
+						sellerid: 0,
+						sellerlogo: "//img.alicdn.com/5e/67/TB1_xRQQXXXXXX_XpXXSutbFXXX.jpg",
+						sellername: "努比亚官方旗舰店",
+						m:5,
+						f:5,
+						s:5
+					}), $.query("#shopitem"));
+				})
+			});
+		},
+		"/itemdetail":function(e, args){
+			console.log(args);
+		},
+		"/shopitemtype":function(e, args){
+			console.log(args);
+		},
+		"/sellerhome":function(e, args){
+			console.log(args);
+		},
+		"/sellerser":function(e, args){
+			console.log(args);
+		},
+		"/collect":function(e, args){
+			console.log(args);
+		},
+		"/addcart":function(e, args){
+			console.log(args);
+		},
+		"/buynow":function(e, args){
+			console.log(args);
+		}
+	});
+</script>

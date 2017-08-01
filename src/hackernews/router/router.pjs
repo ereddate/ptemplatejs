@@ -44,7 +44,11 @@
 		},
 		"/moremenu": function(e, args){
 			var moremenu = [];
-			for (var i=0;i<5;i++) moremenu.push({
+			moremenu.push({
+				menutitle: "shoplist",
+				menuurl: "/openshoplist?title=shoplist"
+			});
+			for (var i=0;i<4;i++) moremenu.push({
 				menutitle:"menu",
 				menuurl: "/menu"
 			});

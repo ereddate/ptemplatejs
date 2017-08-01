@@ -1,0 +1,31 @@
+<template p-template="my-shopitem">
+	<div class="shopitem hide dialog_page">
+		<my-dialogheader title="{{title | limitTo : 10}}"></my-dialogheader>
+		<div class="main" id="shopitem">
+			
+		</div>
+	</div>
+</template>
+<style>
+	.shopitem{
+		background:rgb(244,245,247);
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		overflow:auto;
+		overflow-x:hidden;
+		z-index:9999;
+		animation: moveToRight .5s ease both;
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		&.hide{
+			animation: moveToRight .5s ease both;
+		}
+		.main{
+			margin:1.7388rem 0 0;
+		}
+	}
+</style>

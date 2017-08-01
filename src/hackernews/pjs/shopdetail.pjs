@@ -1,0 +1,70 @@
+<template p-template="my-shoplistdetail">
+	<div class="detaillist">
+		<div class="item">
+			<ul>
+				<li p-express:for="i in shoplist" p-express:if="index <= 10">
+					<a href="#" p-router:href="/detail_item?id={{itemid}}&title={{itemtitle}}">
+						<img src="{{itemimg}}" alt="{{itemtitle}}" />
+						<span class="title">{{itemtitle}}</span>
+						<span class="ser">{{itemser}}</span>
+						<span class="price">￥{{itemprice | currency}} <i>月销{{itemsales | currency}}</i></span>
+					</a>
+				</li>
+			</ul>
+		</div>
+		<div class="item">
+			<ul>
+				<li p-express:for="i in shoplist" p-express:if="index > 10 && index <=20">
+					<a href="#" p-router:href="/detail_item?id={{itemid}}&title={{itemtitle}}">
+						<img src="{{itemimg}}" alt="{{itemtitle}}" />
+						<span class="title">{{itemtitle}}</span>
+						<span class="ser">{{itemser}}</span>
+						<span class="price">￥{{itemprice | currency}} <i>月销{{itemsales | currency}}</i></span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</template>
+<style>
+	.detaillist{
+		display:flex;
+		flex-flow: row;
+		margin:0 0.1932rem;
+		.item{
+			width:50%;
+			ul{
+				li{
+					margin:0.1932rem 0;
+					background-color:rgb(255,255,255);
+					display:block;
+					a{
+						display:block;
+						font-size:0.5410rem;
+						text-decoration:none;
+						color:rgb(0,0,0);
+						padding:0.3864rem;
+						img{
+							width:100%;
+						}
+						span{
+							display:block;
+							&.title{
+								padding:0.3864rem 0;
+							}
+							&.price{
+								i{
+									font-style: initial;
+									color:rgb(153,153,153);
+								}
+							}
+						}
+					}
+				}
+			}
+			&:last-child{
+				margin-left:0.1932rem;
+			}
+		}
+	}
+</style>

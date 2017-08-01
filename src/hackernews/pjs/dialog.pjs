@@ -181,10 +181,10 @@
 			display:block;
 			align-self: auto;
 			&.show{
-				animation: scaleDownCenter .5s ease both;
+				animation: scaleUpCenter .5s ease both;
 			}
 			&.hide{
-				animation: scaleUpCenter .5s ease both;
+				animation: scaleDownCenter .5s ease both;
 			}
 		}
 	}
