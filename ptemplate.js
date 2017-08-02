@@ -1164,14 +1164,6 @@
 										data: data,
 										callback: callback
 									});
-									/*var fn = function() {
-										that.render(name, data, parent, callback);
-									};
-									mod.each(mod.templates[name].data, function(n, val) {
-										mod.createObject(mod.templates[name].data, n, val, function(a, b) {
-											fn();
-										})
-									});*/
 									var html = mod.tmpl(mod.templates[name].content, data || {});
 									parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
 										html: html
