@@ -427,6 +427,7 @@
 			routes: {},
 			eventData: [],
 			Styles: {},
+			_stores: {},
 			toStyle(val) {
 				let style = [];
 				for (let name in val) name != "" && style.push(name.replace(/\s+/gim, "") + ":'" + val[name] + "'");
@@ -1076,7 +1077,6 @@
 			var args = arguments,
 				len = args.length,
 				that = this;
-			!mod._stores && (mod._stores = {});
 			if (len === 1) {
 				return mod._stores[name];
 			} else {
@@ -1152,7 +1152,9 @@
 						}
 						if (parent && parent.length > 0 && parent[0]) {
 							var next = function(data) {
-								data = that.store(name, data);
+								if (!mod._stores[name]){
+									data = that.store(name, data);
+								}
 								(new Promise((resolve, reject) => {
 									!mod.templates[name] && that.createTemplate(name, {
 										parent: parent[0],
