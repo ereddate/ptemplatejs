@@ -83,6 +83,7 @@
 		},
 		"/scrollbanner": function(){
 			if ($.query("#scrollbanner")[0]) {
+				$.query(".scrollbanner")[0] && $.query(".scrollbanner")[0]._remove();
 				var data = {};
 				$.render("my-scrollbanner", function(next) {
 					setTimeout(function() {

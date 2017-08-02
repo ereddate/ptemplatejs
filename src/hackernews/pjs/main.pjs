@@ -100,7 +100,7 @@
 				time: "url2"
 			}]
 		};
-		$.render("my-mainpage", {
+		var store = $.store("my-mainpage", {
 			type: "home",
 			islogin: false,
 			usname: "",
@@ -121,20 +121,21 @@
 						table: table
 					});
 				}
-			},
-			created: function(){
-				switch(this.type){
-					case "home":
-						$.router("/getnews?type="+this.type+"&id=main");
-						break;
-					case "doc":
-						$.router("/getnews?type="+this.type+"&id=doc");
-						break;
-				}
-				$.router("/scrollbanner");
-				next();
 			}
-		}, $.query("#app"));
+		});
+		$.render("my-mainpage", store, $.query("#app"), function(){
+			switch(this.type){
+				case "home":
+					$.router("/getnews?type="+this.type+"&id=main");
+					break;
+				case "doc":
+					$.router("/getnews?type="+this.type+"&id=doc");
+					break;
+			}
+			$.router("/scrollbanner");
+			console.log($.store("my-mainpage"));
+			next();
+		});
 	});
 </script>
 <style>

@@ -1072,6 +1072,26 @@
 				});
 			}
 		},
+		store: function(name, data) {
+			var args = arguments,
+				len = args.length,
+				that = this;
+			!mod._stores && (mod._stores = {});
+			if (len === 1) {
+				return mod._stores[name];
+			} else {
+				mod._stores[name] = data;
+			}
+			var fn = function() {
+				mod.templates[name] && that.render(name, mod._stores[name], mod.templates[name].parent, mod.templates[name].callback);
+			};
+			mod._stores[name] && mod.each(mod._stores[name], function(n, val) {
+				mod.createObject(mod._stores[name], n, val, function(a, b) {
+					fn();
+				})
+			});
+			return data;
+		},
 		getStyle: function(name) {
 			return !Object.is(mod.Styles[name], undefined) && mod.Styles[name];
 		},
@@ -1132,23 +1152,26 @@
 						}
 						if (parent && parent.length > 0 && parent[0]) {
 							var next = function(data) {
+								data = that.store(name, data);
 								(new Promise((resolve, reject) => {
 									!mod.templates[name] && that.createTemplate(name, {
 										parent: parent[0],
 										content: template[0].innerHTML,
-										data: data
+										data: data,
+										callback: callback
 									}, true) || mod.extend(mod.templates[name], {
 										parent: parent[0],
-										data: data
+										data: data,
+										callback: callback
 									});
-									var fn = function() {
+									/*var fn = function() {
 										that.render(name, data, parent, callback);
 									};
 									mod.each(mod.templates[name].data, function(n, val) {
 										mod.createObject(mod.templates[name].data, n, val, function(a, b) {
 											fn();
 										})
-									});
+									});*/
 									var html = mod.tmpl(mod.templates[name].content, data || {});
 									parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
 										html: html
