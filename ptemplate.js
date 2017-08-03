@@ -428,6 +428,13 @@
 			eventData: [],
 			Styles: {},
 			_stores: {},
+			diff: function(a, b) {
+				var c = {};
+				for (var i in b) {
+					if (!(i in a)) c[i] = b[i];
+				}
+				return c;
+			},
 			toStyle(val) {
 				let style = [];
 				for (let name in val) name != "" && style.push(name.replace(/\s+/gim, "") + ":'" + val[name] + "'");
@@ -887,7 +894,13 @@
 				return key === undefined || hasOwn.call(obj, key);
 			},
 			extend: function(a, b) {
-				return Object.assign(a, b);
+				a = a || (mod.isArray(b) ? [] : {});
+				if (mod.isArray(b)){
+					for (var i=0;i<b.length;i++) a[i] = b[i];
+				}else{
+					for (var i in b) a[i] = b[i];
+				}
+				return a;
 			},
 			has: function(target, obj, filter) {
 				var hasIn = false;
@@ -1000,7 +1013,7 @@
 		get(name) {
 			return mod._stores[this.name] && (name ? mod._stores[this.name].data[name] : mod._stores[this.name].data);
 		}
-		clear(){
+		clear() {
 			mod._stores[this.name].data = {};
 			return this;
 		}
@@ -1076,7 +1089,18 @@
 		},
 		update: function(name, data) {
 			var that = this;
-			mod.templates[name] && mod.extend(mod.templates[name].data, data);
+			if (mod.templates[name]) {
+				var a = mod.diff(mod.templates[name].data, data);
+				mod.extend(mod.templates[name].data, data);
+				if (!mod.isEmptyObject(a)) {
+					mod.each(a, function(n, v) {
+						mod.createObject(mod.templates[name].data, n, v, function() {
+							mod.templates[name].reload && mod.templates[name].reload();
+						});
+					});
+					mod.templates[name].reload && mod.templates[name].reload();
+				}
+			}
 			return this;
 		},
 		clone: function(from, to) {
@@ -1177,24 +1201,29 @@
 						}
 						if (parent && parent.length > 0 && parent[0]) {
 							var next = function(data) {
-								if (data.commit){
+								if (data.commit) {
 									data = data.get();
 								}
 								(new Promise((resolve, reject) => {
 									!mod.templates[name] && that.createTemplate(name, {
 										parent: parent[0],
 										content: template[0].innerHTML,
-										data: data
+										data: data,
+										callback: callback,
+										reload: function() {
+											that.render(name, data, parent, callback);
+										}
 									}, true) || mod.extend(mod.templates[name], {
 										parent: parent[0],
-										data: data
+										data: data,
+										callback: callback,
+										reload: function() {
+											that.render(name, data, parent, callback);
+										}
 									});
-									var fn = function() {
-										that.render(name, data, parent, callback);
-									};
 									mod.each(mod.templates[name].data, function(n, val) {
 										mod.createObject(mod.templates[name].data, n, val, function(a, b) {
-											fn();
+											mod.templates[name].reload();
 										})
 									});
 									var html = mod.tmpl(mod.templates[name].content, data || {});

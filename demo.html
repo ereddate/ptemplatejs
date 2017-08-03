@@ -157,7 +157,7 @@
 			<!-- 模板的引用 -->
 			<div p-html="html"></div>
 		</div>
-		<div id="main"></div>
+		<div id="main" style="border:4px solid #000"></div>
 		<div id="mainA"></div>
 		<div id="mainB"></div>
 		<div id="mainC"></div>
@@ -341,46 +341,45 @@
 							}
 						}
 					}, function(elem) {
-						console.log(elem)
-					}).clone("test", "test1").render("test1", {  //clone克隆模板
-						title: "test1",
-						index: 3,
-						style: styles.alink,
-						data: function(){
-							return {data:[{
-								newstitle: "1 news item title ...",
-								url: "/ccc"
-							},{
-								newstitle: "2 news item title ...",
-								url: "/ccc"
-							},{
-								newstitle: "3 news item title ...",
-								url: "/ccc"
-							},{
-								newstitle: "4 news item title ...",
-								url: "/ccc"
-							},{
-								newstitle: "5 news item title ...",
-								url: "/ccc"
-							}]};
-						},
-						handle: {
-							handleWatchFn(e){
-								console.log(e.type)
-							},
-							handleClickFn(e) {
-								e.preventDefault();
-								console.log(e.type,2);
-							},
-							handleChangeFn(e){
-								console.log(e.type);
-								this._set("test1", {
-									title: this.value
-								})
+						console.log(elem);
+					}).clone("test", "test1").render("test1", function(next){
+						next($.extend({data: [{
+									newstitle: "1 news item title ...",
+									url: "/ccc"
+								},{
+									newstitle: "2 news item title ...",
+									url: "/ccc"
+								},{
+									newstitle: "3 news item title ...",
+									url: "/ccc"
+								},{
+									newstitle: "4 news item title ...",
+									url: "/ccc"
+								},{
+									newstitle: "5 news item title ...",
+									url: "/ccc"
+								}]},{  //clone克隆模板
+							title: "test1",
+							index: 3,
+							style: styles.alink,
+							handle: {
+								handleWatchFn(e){
+									console.log(e.type)
+								},
+								handleClickFn(e) {
+									e.preventDefault();
+									console.log(e.type,2);
+								},
+								handleChangeFn(e){
+									console.log(e.type);
+									this._set("test1", {
+										title: this.value
+									})
+								}
 							}
-						}
+						}));
 					}, $.query("#main"), function(elem) {  //query选择器
-						console.log(elem)
+						console.log("->", elem)
 					}).clone("test1", "test2").render("test2", {
 						title: "test2",
 						index: 0,
@@ -420,6 +419,27 @@
 						}
 					}, $.query("#mainA"), function(elem) {  //渲染后的回调
 						console.log(elem)
+						$.update("test1", {
+							title:"test_up",
+							open: false,
+							a: 2,
+							data: [{
+								newstitle: "6 news item title ...",
+								url: "/ccc"
+							}, {
+								newstitle: "7 news item title ...",
+								url: "/ccc"
+							}, {
+								newstitle: "8 news item title ...",
+								url: "/ccc"
+							}, {
+								newstitle: "9 news item title ...",
+								url: "/ccc"
+							}, {
+								newstitle: "10 news item title ...",
+								url: "/ccc"
+							}]
+						})
 					}).render(function(success, error){
 						var elem = $.createDom("script", {
 							"p-template": "test201706161637",
@@ -502,10 +522,7 @@
 							console.log("created", elem);
 						}
 					},
-					$.query("#mainE"),
-					function(elem){
-						console.log("callback", elem)
-					});
+					$.query("#mainE"));
 				});
 				console.log($.__mod__.templates)
 			})(this, pTemplate);
