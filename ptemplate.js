@@ -984,6 +984,39 @@
 				return (o instanceof _constructor);
 			};
 		};
+	class Store {
+		constructor(name, data) {
+			mod.extend(this, {
+				name: name,
+				data: data
+			});
+			mod._stores[this.name] = this;
+			return this;
+		}
+		commit(data) {
+			mod._stores[this.name] && data && mod.extend(mod._stores[this.name].data, data);
+			return this;
+		}
+		get(name) {
+			return mod._stores[this.name] && (name ? mod._stores[this.name].data[name] : mod._stores[this.name].data);
+		}
+		clear(){
+			mod._stores[this.name].data = {};
+			return this;
+		}
+		remove(name) {
+			if (mod._stores[this.name] && name && mod._stores[this.name].data[name]) {
+				delete mod._stores[this.name].data[name];
+			} else {
+				delete mod._stores[this.name];
+			}
+			return this;
+		}
+		clone(name) {
+			return new Store(name, mod._stores[this.name].data);
+		}
+	}
+
 	var pTemplate = {
 		__mod__: mod,
 		query: function(selector, parent) {
@@ -1078,18 +1111,10 @@
 				len = args.length,
 				that = this;
 			if (len === 1) {
-				return mod._stores[name];
+				return mod._stores[name].get();
 			} else {
-				mod._stores[name] = data;
+				return new Store(name, data);
 			}
-			var fn = function() {
-				mod.templates[name] && that.render(name, mod._stores[name], mod.templates[name].parent, mod.templates[name].callback);
-			};
-			mod._stores[name] && mod.each(mod._stores[name], function(n, val) {
-				mod.createObject(mod._stores[name], n, val, function(a, b) {
-					fn();
-				})
-			});
 			return data;
 		},
 		getStyle: function(name) {
@@ -1152,19 +1177,25 @@
 						}
 						if (parent && parent.length > 0 && parent[0]) {
 							var next = function(data) {
-								if (!mod._stores[name]){
-									data = that.store(name, data);
+								if (data.commit){
+									data = data.get();
 								}
 								(new Promise((resolve, reject) => {
 									!mod.templates[name] && that.createTemplate(name, {
 										parent: parent[0],
 										content: template[0].innerHTML,
-										data: data,
-										callback: callback
+										data: data
 									}, true) || mod.extend(mod.templates[name], {
 										parent: parent[0],
-										data: data,
-										callback: callback
+										data: data
+									});
+									var fn = function() {
+										that.render(name, data, parent, callback);
+									};
+									mod.each(mod.templates[name].data, function(n, val) {
+										mod.createObject(mod.templates[name].data, n, val, function(a, b) {
+											fn();
+										})
 									});
 									var html = mod.tmpl(mod.templates[name].content, data || {});
 									parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {

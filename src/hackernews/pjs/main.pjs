@@ -123,6 +123,7 @@
 				}
 			}
 		});
+		console.log(store.get());
 		$.render("my-mainpage", store, $.query("#app"), function(){
 			switch(this.type){
 				case "home":
