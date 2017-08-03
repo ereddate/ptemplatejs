@@ -257,6 +257,7 @@ module.exports = function(grunt) {
     }
 
     function savefile(file, content) {
+      //console.log(file)
       content = js_beautify(content, {
         indent_size: 4,
         indent_char: " ",

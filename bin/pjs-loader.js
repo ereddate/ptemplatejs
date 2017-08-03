@@ -70,7 +70,7 @@ module.exports = {
                   if (/template|script|style/.test(name)) {
                     isWrite = false;
                     if (/template/.test(name)) {
-                      tags[name] = "$.createTemplate('" + tags[name].name + "', {parent: undefined,content: \"" + html.join('') + "\",data: {}}, true);";
+                      tags[name] = "$.createTemplate('" + tags[name].name + "', {content: \"" + html.join('') + "\"}, true);";
                     } else {
                       tags[name] = html.join('');
                     }
