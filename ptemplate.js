@@ -894,13 +894,7 @@
 				return key === undefined || hasOwn.call(obj, key);
 			},
 			extend: function(a, b) {
-				a = a || (mod.isArray(b) ? [] : {});
-				if (mod.isArray(b)){
-					for (var i=0;i<b.length;i++) a[i] = b[i];
-				}else{
-					for (var i in b) a[i] = b[i];
-				}
-				return a;
+				return Object.assign(a, b);
 			},
 			has: function(target, obj, filter) {
 				var hasIn = false;
@@ -1011,15 +1005,27 @@
 			return this;
 		}
 		get(name) {
-			return mod._stores[this.name] && (name ? mod._stores[this.name].data[name] : mod._stores[this.name].data);
+			if (name) {
+				name = name.split(' ');
+				var a = {};
+				mod._stores[this.name] && mod.each(name, function(i, n) {
+					a[n] = mod._stores[this.name].data[n];
+				});
+				return a;
+			}else{
+				return mod._stores[this.name].data;
+			}
 		}
 		clear() {
 			mod._stores[this.name].data = {};
 			return this;
 		}
 		remove(name) {
-			if (mod._stores[this.name] && name && mod._stores[this.name].data[name]) {
-				delete mod._stores[this.name].data[name];
+			if (mod._stores[this.name] && name) {
+				name = name.split(' ');
+				mod.each(name, function(i, n){
+					delete mod._stores[this.name].data[n];
+				});
 			} else {
 				delete mod._stores[this.name];
 			}
