@@ -141,6 +141,29 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 	};
 	!$.__mod__.tmplTags && ($.__mod__.tmplTags = {});
 	$.extend($.__mod__.tmplTags, {
+		lazyload: function(obj, data) {
+			var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
+			if (attrs) {
+				var p = {};
+				attrs.forEach(function(a) {
+					p[a.name] = a.value;
+				});
+				var elem = obj.children[0];
+				return {
+					elem: elem,
+					callback: function(elem) {
+						var that = elem;
+						var img = $.createDom("img", p);
+						img._on("load", function(e) {
+							that._attr(p);
+							this._remove();
+						})._on("error", function(){
+							this._remove();
+						});
+					}
+				};
+			}
+		},
 		animate: function(obj, data) {
 			var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
 			if (attrs) {

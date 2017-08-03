@@ -121,7 +121,7 @@
 					});
 					var n = 0,
 						interval;
-					ul._append(lis[0]._clone());
+					ul._append(lis[0]._clone(true));
 
 					function play(n) {
 						ul._css({

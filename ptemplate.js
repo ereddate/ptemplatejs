@@ -712,7 +712,13 @@
 					} else {
 						if (obj.tagName && mod.tmplTags && mod.tmplTags[obj.tagName.toLowerCase()]) {
 							var newElem = mod.tmplTags[obj.tagName.toLowerCase()](obj, data);
-							newElem && (obj.parentNode.replaceChild(newElem, obj), obj = newElem);
+							if (mod.isPlainObject(newElem)) {
+								obj.parentNode.replaceChild(newElem.elem, obj);
+								obj = newElem.elem;
+								newElem.callback(obj);
+							} else {
+								newElem && (obj.parentNode.replaceChild(newElem, obj), obj = newElem);
+							}
 						}
 						mod.mixElement(obj);
 						var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
@@ -1012,7 +1018,7 @@
 					a[n] = mod._stores[this.name].data[n];
 				});
 				return a;
-			}else{
+			} else {
 				return mod._stores[this.name].data;
 			}
 		}
@@ -1023,7 +1029,7 @@
 		remove(name) {
 			if (mod._stores[this.name] && name) {
 				name = name.split(' ');
-				mod.each(name, function(i, n){
+				mod.each(name, function(i, n) {
 					delete mod._stores[this.name].data[n];
 				});
 			} else {
