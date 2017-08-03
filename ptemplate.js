@@ -1244,11 +1244,7 @@
 									data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 								});
 							}
-							if (typeof data == "function") {
-								mod.promise(data, next);
-							} else {
-								next(data);
-							}
+							mod.promise(data, next);
 						}
 					}
 				};
