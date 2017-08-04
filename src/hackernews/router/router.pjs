@@ -121,7 +121,10 @@
 					});
 					var n = 0,
 						interval;
-					ul._append(lis[0]._clone(true));
+					ul._append(lis[0]._clone(true))._query("li").forEach(function(e){
+						var that = e._query("img")[0];
+						$.lazyload && $.lazyload(that);
+					});
 
 					function play(n) {
 						ul._css({

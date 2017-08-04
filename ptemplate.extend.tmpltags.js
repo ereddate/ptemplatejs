@@ -140,6 +140,18 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		}
 	};
 	!$.__mod__.tmplTags && ($.__mod__.tmplTags = {});
+	$.__mod__.lazyload = $.lazyload = function(obj) {
+		obj._attr("p-lazyload") && ($.createDom("img", {
+			src: obj._attr("p-lazyload")
+		}))._on("load", function(e) {
+			obj._attr({
+				src: obj._attr("p-lazyload")
+			})._addClass("loaded");
+			this._remove();
+		})._on("error", function() {
+			this._remove();
+		});
+	};
 	$.extend($.__mod__.tmplTags, {
 		lazyload: function(obj, data) {
 			var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
@@ -153,13 +165,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					elem: elem,
 					callback: function(elem) {
 						var that = elem;
-						var img = $.createDom("img", p);
-						img._on("load", function(e) {
-							that._attr(p);
-							this._remove();
-						})._on("error", function(){
-							this._remove();
-						});
+						p.src && that._attr("p-lazyload", p.src);
 					}
 				};
 			}

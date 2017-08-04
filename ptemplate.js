@@ -709,72 +709,72 @@
 						pTemplate.render(obj.tagName.toLowerCase(), mData, [pTemplate.createDom("div", {})], function(parent) {
 							obj.parentNode && obj.parentNode.replaceChild(parent.children[0], obj);
 						});
-					} else {
-						if (obj.tagName && mod.tmplTags && mod.tmplTags[obj.tagName.toLowerCase()]) {
-							var newElem = mod.tmplTags[obj.tagName.toLowerCase()](obj, data);
-							if (mod.isPlainObject(newElem)) {
-								obj.parentNode.replaceChild(newElem.elem, obj);
-								obj = newElem.elem;
-								newElem.callback(obj);
-							} else {
-								newElem && (obj.parentNode.replaceChild(newElem, obj), obj = newElem);
-							}
+					}
+					if (obj.tagName && mod.tmplTags && mod.tmplTags[obj.tagName.toLowerCase()]) {
+						var newElem = mod.tmplTags[obj.tagName.toLowerCase()](obj, data);
+						if (mod.isPlainObject(newElem)) {
+							obj.parentNode.replaceChild(newElem.elem, obj);
+							obj = newElem.elem;
+							newElem.callback(obj);
+						} else {
+							newElem && (obj.parentNode.replaceChild(newElem, obj), obj = newElem);
 						}
-						mod.mixElement(obj);
-						var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
-						if (attrs) {
-							attrs.forEach(function(a) {
-								if (!data || !mod.isEmptyObject(data)) {
-									mod.each(data, function(n, v) {
-										if (n != "created") {
-											var u = v;
-											if (typeof v == "function") {
-												u = v();
-											}
-											if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
-												mod.each(u, function(name, val) {
-													a.value = rp(name, val.call(data), a.value);
-													data.mixins && data.mixins[n.toLowerCase()] && (a.value = rp(name, data.mixins[n.toLowerCase()][name].call(data), a.value));
-												});
-											} else {
-												a.value = rp(n, u, a.value);
-											}
+					}
+					mod.mixElement(obj);
+					var attrs = obj.attributes && obj.attributes.length > 0 && [].slice.call(obj.attributes) || false;
+					if (attrs) {
+						attrs.forEach(function(a) {
+							if (!data || !mod.isEmptyObject(data)) {
+								mod.each(data, function(n, v) {
+									if (n != "created") {
+										var u = v;
+										if (typeof v == "function") {
+											u = v();
 										}
-									});
-								}
-								if (/^p-/.test(a.name.toLowerCase())) {
-									var name = a.name.replace(/p\-/gim, "").split(':');
-									if (mod.tmplAttributes[name[0]])
-										mod.tmplAttributes[name[0]](obj, name[1], {
-											name: a.name,
-											value: a.value
-										}, data, obj.parentNode);
-									else {
-										var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") == "for" ? "bind" : "for"],
-											vname = a.value.split(' ');
-										vname.forEach((n) => {
-											!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
-										});
+										if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
+											mod.each(u, function(name, val) {
+												a.value = rp(name, val.call(data), a.value);
+												data.mixins && data.mixins[n.toLowerCase()] && (a.value = rp(name, data.mixins[n.toLowerCase()][name].call(data), a.value));
+											});
+										} else {
+											a.value = rp(n, u, a.value);
+										}
 									}
-									obj._removeAttr(a.name);
-								}
-							});
-						}
-						for (var name in bindAttrElement.bind) {
-							var e = bindAttrElement.bind[name];
-							mod.each(e, (i, elem) => {
-								if (bindAttrElement.for[name]) {
-									var f = bindAttrElement.for[name];
-									mod.each(f, (n, felem) => {
-										!elem._bindElement ? elem._bindElement = [felem] : elem._bindElement.push(felem);
+								});
+							}
+							if (/^p-/.test(a.name.toLowerCase()) && !/lazyload/.test(a.name.toLowerCase())) {
+								var name = a.name.replace(/p\-/gim, "").split(':');
+								if (mod.tmplAttributes[name[0]])
+									mod.tmplAttributes[name[0]](obj, name[1], {
+										name: a.name,
+										value: a.value
+									}, data, obj.parentNode);
+								else {
+									var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") == "for" ? "bind" : "for"],
+										vname = a.value.split(' ');
+									vname.forEach((n) => {
+										!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
 									});
 								}
-							})
-						}
-						obj.children && mod.each([].slice.call(obj.children), function(i, e) {
-							mod.tmpl(e, data);
+								obj._removeAttr(a.name);
+							}
 						});
 					}
+					for (var name in bindAttrElement.bind) {
+						var e = bindAttrElement.bind[name];
+						mod.each(e, (i, elem) => {
+							if (bindAttrElement.for[name]) {
+								var f = bindAttrElement.for[name];
+								mod.each(f, (n, felem) => {
+									!elem._bindElement ? elem._bindElement = [felem] : elem._bindElement.push(felem);
+								});
+							}
+						})
+					}
+					obj.children && mod.each([].slice.call(obj.children), function(i, e) {
+						mod.tmpl(e, data);
+					});
+
 				}
 				return obj;
 			},
@@ -1247,6 +1247,9 @@
 									mod.tmpl(parent[0], data);
 									resolve();
 								})).then(function(r) {
+									parent[0]._query("img").forEach(function(e){
+										mod.lazyload && e._attr("p-lazyload") && mod.lazyload(e);
+									});
 									data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 								});
 							}
