@@ -1,5 +1,6 @@
 <script>
 	var timeout = null,
+		scrolltimeout = null,
 		toggleDialog = function(next, callback, bool){
 			var p = new Promise((resolve, reject) => {
 				if (typeof bool == "boolean" && bool == true || typeof bool == "string" && bool == "true"){
@@ -83,10 +84,13 @@
 		},
 		"/scrollbanner": function(){
 			if ($.query("#scrollbanner")[0]) {
-				$.query(".scrollbanner")[0] && $.query(".scrollbanner")[0]._remove();
+				$.query(".scrollbanner").forEach(function(e){
+					e._remove();
+				});
+				scrolltimeout && clearTimeout(scrolltimeout);
 				var data = {};
 				$.render("my-scrollbanner", function(next) {
-					setTimeout(function() {
+					scrolltimeout = setTimeout(function() {
 						$.extend(data, {
 							banners: [{
 								id: 1,
@@ -160,6 +164,7 @@
 						}
 					}
 					start();
+					window.scrollTo(1,1);
 				});
 			}
 		},
