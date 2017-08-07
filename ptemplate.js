@@ -1003,11 +1003,21 @@
 				name: name,
 				data: data
 			});
+			this.log = [{
+				data: data,
+				msg: "init"
+			}];
 			mod._stores[this.name] = this;
 			return this;
 		}
-		commit(data) {
+		commit(data, msg) {
 			mod._stores[this.name] && data && mod.extend(mod._stores[this.name].data, data);
+			if (msg) {
+				this.log.push({
+					data: data,
+					msg: msg
+				});
+			}
 			return this;
 		}
 		get(name) {
@@ -1039,6 +1049,16 @@
 		}
 		clone(name) {
 			return new Store(name, mod._stores[this.name].data);
+		}
+		diff(data){
+			return mod.diff(this.data, data);
+		}
+		showlog(n){
+			return n && this.log[n] || this.log;
+		}
+		revert(n){
+			this.log[n] && (this.data = this.log[n].data);
+			return this;
 		}
 	}
 
@@ -1247,7 +1267,7 @@
 									mod.tmpl(parent[0], data);
 									resolve();
 								})).then(function(r) {
-									parent[0]._query("img").forEach(function(e){
+									parent[0]._query("img").forEach(function(e) {
 										mod.lazyload && e._attr("p-lazyload") && mod.lazyload(e);
 									});
 									data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);

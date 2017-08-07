@@ -113,14 +113,15 @@
 					}, 3000);
 				}, $.createDom("div", {}), function(elem) {
 					$.query("#scrollbanner")[0]._append(elem.children[0]);
+					var f = $.getBaseFontSize();
 					var p = $.query(".scrollbanner")[0];
 					var ul = p._query("ul")[0];
 					var lis = ul._css({
-						width: ((data.banners.length + 1) * p._width()) + "px"
+						width: ((data.banners.length + 1) * p._width() / f) + "rem"
 					})._query("li");
 					lis.forEach(function(e) {
 						e._css({
-							width: p._width() + "px"
+							width: p._width()/f + "rem"
 						})
 					});
 					var n = 0,
@@ -132,8 +133,8 @@
 
 					function play(n) {
 						ul._css({
-							width: ((data.banners.length + 1) * p._width()) + "px",
-							transform: "translate3d(-" + (n * p._width()) + "px, 0px, 0px)",
+							width: ((data.banners.length + 1) * p._width()/f) + "rem",
+							transform: "translate3d(-" + (n * p._width() / f) + "rem, 0px, 0px)",
 							"transition-duration": "0.5s"
 						});
 					}
@@ -144,8 +145,8 @@
 						if (n > data.banners.length) {
 							n = 0;
 							ul._css({
-								width: ((data.banners.length + 1) * p._width()) + "px",
-								transform: "translate3d(-" + (n * p._width()) + "px, 0px, 0px)",
+								width: ((data.banners.length + 1) * p._width()/f) + "rem",
+								transform: "translate3d(-" + (n * p._width()/f) + "rem, 0px, 0px)",
 								"transition-duration": "0s"
 							});
 							start(true);
