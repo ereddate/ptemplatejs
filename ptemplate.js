@@ -1050,14 +1050,17 @@
 		clone(name) {
 			return new Store(name, mod._stores[this.name].data);
 		}
-		diff(data){
+		diff(data) {
 			return mod.diff(this.data, data);
 		}
-		showlog(n){
+		showlog(n) {
 			return n && this.log[n] || this.log;
 		}
-		revert(n){
-			this.log[n] && (this.data = this.log[n].data);
+		revert(n) {
+			this.log[n] && (this.data = this.log[n].data, this.log.push({
+				data: this.log[n].data,
+				msg: "revert " + n
+			}));
 			return this;
 		}
 	}
