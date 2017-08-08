@@ -2,10 +2,11 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		{{ include("./src/hackernews/html/modules/head.html", {
+		{{ include("./src/pages/html/modules/head.html", {
 			"title": "ptemplatejs demo",
 			"ver": "0.0.1",
-			"projectname": "hackernews",
+			"projectname": "pages",
+			"random": "javascript:(Math.random(100)+'').replace(/\\./gim, '')",
 			"path": "//192.168.10.47/m/ptemplatejs/"
 		}) }}
 		<style>
@@ -26,10 +27,11 @@
 	</head>
 	<body>
 		<div id="app"></div>
-		{{ include("./src/hackernews/html/modules/footer.html", {
+		{{ include("./src/pages/html/modules/footer.html", {
 			"ver": "0.0.1",
-			"projectname": "hackernews",
+			"projectname": "pages",
 			"modulename": "app",
+			"random": "javascript:(Math.random(100)+'').replace(/\\./gim, '')",
 			"path": "//192.168.10.47/m/ptemplatejs/"
 		}) }}
 	</body>

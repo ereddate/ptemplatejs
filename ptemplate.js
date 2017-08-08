@@ -264,7 +264,7 @@
 			},
 			_addClass(name) {
 				var then = this;
-				name.split(' ').forEach((n) => {
+				typeof name == "string" && name.split(' ').forEach((n) => {
 					then._removeClass(n);
 					then.className += " " + n;
 				});
@@ -1065,10 +1065,10 @@
 			if (this.log[n]) {
 				var diff = mod.diff(this.log[n].data, this.data),
 					that = this;
-				mod.each(diff, function(name, v){
-					if (that.log[n].data[name] && that.data[name] != that.log[n].data[name]){
+				mod.each(diff, function(name, v) {
+					if (that.log[n].data[name] && that.data[name] != that.log[n].data[name]) {
 						that.data[name] = that.log[n].data[name];
-					}else{
+					} else {
 						delete that.data[name];
 					}
 				});

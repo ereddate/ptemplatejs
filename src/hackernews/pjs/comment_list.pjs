@@ -1,13 +1,15 @@
 <template p-template="my-commentlist">
-	<ul>
-		<li p-express:for="item in data" class="comment_list {{id < 3 ? 'show' : 'hide'}}">
-			<article class="comment_list_item">
-				<p class="content">{{contents | limitTo : 100}}</p>
-				<p class="desc">by <a href="#" target="_blank" p-router:href="/usinfo?id={{id}}&isme=false">{{author}}</a> {{time}}</p>
-			</article>
-		</li>
-	</ul>
-	<a href="#" class="more" p-router:href="/more?id=main&len=3">more</a>
+	<div>
+		<ul>
+			<li p-express:for="item in data" class="comment_list {{id < 3 ? 'show' : 'hide'}}">
+				<article class="comment_list_item">
+					<p class="content">{{contents | limitTo : 100}}</p>
+					<p class="desc">by <a href="#" target="_blank" p-router:href="/usinfo?id={{id}}&isme=false">{{author}}</a> {{time}}</p>
+				</article>
+			</li>
+		</ul>
+		<a href="#" class="more" p-router:href="/more?id=main&len=3">more</a>
+	</div>
 </template>
 <script>
 	$.update("my-list", {
