@@ -50,7 +50,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				} else {
 					obj._attr(type, val);
 				}
-				obj._removeAttr(a.name)
+				obj._removeAttr(a.name);
+			}else{
+				obj._attr(type, a.value)._removeAttr(a.name);
 			}
 		},
 		style: function(obj, type, a, data, _parent) {

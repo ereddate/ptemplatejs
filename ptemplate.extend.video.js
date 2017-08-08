@@ -57,8 +57,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					src = src.split(' ');
 					dom.innerHTML = '<video id="videoplay" width="' + width + '" height="' + height + '" ' + (controls == "false" ? "" : "controls") + ' ' + (autoplay == "false" ? "" : "autoplay") + ' ' + (loop == "false" ? "" : "loop") + '></video><span id="videostatus" class="videostatus"></span><span id="status" class="netstate"></span>';
 					var video = dom.getElementsByTagName("video")[0],
-						videostatus = document.getElementById("videostatus"),
-						netstate = document.getElementById("status"),
+						videostatus = $.query("#videostatus", dom)[0],
+						netstate = $.query("#status", dom)[0],
 						oldVolume = 1,
 						keys = {
 							play: "播放",
