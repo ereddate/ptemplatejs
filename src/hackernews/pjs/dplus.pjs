@@ -1,0 +1,6 @@
+<script>
+	var dplus = $.createDom("script", {
+		src:"http://utrack.hexun.com/dp/hexun_dplus_ver1.0.1.js"
+	});
+	$.query("head")[0]._append(dplus);
+</script>

@@ -8,6 +8,8 @@
 				</a>
 			</li>
 		</ul>
+		<!--a href="#" p-router:href="/nextscrollbanner" class="left">&lt;</a>
+		<a href="#" p-router:href="/nextscrollbanner" class="right">&gt;</a-->
 	</div>
 </template>
 <style>
@@ -16,6 +18,27 @@
 		width:100%;
 		min-height:7.7279rem;
 		overflow:hidden;
+		.left, .right{
+			position:absolute;
+			top:30%;
+			background-color:rgba(0,0,0,.5);
+			color:rgb(255,255,255);
+			display:block;
+			font-size:20px;
+			text-decoration:none;
+		}
+		.left{
+			left:0;
+			border-top-right-radius:30px;
+			border-bottom-right-radius:30px;
+			padding:0.3864rem 0.3864rem 0.3864rem 0.1932rem;
+		}
+		.right{
+			right:0;
+			border-top-left-radius:30px;
+			border-bottom-left-radius:30px;
+			padding:0.3864rem 0.1932rem 0.3864rem 0.3864rem;
+		}
 		ul{
 			position:absolute;
 			top:0;

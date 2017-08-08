@@ -1,0 +1,6 @@
+<script>
+	var common_store = $.store("common", {
+		project: "hackernews",
+		ver: "0.0.1"
+	});
+</script>

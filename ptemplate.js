@@ -431,7 +431,7 @@
 			diff: function(a, b) {
 				var c = {};
 				for (var i in b) {
-					if (!(i in a)) c[i] = b[i];
+					if (!(i in a) || a[i] && a[i] != b[i]) c[i] = b[i];
 				}
 				return c;
 			},
@@ -1004,7 +1004,7 @@
 				data: data
 			});
 			this.log = [{
-				data: data,
+				data: mod.extend({}, data),
 				msg: "init"
 			}];
 			mod._stores[this.name] = this;
@@ -1021,15 +1021,20 @@
 			return this;
 		}
 		get(name) {
+			var that = this;
 			if (name) {
 				name = name.split(' ');
-				var a = {};
-				mod._stores[this.name] && mod.each(name, function(i, n) {
-					a[n] = mod._stores[this.name].data[n];
-				});
-				return a;
+				if (name.length > 1) {
+					var a = {};
+					mod._stores[that.name] && mod.each(name, function(i, n) {
+						a[n] = mod._stores[that.name].data[n];
+					});
+					return a;
+				} else {
+					return mod._stores[that.name].data[name[0]];
+				}
 			} else {
-				return mod._stores[this.name].data;
+				return mod._stores[that.name].data;
 			}
 		}
 		clear() {
@@ -1057,10 +1062,21 @@
 			return n && this.log[n] || this.log;
 		}
 		revert(n) {
-			this.log[n] && (this.data = this.log[n].data, this.log.push({
-				data: this.log[n].data,
-				msg: "revert " + n
-			}));
+			if (this.log[n]) {
+				var diff = mod.diff(this.log[n].data, this.data),
+					that = this;
+				mod.each(diff, function(name, v){
+					if (that.log[n].data[name] && that.data[name] != that.log[n].data[name]){
+						that.data[name] = that.log[n].data[name];
+					}else{
+						delete that.data[name];
+					}
+				});
+				this.log.push({
+					data: this.log[n].data,
+					msg: "revert " + n
+				});
+			}
 			return this;
 		}
 	}
