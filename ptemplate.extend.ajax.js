@@ -178,4 +178,4 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		serialize(params, obj, traditional)
 		return params.join('&').replace(/%20/g, '')
 	}
-})(this, pTemplate);
+})(window, pTemplate);

@@ -22,14 +22,20 @@ module.exports = function(grunt) {
         }
       },
       watch: _watch,
-      zip: {}
+      zip: {},
+      uglify: {
+        options: {
+          report: "gzip"
+        }
+      },
+      babel: {
+        options: {
+          sourceMap: true,
+          presets: ['babel-preset-es2015']
+        }
+      }
     },
     concats = [];
-  /*uglify: {
-          options: {
-            report: "gzip"
-          }
-        },*/
   app.configs.forEach(function(a) {
     gruntConfigs.zip[a.projectName] = {
       expand: true,
@@ -41,6 +47,30 @@ module.exports = function(grunt) {
         "dist/" + a.projectName + "/libs/" + a.version + "/**/*.js"
       ],
       dest: "dist/" + a.projectName + "/zip/" + a.projectName.replace("/", "_") + "." + a.version + "." + grunt.template.today('yyyymmddhhmmss') + ".zip"
+    };
+    gruntConfigs.babel[a.projectName] = {
+      files: [{
+        src: "*.js",
+        dest: distPath + a.projectName + "/js/" + a.version + "/",
+        expand: true,
+        cwd: distPath + a.projectName + "/js/" + a.version + "/"
+      }, {
+        src: "*.js",
+        dest: distPath + a.projectName + "/libs/" + a.version + "/",
+        expand: true,
+        cwd: distPath + a.projectName + "/libs/" + a.version + "/"
+      }]
+    };
+    gruntConfigs.tmpl[a.projectName] = {
+      options: {
+        encoding: "utf-8"
+      },
+      files: [{
+        src: "*.html",
+        dest: distPath + a.projectName + "/html/" + a.version + "/",
+        expand: true,
+        cwd: basePath + a.projectName + "/html/"
+      }]
     };
   })
 
@@ -121,9 +151,9 @@ module.exports = function(grunt) {
     });
   });
 
-  grunt.registerTask("uglifyjs", "uglify javascript files", function(v) {
+  /*grunt.registerTask("uglifyjs", "uglify javascript files", function(v) {
     require("./bin/pjs-uglifyjs").uglifyjs(v);
-  });
+  });*/
 
   var libFiles = grunt.file.expand(pkg.configs.ptemplatejs.path + "*.js");
 
@@ -138,10 +168,19 @@ module.exports = function(grunt) {
       src: libConcats,
       dest: "./" + distPath + c.projectName + "/libs/" + c.version + "/" + pkg.name + "." + c.version + ".js"
     });
-    var tasks = ["pjsloader:" + c.projectName, "lessToStyle:" + c.projectName, "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName, "zip:" + c.projectName];
+    gruntConfigs.concat[c.projectName] = {
+      options: {
+        footer: '\n/*! time:<%= grunt.template.today("yyyy-mm-dd") %> end \*\/',
+        banner: '\n/*! ' + c.projectName + ' start\*\/'
+      },
+      files: concats
+    };
+    var tasks = ["pjsloader:" + c.projectName, "lessToStyle:" + c.projectName, "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName];
+    tasks.push("babel:" + c.projectName);
     if (c.build && c.build.uglifyjs === true) {
-      tasks.push("uglifyjs:" + c.projectName);
+      tasks.push("uglify:" + c.projectName);
     }
+    tasks.push("zip:" + c.projectName);
     _watch[c.projectName] = {
       files: ["./" + basePath + c.projectName + "/**/*.pjs", "package.json", "./" + basePath + c.projectName + "/**/*.js", "./" + basePath + "app.js", "gruntfile.js", "./" + basePath + c.projectName + "/**/*.html", "./" + basePath + c.projectName + "/**/*.less", "./" + basePath + c.projectName + "/**/*.css"],
       tasks: tasks,
@@ -149,7 +188,7 @@ module.exports = function(grunt) {
         livereload: (pkg.configs.server.autoreload || true)
       }
     };
-    /*gruntConfigs.uglify[c.projectName] = {
+    gruntConfigs.uglify[c.projectName] = {
       options: {
         banner: "\n/*! " + c.projectName + "/" + grunt.template.today("yyyy-mm-dd") + "end \*\/",
         mangle: true, //不混淆变量名
@@ -160,25 +199,12 @@ module.exports = function(grunt) {
         cwd: 'dist/' + c.projectName + "/js/", //js目录下
         src: '**\/*.js', //所有js文件
         dest: 'dist/' + c.projectName + "/js/" //输出到此目录下
-      }]
-    };*/
-    gruntConfigs.tmpl[c.projectName] = {
-      options: {
-        encoding: "utf-8"
-      },
-      files: [{
-        src: "*.html",
-        dest: distPath + c.projectName + "/html/" + c.version + "/",
+      },{
         expand: true,
-        cwd: basePath + c.projectName + "/html/"
+        cwd: 'dist/' + c.projectName + "/libs/", //js目录下
+        src: '**\/*.js', //所有js文件
+        dest: 'dist/' + c.projectName + "/libs/" //输出到此目录下
       }]
-    };
-    gruntConfigs.concat[c.projectName] = {
-      options: {
-        footer: '\n/*! time:<%= grunt.template.today("yyyy-mm-dd") %> end \*\/',
-        banner: '\n/*! ' + c.projectName + ' start\*\/'
-      },
-      files: concats
     };
   });
 
@@ -306,8 +332,9 @@ module.exports = function(grunt) {
 
   grunt.initConfig(gruntConfigs);
 
-  //grunt.loadNpmTasks("grunt-contrib-uglify");
+  grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-zip");
+  grunt.loadNpmTasks("grunt-babel");
   grunt.loadNpmTasks("grunt-cmd-concat");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.registerTask('default', 'watch');

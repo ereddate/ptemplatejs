@@ -257,4 +257,4 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return this;
 		}
 	});
-})(this, pTemplate);
+})(window, pTemplate);

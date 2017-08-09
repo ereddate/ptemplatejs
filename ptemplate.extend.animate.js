@@ -102,4 +102,4 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return $.__mod__.animate(elem, ops, speed, callback, ease);
 		}
 	});
-})(this, pTemplate)
+})(window, pTemplate)

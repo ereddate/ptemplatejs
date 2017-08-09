@@ -70,4 +70,4 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			}
 		}
 	}
-})(this, pTemplate)
+})(window, pTemplate)

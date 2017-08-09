@@ -133,4 +133,4 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		xvideo.fn.init.prototype = xvideo.fn;
 		return xvideo(element).ready(callback);
 	};
-})(this, pTemplate);
+})(window, pTemplate);

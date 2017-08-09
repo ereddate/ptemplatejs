@@ -186,10 +186,6 @@
 				mod.trigger(this, eventName, args);
 				return this;
 			},
-			/*_once(eventName, fn) {
-				mod.on(this, eventName, fn, undefined, false, true);
-				return this;
-			},*/
 			_remove(element) {
 				element && element.nodeType && this.removeChild(element) || this.parentNode && this.parentNode.removeChild(this);
 				return this;
@@ -1308,4 +1304,4 @@
 		}
 	};
 	win.$ = win.pTemplate = pTemplate;
-})(this);
+})(window);

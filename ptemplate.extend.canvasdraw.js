@@ -292,7 +292,7 @@ typeof window.pTemplate != "undefined" && (function(win, $, isCanvas) {
 		};
 	});
 
-})(this, pTemplate, function() {
+})(window, pTemplate, function() {
 	var a = document.createElement("canvas");
 	document.body.appendChild(a);
 	var bool = a.getContext ? true : false;
