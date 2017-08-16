@@ -225,8 +225,12 @@
 				element._prepend(this);
 				return this;
 			},
+			_before(element){
+				this.parentNode.insertBefore(element, this) || this.parentNode._prepend(element);
+				return this;
+			},
 			_after(element) {
-				var next = this[i].nextElementSibling || this[i].nextSibling;
+				var next = this.nextElementSibling || this.nextSibling;
 				next && this.parentNode.insertBefore(element, next) || this.parentNode.appendChild(element);
 				return this;
 			},
@@ -543,7 +547,7 @@
 			jsonToUrlString: function(obj, at) {
 				var str = [];
 				mod.each(obj, (name, val) => {
-					val != "" && str.push(name + "=" + val.toString());
+					typeof val != "undefined" && str.push(name + "=" + val.toString());
 				});
 				return str.length > 0 ? str.join(at) : "";
 			},

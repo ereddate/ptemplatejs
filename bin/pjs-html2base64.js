@@ -196,25 +196,26 @@ function toEncode(contents) {
     var results = [],
         i = 0,
         result,
-        regImg = /\(\s*(["']*([^"']+\.(gif|png|jpg)+\s*_base64)["']*)\s*\)/gim,
+        regImg = /\s*url\(['"]*([^'"]+\.[gif|png|jpg]+[^'"]*\s*\_base64)['"]*\)/,
         regFont = /\s*url\(['"]*([^'"]+\.[eot|woff2|woff|ttf|svg]+[^'"]*\s*\_base64)['"]*\)/;
     while ((result = regImg.exec(contents)) != null) {
         i++;
         //console.log(result)
         contents = contents.replace(result[1], "img_" + i);
-        var filename = /([^\/]+\.(png|jpg|gif))/.exec(result[2]);
+        var filename = /([^\/]+\.(png|jpg|gif))/.exec(result[1]);
         if (filename) {
-            var dir = result[2].split(filename[1])[0];
+            var dir = result[1].split(filename[1])[0];
             results.push({
                 index: i,
                 html: result[1],
-                url: result[2].replace(" _base64", ""),
+                url: /[^'"]+\.(png|jpg|gif)/.exec(result[1])[0],
                 file: filename[1],
                 dir: dir,
                 ext: filename[2]
             });
         }
     }
+   // console.log(regFont.exec(contents))
     while ((result = regFont.exec(contents)) != null) {
         i++;
         //console.log(result)

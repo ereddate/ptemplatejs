@@ -258,6 +258,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							case "tap":
 							case "pinched":
 							case "swipe":
+								obj._on("click", function(e){
+									e.preventDefault();
+								});
 								$.__mod__.touch[type[0]](obj, function(e, args) {
 									data.handle[handle[0]] && data.handle[handle[0]].call(this, e, args);
 									mixins(this, handle[0], e, args);

@@ -83,7 +83,8 @@ module.exports = function(grunt) {
 		var includeRegExp = new RegExp(options.prefix + 'include\\(\\s*["\'](.*?)["\'](,\\s*({[\\s\\S]*?})){0,1}\\s*\\)' + options.suffix);
 
 		var localserver = require("../package.json");
-		var tobase = require("./pjs-html2base64").to;
+		var toBase64 = require("./pjs-html2base64");
+		var tobase = toBase64.to;
 
 		function include(contents, workingDir, target) {
 
@@ -135,9 +136,9 @@ module.exports = function(grunt) {
 				var localVars = matches[3] ? JSON.parse(matches[3]) : {};
 
 				//console.log(localVars)
-				for (var i in localVars){
-					if (/javascript\:/.test(localVars[i])){
-						localVars[i] = new Function("return "+localVars[i].replace(/javascript\:/gim, "")+";")();
+				for (var i in localVars) {
+					if (/javascript\:/.test(localVars[i])) {
+						localVars[i] = new Function("return " + localVars[i].replace(/javascript\:/gim, "") + ";")();
 					}
 				}
 				//console.log(localVars)
@@ -246,19 +247,21 @@ module.exports = function(grunt) {
 				grunt.log.debug('Saving to', dest);
 
 				//console.log(contents)
-				//var img2base64 = require("../../../views/modules/html2base64");
-				//contents = img2base64(contents);
-
-				contents = require('js-beautify').html(contents, {
-					indent_size: 4,
-					indent_char: " ",
-					indent_with_tabs: false,
-					preserve_newlines: false,
-					max_preserve_newlines: 10,
-					wrap_line_length: 0,
-					indent_inner_html: false,
-					brace_style: "collapse"
-				});
+				//console.log(src)
+				if (/\.css/.test(src)) {
+					contents = toBase64.get(contents);
+				} else {
+					contents = require('js-beautify').html(contents, {
+						indent_size: 4,
+						indent_char: " ",
+						indent_with_tabs: false,
+						preserve_newlines: false,
+						max_preserve_newlines: 10,
+						wrap_line_length: 0,
+						indent_inner_html: false,
+						brace_style: "collapse"
+					});
+				}
 				//console.log(tags)
 				grunt.file.write(dest, contents);
 

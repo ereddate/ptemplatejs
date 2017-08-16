@@ -70,6 +70,11 @@ module.exports = function(grunt) {
         dest: distPath + a.projectName + "/html/" + a.version + "/",
         expand: true,
         cwd: basePath + a.projectName + "/html/"
+      },{
+        src: "*.css",
+        dest: distPath + a.projectName + "/css/" + a.version + "/",
+        expand: true,
+        cwd: distPath + a.projectName + "/css/" + a.version + "/"
       }]
     };
   })
@@ -93,11 +98,11 @@ module.exports = function(grunt) {
             var obj = templates.modules[n],
               imports = [],
               then = function(text) {
-                text = text.replace(/\s+/gim, " ").replace(/\r+|\n+/gim, "").replace(/"/gim, "\\\"").replace(/'/gim, "\\\'");
+                text = text.replace(/\s+/gim, " ").replace(/\r+|\n+/gim, "");
                 if (pconfig.build && pconfig.build.css && pconfig.build.css.isfile) {
                   text = text;
                 } else {
-                  text = "var head = $.query('head')[0]; head.appendChild($.createStyle(\"" + text + "\"));";
+                  text = "var head = $.query('head')[0]; head.appendChild($.createStyle(\"" + text.replace(/"/gim, "\\\"").replace(/'/gim, "\\\'") + "\"));";
                 }
                 templates.modules[n].style = text;
               };
@@ -109,36 +114,6 @@ module.exports = function(grunt) {
                 var text = output.css;
                 then(text);
               });
-              /*obj.style = obj.style.replace(/\@import\s+['"]+([^'"]+)['"]+;/gim, function(a, b) {
-                if (b) {
-                  imports.push(b);
-                }
-                return "";
-              });
-              if (imports.length > 0) {
-                console.log(imports)
-                var parser = new(less.Parser)({
-                  paths: imports
-                });
-                parser.parse(obj.style, function(e, tree) {
-                  if (e) {
-                    console.log(e);
-                  }
-                  var text = tree.toCSS({
-                    compress: true
-                  });
-                  then(text);
-                });
-              } else {
-                less.render(obj.style, function(e, output) {
-                  if (e) {
-                    console.log(e);
-                  }
-                  var text = output.css;
-                  then(text);
-                });
-              }*/
-
             }
           }
           grunt.log.writeln('success.');
@@ -150,10 +125,6 @@ module.exports = function(grunt) {
       }
     });
   });
-
-  /*grunt.registerTask("uglifyjs", "uglify javascript files", function(v) {
-    require("./bin/pjs-uglifyjs").uglifyjs(v);
-  });*/
 
   var libFiles = grunt.file.expand(pkg.configs.ptemplatejs.path + "*.js");
 
@@ -308,7 +279,7 @@ module.exports = function(grunt) {
               var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + n + ".js";
               var content = readContent(r, projectName, file);
               content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, $){"));
-              content.push("})(this, pTemplate);");
+              content.push("})(window, pTemplate);");
               savefile(file, content.join(''));
             }
           });
@@ -319,7 +290,7 @@ module.exports = function(grunt) {
             var file = f.replace(basePath, pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
             var content = readContent(r, projectName, file);
             content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, $){"));
-            content.push("})(this, pTemplate);");
+            content.push("})(window, pTemplate);");
             savefile(file, content.join(''));
           })
         }
