@@ -257,4 +257,5 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return this;
 		}
 	});
+	$.touch = $.__mod__.touch;
 })(window, pTemplate);

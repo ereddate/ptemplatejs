@@ -56,8 +56,7 @@
 				"ajax",
 				"canvasdraw",
 				"video",
-				"animate",
-				"touchs"
+				"animate"
 			]
 		}
 	}
