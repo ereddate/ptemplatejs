@@ -225,7 +225,7 @@
 				element._prepend(this);
 				return this;
 			},
-			_before(element){
+			_before(element) {
 				this.parentNode.insertBefore(element, this) || this.parentNode._prepend(element);
 				return this;
 			},
@@ -464,7 +464,7 @@
 						value = mod.is(typeof value, "function") ? value.call(elem, name) : value;
 						elem._html(value);
 						break;
-					case "class":
+					case "cls":
 						elem._addClass(value);
 						break;
 					case "handle":
@@ -561,7 +561,7 @@
 				return element;
 			},
 			promise: function(v, then) {
-				Object.is(typeof v, "function") ? (new Promise((resolve, reject) => {
+				typeof v == "function" ? (new Promise((resolve, reject) => {
 					v(resolve, reject)
 				})).then(function(r) {
 					then(r)
@@ -668,7 +668,7 @@
 					},
 					bindAttrElement = {
 						bind: {},
-						for: {}
+						form: {}
 					};
 				if (mod.is(typeof obj, "string")) {
 					mod.each(data, function(n, v) {
@@ -752,7 +752,7 @@
 								else {
 									var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") == "for" ? "bind" : "for"],
 										vname = a.value.split(' ');
-									vname.forEach((n) => {
+									belem && vname.forEach((n) => {
 										!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
 									});
 								}
@@ -763,8 +763,8 @@
 					for (var name in bindAttrElement.bind) {
 						var e = bindAttrElement.bind[name];
 						mod.each(e, (i, elem) => {
-							if (bindAttrElement.for[name]) {
-								var f = bindAttrElement.for[name];
+							if (bindAttrElement.form[name]) {
+								var f = bindAttrElement.form[name];
 								mod.each(f, (n, felem) => {
 									!elem._bindElement ? elem._bindElement = [felem] : elem._bindElement.push(felem);
 								});
@@ -1254,43 +1254,38 @@
 							var next = function(data) {
 								if (data.commit) {
 									data = data.get();
-								}
-								(new Promise((resolve, reject) => {
-									!mod.templates[name] && that.createTemplate(name, {
-										parent: parent[0],
-										content: template[0].innerHTML,
-										data: data,
-										callback: callback,
-										reload: function() {
-											that.render(name, data, parent, callback);
-										}
-									}, true) || mod.extend(mod.templates[name], {
-										parent: parent[0],
-										data: data,
-										callback: callback,
-										reload: function() {
-											that.render(name, data, parent, callback);
-										}
-									});
-									mod.each(mod.templates[name].data, function(n, val) {
-										mod.createObject(mod.templates[name].data, n, val, function(a, b) {
-											mod.templates[name].reload();
-										})
-									});
-									var html = mod.tmpl(mod.templates[name].content, data || {});
-									parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
-										html: html
-									})) : parent[0].tagName.toLowerCase() == "body" ? parent[0]._append($.createDom("div", {
-										html: html
-									}).children[0]) : (parent[0].innerHTML = html);
-									mod.tmpl(parent[0], data);
-									resolve();
-								})).then(function(r) {
-									parent[0]._query("img").forEach(function(e) {
-										mod.lazyload && e._attr("p-lazyload") && mod.lazyload(e);
-									});
-									data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+								}!mod.templates[name] && that.createTemplate(name, {
+									parent: parent[0],
+									content: template[0].innerHTML,
+									data: data,
+									callback: callback,
+									reload: function() {
+										that.render(name, data, parent, callback);
+									}
+								}, true) || mod.extend(mod.templates[name], {
+									parent: parent[0],
+									data: data,
+									callback: callback,
+									reload: function() {
+										that.render(name, data, parent, callback);
+									}
 								});
+								mod.each(mod.templates[name].data, function(n, val) {
+									mod.createObject(mod.templates[name].data, n, val, function(a, b) {
+										mod.templates[name].reload();
+									})
+								});
+								var html = mod.tmpl(mod.templates[name].content, data || {});
+								parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
+									html: html
+								})) : parent[0].tagName.toLowerCase() == "body" ? parent[0]._append($.createDom("div", {
+									html: html
+								}).children[0]) : (parent[0].innerHTML = html);
+								mod.tmpl(parent[0], data);
+								parent[0]._query("img").forEach(function(e) {
+									mod.lazyload && e._attr("p-lazyload") && mod.lazyload(e);
+								});
+								data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 							}
 							mod.promise(data, next);
 						}

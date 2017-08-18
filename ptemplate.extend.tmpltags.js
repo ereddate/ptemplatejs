@@ -230,7 +230,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				isForm = a.submithandle,
 				b = $.createDom("form", {
 					html: obj._html(),
-					class: "validform"
+					cls: "validform"
 				});
 			b._query("button[datatype=submit]").length > 0 && b._query("button[datatype=submit]")[0]._on("click", function(e) {
 				e.preventDefault();
@@ -271,7 +271,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				console.log(e);
 			}
 		},
-		if: function(obj, data) {
+		"if-item": function(obj, data) {
 			var a = obj._attr("express");
 			try {
 				var html = new Function("return " + a + " ? '" + obj._html().replace(/\s+/gim, " ").replace(/\r\n\t/gim, "").replace(/'/gim, "\\\'").replace(/"/gim, "\\\"") + "' : '';")();

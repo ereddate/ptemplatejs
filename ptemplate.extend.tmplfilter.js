@@ -164,7 +164,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return _currency(val, filterCondition);
 		},
 		empty: function(val, filterCondition) {
-			return (typeof val == "string" && $.__mod__.trim(val) == "" || val == null || typeof val == "undefined" || $.__mod__.is("object", typeof val) && $.__mod__.isEmptyObject(val) || $.__mod__.is("array", typeof val) && val.length == 0) && filterCondition || "";
+			return (typeof val == "string" && $.__mod__.trim(val) == "" || val == null || typeof val == "undefined" || $.__mod__.is("object", typeof val) && $.__mod__.isEmptyObject(val) || $.__mod__.is("array", typeof val) && val.length == 0) && filterCondition || val;
 		},
 		passcard: function(val, filterCondition) {
 			var num = filterCondition || 4,

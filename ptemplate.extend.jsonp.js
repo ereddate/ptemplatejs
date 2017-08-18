@@ -47,7 +47,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							head.removeChild(document.getElementById(callback));
 							fail(error, "timeout " + callback);
 						}
-					}, ops && ops.timeout || 5000);
+					}, ops && ops.timeout || 3000);
 					script.id = callback;
 					script.src = url + (/\?/.test(url) ? "&" : "?") + (ops && ops.callback || "callback") + "=" + callback;
 					script.onload = function(a) {

@@ -31,7 +31,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			var routers = a.value.split('?');
 			if ($.__mod__.routes && $.__mod__.routes[routers[0]]) {
 				var result = $.__mod__.routes[routers[0]];
-				if (Object.is(typeof result, "function")) {
+				if (typeof result == "function") {
 					if (routers[1]) {
 						routers[1] = $.__mod__.toArgs(routers[1], data);
 					}
