@@ -70,7 +70,7 @@ module.exports = function(grunt) {
         dest: distPath + a.projectName + "/html/" + a.version + "/",
         expand: true,
         cwd: basePath + a.projectName + "/html/"
-      },{
+      }, {
         src: "*.css",
         dest: distPath + a.projectName + "/css/" + a.version + "/",
         expand: true,
@@ -170,7 +170,7 @@ module.exports = function(grunt) {
         cwd: 'dist/' + c.projectName + "/js/", //js目录下
         src: '**\/*.js', //所有js文件
         dest: 'dist/' + c.projectName + "/js/" //输出到此目录下
-      },{
+      }, {
         expand: true,
         cwd: 'dist/' + c.projectName + "/libs/", //js目录下
         src: '**\/*.js', //所有js文件
@@ -278,7 +278,7 @@ module.exports = function(grunt) {
               var r = grunt.file.read(path.resolve(f[n]));
               var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + n + ".js";
               var content = readContent(r, projectName, file);
-              content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, $){"));
+              content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, " + (pkg.configs.ptemplatejs.alias || "$") + "){"));
               content.push("})(window, pTemplate);");
               savefile(file, content.join(''));
             }
@@ -289,7 +289,7 @@ module.exports = function(grunt) {
             var r = grunt.file.read(path.resolve(f));
             var file = f.replace(basePath, pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
             var content = readContent(r, projectName, file);
-            content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, $){"));
+            content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, " + (pkg.configs.ptemplatejs.alias || "$") + "){"));
             content.push("})(window, pTemplate);");
             savefile(file, content.join(''));
           })

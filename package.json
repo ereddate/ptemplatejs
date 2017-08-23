@@ -48,7 +48,7 @@
 		},
 		"server": {
 			"ip": "192.168.10.47",
-			"autoreload": true
+			"autoreload": false
 		},
 		"ptemplatejs": {
 			"path": "./",
