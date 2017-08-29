@@ -20,14 +20,21 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			let then = this;
 			then.emit.push((done) => {
 				setTimeout(() => {
-					new Promise((resolve, reject) => {
+					typeof Promise != "undefined" ? new Promise((resolve, reject) => {
 						try {
 							callback && callback.call(then, resolve);
 						} catch (e) {
 							console.log(e);
 							reject();
 						}
-					}).then(done, done);
+					}).then(done, done) : $.promise((resolve, reject) => {
+						try {
+							callback && callback.call(then, resolve);
+						} catch (e) {
+							console.log(e);
+							reject();
+						}
+					}).then(done).catch(done);
 				}, 25)
 			});
 			return then;
@@ -36,29 +43,50 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			let then = this;
 			then.emit.push((done) => {
 				setTimeout(() => {
-					new Promise((resolve, reject) => {
+					typeof Promise != "undefined" ? new Promise((resolve, reject) => {
 						try {
 							callback && callback.call(then, resolve);
 						} catch (e) {
 							console.log(e);
 							reject();
 						}
-					}).then(done, done);
+					}).then(done, done) : $.promise((resolve, reject) => {
+						try {
+							callback && callback.call(then, resolve);
+						} catch (e) {
+							console.log(e);
+							reject();
+						}
+					}).then(done).catch(done);
 				}, time || 1000);
 			});
 			return then;
 		}
 		done(callback) {
-			let then = this,
-				a = then.emit[Symbol.iterator](),
-				b = a.next();
-			if (!b.done) {
-				then.emit.splice(0, 1);
-				b.value(() => {
-					then.done(callback)
-				})
-			} else {
-				callback && callback.call(then);
+			let then = this;
+			if (typeof Symbol != "undefined"){
+				let a = then.emit[Symbol.iterator](),
+					b = a.next();
+				if (!b.done) {
+					then.emit.splice(0, 1);
+					b.value(() => {
+						then.done(callback)
+					})
+				} else {
+					callback && callback.call(then);
+				}
+			}else{
+				var next = function(n){
+					var len = then.emit.length;
+					if (n>=len){
+						callback && callback.call(then);
+					}else{
+						then.emit[n] && then.emit[n](function(){
+							next(n+1);
+						});
+					}
+				};
+				next(0);
 			}
 			return then;
 		}
