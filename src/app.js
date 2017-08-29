@@ -27,7 +27,7 @@ module.exports = {
 		projectName: "famousman",
 		version: "0.0.1",
 		build: {
-			uglifyjs: false,
+			uglifyjs: true,
 			css: {
 				isfile: true
 			}

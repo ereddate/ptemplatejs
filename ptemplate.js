@@ -157,7 +157,7 @@
 				return then.innerHTML;
 			},
 			_val(value) {
-				if (Reflect.has(this, "value")) {
+				if ("value" in this) {
 					if (typeof value != "undefined") {
 						this._attr("value", value);
 					} else {
@@ -489,7 +489,7 @@
 				return obj;
 			},
 			createObject: function(obj, name, _class, callback) {
-				Reflect.defineProperty(obj, name, {
+				(typeof Reflect != "undefined" && Reflect.defineProperty ? Reflect.defineProperty : Object.defineProperty)(obj, name, {
 					get: function() {
 						return _class
 					},
@@ -519,7 +519,7 @@
 						return "array" === c || 0 === len || "number" == typeof len && len > 0 && len - 1 in a;
 						break;
 				}
-				return Object.is(a, b);
+				return a == b;
 			},
 			set: function(n, o) {
 				mod.templates[n] && mod.extend(mod.templates[n].data, o || {});
@@ -561,11 +561,18 @@
 				return element;
 			},
 			promise: function(v, then) {
-				typeof v == "function" ? (new Promise((resolve, reject) => {
+				typeof v == "function" ? typeof Promise != "undefined" ? (new Promise((resolve, reject) => {
 					v(resolve, reject)
 				})).then(function(r) {
 					then(r)
 				}, function(error) {
+					console.log("error." + error);
+					then(null)
+				}) : $.promise && $.promise(function(resolve, reject){
+					v(resolve, reject)
+				}).then(function(r){
+					then(r)
+				}).catch(function(error){
 					console.log("error." + error);
 					then(null)
 				}) : then(v);
@@ -900,7 +907,13 @@
 				return key === undefined || hasOwn.call(obj, key);
 			},
 			extend: function(a, b) {
-				return Object.assign(a, b);
+				if (Object.assign) {
+					return Object.assign(a, b);
+				}else{
+					a = a || {};
+					for (var i in b) a[i] = b[i];
+					return a;
+				}
 			},
 			has: function(target, obj, filter) {
 				var hasIn = false;
@@ -1167,10 +1180,10 @@
 		createStyle: function(style) {
 			if (mod.isPlainObject(style)) {
 				for (let name in style) {
-					if (!Reflect.has(mod.Styles, name))
+					if (name in mod.Styles)
 						style[name] = mod.toStyle(style[name]);
 					else {
-						Reflect.deleteProperty(style, name);
+						(typeof Reflect != "undefined" && Reflect.deleteProperty ? Reflect.deleteProperty : Object.deleteProperty)(style, name);
 						style[name] = mod.Styles[name];
 					}
 				}
@@ -1193,7 +1206,7 @@
 			return data;
 		},
 		getStyle: function(name) {
-			return !Object.is(mod.Styles[name], undefined) && mod.Styles[name];
+			return typeof mod.Styles[name] != "undefined" && mod.Styles[name];
 		},
 		createDom: function( /*name, attrs, children, ...*/ ) {
 			return mod.createDom.apply(mod, arguments);

@@ -54,6 +54,7 @@
 			"path": "./",
 			"ignore": [
 				"ajax",
+				"callbacks",
 				"canvasdraw",
 				"video",
 				"animate"
