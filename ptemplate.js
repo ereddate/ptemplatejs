@@ -568,11 +568,11 @@
 				}, function(error) {
 					console.log("error." + error);
 					then(null)
-				}) : $.promise && $.promise(function(resolve, reject){
+				}) : $.promise && $.promise(function(resolve, reject) {
 					v(resolve, reject)
-				}).then(function(r){
+				}).then(function(r) {
 					then(r)
-				}).catch(function(error){
+				}).catch(function(error) {
 					console.log("error." + error);
 					then(null)
 				}) : then(v);
@@ -909,7 +909,7 @@
 			extend: function(a, b) {
 				if (Object.assign) {
 					return Object.assign(a, b);
-				}else{
+				} else {
 					a = a || {};
 					for (var i in b) a[i] = b[i];
 					return a;
@@ -1267,39 +1267,48 @@
 							var next = function(data) {
 								if (data.commit) {
 									data = data.get();
-								}!mod.templates[name] && that.createTemplate(name, {
-									parent: parent[0],
-									content: template[0].innerHTML,
-									data: data,
-									callback: callback,
-									reload: function() {
-										that.render(name, data, parent, callback);
-									}
-								}, true) || mod.extend(mod.templates[name], {
-									parent: parent[0],
-									data: data,
-									callback: callback,
-									reload: function() {
-										that.render(name, data, parent, callback);
-									}
-								});
-								mod.each(mod.templates[name].data, function(n, val) {
-									mod.createObject(mod.templates[name].data, n, val, function(a, b) {
-										mod.templates[name].reload();
-									})
-								});
-								var html = mod.tmpl(mod.templates[name].content, data || {});
-								parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
-									html: html
-								})) : parent[0].tagName.toLowerCase() == "body" ? parent[0]._append($.createDom("div", {
-									html: html
-								}).children[0]) : (parent[0].innerHTML = html);
-								mod.tmpl(parent[0], data);
-								parent[0]._query("img").forEach(function(e) {
-									mod.lazyload && e._attr("p-lazyload") && mod.lazyload(e);
-								});
-								data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
-							}
+								}
+								var then = function(data) {
+									!mod.templates[name] && that.createTemplate(name, {
+										parent: parent[0],
+										content: template[0].innerHTML,
+										data: data,
+										callback: callback,
+										reload: function() {
+											that.render(name, data, parent, callback);
+										}
+									}, true) || mod.extend(mod.templates[name], {
+										parent: parent[0],
+										data: data,
+										callback: callback,
+										reload: function() {
+											that.render(name, data, parent, callback);
+										}
+									});
+									mod.each(mod.templates[name].data, function(n, val) {
+										mod.createObject(mod.templates[name].data, n, val, function(a, b) {
+											mod.templates[name].reload();
+										})
+									});
+									var html = mod.tmpl(mod.templates[name].content, data || {});
+									parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
+										html: html
+									})) : parent[0].tagName.toLowerCase() == "body" ? parent[0]._append($.createDom("div", {
+										html: html
+									}).children[0]) : (parent[0].innerHTML = html);
+									mod.tmpl(parent[0], data);
+									parent[0]._query("img").forEach(function(e) {
+										mod.lazyload && e._attr("p-lazyload") && mod.lazyload(e);
+									});
+									data.handle && data.handle.componentDidMount ? data.handle.componentDidMount.call(data, function(args) {
+										data.created ? that.nextTick(args ? mod.extend(data, args) : data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+									}) : data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+								};
+								data.handle && data.handle.componentWillMount ? data.handle.componentWillMount.call(data, function(args) {
+									var result = args ? mod.extend(data, args) : data;
+									then(result);
+								}) : then(data);
+							};
 							mod.promise(data, next);
 						}
 					}
