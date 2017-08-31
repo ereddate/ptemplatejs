@@ -1,0 +1,102 @@
+<script>
+	var store = $.store("my-main", {}),
+		recommend_page = 1,
+		mysubs_page = 1,
+		type = signIn ? 1 : 2,
+		channel = q ? parseInt(q) : signIn ? 1 : 2,
+		name = signIn ? "mysubs_data" : "recommend_data",
+        page = signIn ? mysubs_page : recommend_page;
+
+	store.commit({
+		api: {
+			signin: "//reg.hexun.com/h5/login.aspx?gourl=",
+			signout: "//utility.tool.hexun.com/quit.aspx?gourl=",
+			/*teach_recommend: "//test.apicaidao.hexun.com/recommend/recommendbloglist/{{page}}/{{pagesize}}",*/
+			teach_recommend: "//apicaidao.hexun.com/recommend/article/{{page}}/{{pagesize}}?tnn&acc",
+			my_subs: "//apicaidao.hexun.com/article/follow/{{page}}/{{pagesize}}?tnn&acc",
+			teach_info: "//partner.px.hexun.com/api/partner/get_partnershow_info?partnerId={{id}}",
+			teach_article: "//apicaidao.hexun.com/article/{{teacherid}}/{{pagenum}}/{{pagesize}}",
+			isfollow: "//follow.zq.hexun.com/relation/isattention.do?uid={{usid}}&source=2",
+			followin: "//follow.zq.hexun.com/relation/add.do?uid={{usid}}&source=2",
+			followout: "//follow.zq.hexun.com/relation/cancel.do?uid={{usid}}&source=2",
+			banners: "//m.hexun.com/api/getMoreFocus"
+		}
+	}, "commit api list").commit({
+		state: {
+			apptype: app_type,
+			type:type,
+			usid:"",
+			homeurl:"#",
+			homelogourl: "#",
+			hometitle:"famousman",
+			channel: channel,
+			time: time,
+			recommenderr_code:0,
+			mysubserr_code:0,
+			isfollow: false,
+			noSigninMoreText: "登录查看更多名家观点",
+			signInMoreText: "点击查看更多观点",
+			loadingErrorMoreText: "拉取数据失败，请点击重试",
+			apiErrorMoreText: "网络问题，请点击重试",
+			lastMoreText: "已经到底了",
+			loadingTipDefaultText: "拉取数据中...",
+			followDialogTitle: "提示",
+			followDialogContent: "确定要取消关注吗？",
+			error_code: 0
+		}
+	}, "my-main init data").commit({
+		handle:{
+			reload_recommendlist: function(data){
+				$.render("my-recommendlist", {
+					recommend_data: data,
+					handle:{
+						componentWillMount: function(next){
+							$.update("my-main", {
+								recommend_data: data,
+								recommenderr_code: 0
+							});
+							next();
+						}
+					}
+				}, $.createDom("div", {}), function(elem) {
+					var a = $.query("#recommend_list")[0];
+					a && a._html('')._append(elem.children[0]);
+					$.router("/banners?id=banners");
+				});
+				$.router("/closeloading");
+				$.router("/refresh_watch");
+			},
+			reload_mysubslist: function(data){
+				$.render("my-subslist", {
+					handle:{
+						componentWillMount: function(next){
+							$.update("my-main", {
+								mysubs_data: $.extend([], data.list),
+								mysubserr_code: 0
+							});
+							next({
+								mysubs_data: $.extend([], data.list)
+							});
+						}
+					}
+				}, $.createDom("div", {}), function(elem) {
+					var a = $.query("#mysubs_list")[0];
+					a && a._html('')._append(elem.children[0]);
+				});
+				$.router("/closeloading");
+				$.router("/refresh_watch");
+			},
+			reload_banners: function(data, id){
+				$.render("my-scrollbanner", {
+					banners: data
+				}, $.query("#"+id), function(elem){
+					$.extend(set, set.scrollbanner(".scrollbanner", data.length));
+				});
+				$.router("/closeloading");
+			}
+		}
+	}, "router handle");
+
+	var api = store.get("api"),
+		url = signIn ? api.my_subs : api.teach_recommend;
+</script>

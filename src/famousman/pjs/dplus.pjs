@@ -1,0 +1,12 @@
+<script>
+	var a = $.query("head")[0];
+	[$.createDom("script", {
+		src:"//i2.hexun.com/2016/m/js/jquery.2.2.0.g.min.js?t="+(Math.random(100)+'').replace(/\./gim, '')
+	}), $.createDom("script", {
+		src:"//utrack.hexun.com/dp/hexun_uweb.js?t="+(Math.random(100)+'').replace(/\./gim, '')
+	}),$.createDom("script", {
+		src:"//utrack.hexun.com/dp/hexun_dplus_ver1.0.1.js?t="+(Math.random(100)+'').replace(/\./gim, '')
+	})].forEach(function(n){
+		a._append(n);
+	});
+</script>

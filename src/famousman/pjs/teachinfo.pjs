@@ -1,0 +1,94 @@
+<template p-template="my-teachinfo">
+	<div class="teachinfo">
+		<div class="teachinfo_main">
+			<div class="item">
+				<a href="#" p-router:href="/teach_info?usid={{partnerId}}&url={{studioUrl}}" class="teachheader">
+					<lazyload src="{{photo}}" class="loaded">
+						<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSJ3aGl0ZSI+CiAgPHBhdGggb3BhY2l0eT0iLjI1IiBkPSJNMTYgMCBBMTYgMTYgMCAwIDAgMTYgMzIgQTE2IDE2IDAgMCAwIDE2IDAgTTE2IDQgQTEyIDEyIDAgMCAxIDE2IDI4IEExMiAxMiAwIDAgMSAxNiA0Ii8+CiAgPHBhdGggZD0iTTE2IDAgQTE2IDE2IDAgMCAxIDMyIDE2IEwyOCAxNiBBMTIgMTIgMCAwIDAgMTYgNHoiPgogICAgPGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIGZyb209IjAgMTYgMTYiIHRvPSIzNjAgMTYgMTYiIGR1cj0iMC44cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+CiAgPC9wYXRoPgo8L3N2Zz4K" alt="{{truename}}" />
+					</lazyload>
+				</a>
+				<a href="#" p-router:href="/followin?usid={{partnerId}}&url={{studioUrl}}" class="follow" p-express:if="{{isfollow}} == false">+ 关注</a>
+				<a href="#" p-router:href="/followin_out?usid={{partnerId}}&url={{studioUrl}}" class="follow on" p-express:if="{{isfollow}} == true">已关注</a>
+			</div>
+			<div class="item info">
+				<h1><span>{{truename}}</span><a href="{{studioUrl}}" target="_blank"><i class="icon-house"></i>工作室</a></h1>
+				<p>{{intro | limitTo : 50}}...</p>
+			</div>
+		</div>
+	</div>
+</template>
+<style>
+	.teachinfo{
+		padding:0 0 0.3864rem 0;
+		.teachinfo_main{
+			padding:0.5796rem 0 0.7728rem 0;
+			background-color:rgb(255,255,255);
+			display:flex;
+			flex-flow:row;
+			.item{
+				width:3.4776rem;
+				text-align:center;
+				&:last-child{
+					width:75%;
+					text-align:left;
+					overflow:hidden;
+				}
+				a{
+					display:block;
+					text-decoration:none;
+					margin:0 auto;
+					&.teachheader{
+						display:block;
+						width:2.3183rem;
+						height:2.3183rem;
+						overflow:hidden;
+						border-radius:2.3183rem;
+						background-color:rgb(244,245,247);
+						img{
+							width:100%;
+						}
+					}
+					&.follow{
+						margin:0.2318rem auto 0 auto;
+						padding:0.2897rem;
+						font-size:0.4637rem;
+						width:1.9319rem;
+						background-color:rgb(213,60,62);
+						color:rgb(255,255,255);
+						border-radius:0.3864rem;
+						&.on{
+							background-color:rgb(102,102,102);
+						}
+					}
+				}
+				&.info{
+					font-size:0.5409rem;
+					color:rgb(102,102,102);
+					h1{
+						padding:0.1932rem 0 0.4250rem 0;
+						font-size:0.5795rem;
+						color:rgb(0,0,0);
+						display:flex;
+						flex-flow:row;
+						span{
+							width:80%;
+						}
+						a{
+							width:20%;
+							text-decoration:none;
+							color:rgb(102,102,102);
+							font-weight:400;
+							font-size:0.5409rem;
+							i{
+								margin-right:0.1932rem;
+							}
+						}
+					}
+					p{
+						line-height:0.8114rem;
+					}
+				}
+			}
+		}
+	}
+</style>

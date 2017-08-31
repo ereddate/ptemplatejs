@@ -1,0 +1,56 @@
+<template p-template="my-footer">
+	<div class="footer">
+		<div class="links">
+			<a href="//m.hexun.com/index.html" target="_blank" class="on">触屏版</a>
+			<i>|</i>
+			<a href="//www.hexun.com?from=mobile" target="_blank">PC版</a>
+			<i>|</i>
+			<a href="//3g.hexun.com" target="_blank">客户端</a>
+		</div>
+		<a href="//m.hexun.com/feedback.php" target="_blank" class="footerbutton">给和讯提意见</a>
+		<span>hexun.com {{time}}</span>
+	</div>
+</template>
+<style>
+	.footer{
+		background-color:rgb(213,60,62);
+		font-size:0.5795rem;
+		text-align:center;
+		color:rgb(255,255,255);
+		.links{
+			padding:0.4829rem 0;
+			a,i{
+				display:inline-block;
+			}
+			a{
+				padding:0.1932rem 0.3864rem;
+				color:rgb(255,255,255);
+				text-decoration:none;
+				&.on{
+					background-color:rgb(178,25,25);
+					border-radius:0.0966rem;
+				}
+			}
+			i{
+				padding:0 0.1932rem;
+				font-style: initial;
+				color:rgb(191,32,32);
+			}
+		}
+		.footerbutton{
+			display:block;
+			padding:0.1932rem 0.3864rem;
+			background-color:rgb(255,255,255);
+			color:rgb(0,0,20);
+			text-decoration:none;
+			width:6.8789rem;
+			border-radius:0.0966rem;
+			margin:0.1932rem auto;
+		}
+		span{
+			padding:0.3864rem 0;
+			display:block;
+			font-size:0.3477rem;
+		}
+	}
+</style>

@@ -1,0 +1,14 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta http-equiv="x-dns-prefetch-control" content="on">
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate, no-siteapp">
+<title>{{ title }}</title>
+<meta name="format-detection" content="telephone=no, address=no, email=no">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="{{title}}">
+<meta content="yes" name="apple-touch-fullscreen">
+{{ if iscss == 'true' }}
+<link rel="stylesheet" href="{{ path }}{{ projectname }}/css/{{ ver }}/{{ modulename }}.{{ ver }}.css?t={{ random }}">
+{{ end if }}
+<script src="{{ path }}{{ projectname }}/libs/{{ ver }}/ptemplatejs.{{ ver }}.js?t={{ random }}"></script>

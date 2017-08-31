@@ -1,0 +1,527 @@
+<script>
+	var timeout = null, current_teachid="", current_teachStudio= "",
+		refreshTimout = null;
+	$.router({
+		"/offline": function(e, args){
+			$.router("/closeloading");
+			$.router("/closexdialog");
+			$.set("my-main", {
+				error_code:500
+			});
+		},
+		"/mysubscript": function(e, args){
+			if (app_type == "web"){
+				location.href = location.href.split('?')[0] + "?channel="+1;
+			}else{
+				$.router("/mysubscript_fn");
+			}
+		},
+		"/mysubscript_fn": function(e, args){
+			$.router("/closexdialog");
+			if (signIn){
+				mysubs_page = 1;
+				channel = 1;
+				$.set("my-main", {
+					channel:channel,
+					mysubs_data:[],
+					error_code: 0
+				});
+				window.scrollTo(1,1);
+				$.router("/reload_mysubs?id=mysubs_list");
+			}else{
+				$.router("/recommend");
+			}
+		},
+		"/recommend": function(e, args){
+			if (app_type == "web"){
+				location.href = location.href.split('?')[0] + "?channel="+2;
+			}else{
+				$.router("/recommend_fn");
+			}
+		},
+		"/recommend_fn": function(e, args){
+			$.router("/closexdialog");
+			recommend_page = 1;
+			channel = 2;
+			$.set("my-main", {
+				channel:channel,
+				recommend_data:[],
+				error_code: 0
+			});
+			window.scrollTo(1,1);
+			$.router("/reload_recommend?id=recommend_list");
+		},
+		"/banners": function(e, args){
+			$.router("/loading");
+			getData(api.banners, {}, function(data){
+				var len = data.length;
+				for (var i =0;i<len;i++) data[i] = {
+					NewsID:data[i].NewsID,
+					NewsTitle: data[i].NewsTitle,
+					NewsPic: data[i].NewsPic,
+					Url: "//m.hexun.com/news/"+data[i].NewsTime+"/"+data[i].NewsID+".html",
+					index: (i+1),
+					length: len
+				};
+				store.commit({
+					banners: data
+				}, "recommend banners data");
+				store.get("handle")["reload_banners"](data, args.id);
+			}, function(err){
+				var data = store.get("banners");
+				if (data){
+					store.get("handle")["reload_banners"](data, args.id);
+				}else{
+					$.router("/closeloading");
+				}
+			});
+		},
+		"/prevscrollbanner": function(e, args){
+			set.left && set.left();
+		},
+		"/nextscrollbanner": function(e, args){
+			set.right && set.right();
+		},
+		"/signin": function(e, args){
+			location.href = api.signin+encodeURIComponent(location.href);
+		},
+		"/signout": function(e, args){
+			location.href = api.signout+encodeURIComponent(location.href);
+		},
+		"/gotop": function(e, args){
+			window.scrollTo(1,1);
+		},
+		"/teach_info": function(e, args){
+			if (app_type == "web"){
+				location.href = location.href.split('?')[0] + "?channel="+3+"&id="+(args && args.usid || current_teachid)+"&url="+(args && args.url || current_teachStudio);
+			}else{
+				$.router("/teach_info_fn?usid="+(args && args.usid || current_teachid)+"&url="+(args && args.url || current_teachStudio));
+			}
+		},
+		"/teach_info_fn": function(e, args){
+			$.router("/closexdialog");
+			current_teachid = args && args.usid || current_teachid;
+			current_teachStudio = args && args.url || current_teachStudio;
+			channel = 3;
+			$.update("my-main", {
+				channel: 3,
+				teachid: current_teachid
+			});
+			$.router("/getteachinfo?usid="+current_teachid+"&id=teachinfo&url="+current_teachStudio);
+			$.router("/getteacharticle?usid="+current_teachid+"&id=teacharticle");
+			window.scrollTo(1,1);
+		},
+		"/getmore_recommend": function(e, args){
+			$.query(".xdialog")[0] && (refreshTimout && clearTimeout(refreshTimout), $.router("/closexdialog"));
+			!(args && args.id) && (recommend_page+=1);
+			var page = args && args.page || recommend_page;
+			$.router("/loading");
+			getData(api.teach_recommend, {
+				page: page,
+				pagesize: 20
+			}, function(data) {
+				$.render("my-recommendlist", {
+					handle:{
+						componentWillMount: function(next){
+							store.commit({
+								recommend:{
+									[page]: data
+								}
+							}, "commit recommend page"+page+" data");
+							next({
+								recommend_data: data
+							});
+						}
+					}
+				}, $.createDom("div", {}), function(elem) {
+					if (args && args.id) {
+						var a = $.query("#" + args.id)[0];
+						a && a._html('')._append(elem.children[0]);
+						$.query(".recommend_more")[0]._off("click")._attr({
+							href: signIn ? "/getmore_recommend" : "/signin"
+						})._html("<i class='icon-down_arrow'></i>" + (signIn ? store.get("state").signInMoreText : store.get("state").noSigninMoreText))._removeClass("last")._on("click", signIn ? function(e) {
+							e.preventDefault();
+							$.router("/getmore_recommend");
+						} : function(e) {
+							e.preventDefault();
+							$.router("/signin");
+						});
+						recommend_page = 1;
+					} else {
+						var a = $.query(".main_recommend")[0];
+						a && [].slice.call(a.children)._eq(1)._append(elem.children[0]);
+					}
+					if (data.length>=20){
+						signIn && $.query(".recommend_more")[0]._html("<i class='icon-down_arrow'></i>"+store.get("state").signInMoreText)._removeClass("error");
+					}else{
+						$.query(".recommend_more")[0]._off("click")._attr({
+							href: "javascript:;"
+						})._html(store.get("state").lastMoreText)._addClass("last");
+					}
+					$.router("/closeloading");
+					$.router("/refresh_watch");
+				});
+			}, function(error) {
+				!(args && args.id) && (recommend_page-=1);
+				if (error === 10005) {
+					$.query(".recommend_more")[0]._off("click")._attr({
+						href: "javascript:;"
+					})._html(store.get("state").lastMoreText)._addClass("last");
+				}else{
+					$.query(".recommend_more")[0]._html("<i class='icon-refresh'></i>"+store.get("state").apiErrorMoreText)._addClass("error");
+				}
+				$.router("/closeloading");
+			});
+		},
+		"/reload_recommend": function(e, args){
+			$.router("/loading");
+			var page =  1;
+			getData(api.teach_recommend, {
+				page: page,
+				pagesize: 20
+			}, function(data) {
+				store.commit({
+					recommend:{
+						[page]: data
+					}
+				}, "commit recommend page"+page+" data");
+				store.get("handle")["reload_recommendlist"](data);
+			}, function(error) {
+				console.log(error);
+				if (error === 10005) {
+					$.query(".recommend_more")[0]._off("click")._attr({
+						href: "javascript:;"
+					})._html(store.get("state").lastMoreText)._addClass("last");
+				} else {
+					var data = store.get("recommend");
+					data && data[1] ? store.get("handle")["reload_recommendlist"](data[1]) : $.update("my-main", {
+						recommend_data: [],
+						recommenderr_code: /timeout|unknown/.test(error) ? 20008 : error
+					});
+				}
+				$.router("/closeloading");
+			});
+		},
+		"/getmore_mysubs": function(e, args){
+			if (isSignIn() == false){
+				$.router("/signin");
+				return;
+			}
+			$.query(".xdialog")[0] && (refreshTimout && clearTimeout(refreshTimout), $.router("/closexdialog"));
+			!(args && args.id) && (mysubs_page+=1);
+			$.router("/loading");
+			var page = args && args.page || mysubs_page;
+			getData(api.my_subs, {
+				page: page,
+				pagesize: 20
+			}, function(data) {
+				$.render("my-subslist", {
+					handle:{
+						componentWillMount: function(next){
+							store.commit({
+								mysubs:{
+									[page]: data
+								}
+							}, "commit mysubs page"+page+" data");
+							next({
+								mysubs_data: $.extend([], data.list)
+							});
+						}
+					}
+				}, $.createDom("div", {}), function(elem) {
+					if (args && args.id) {
+						var a = $.query("#" + args.id)[0];
+						a && a._html('')._append(elem.children[0]);
+						$.query(".mysubs_more")[0]._off("click")._attr({
+							href: signIn ? "/getmore_mysubs" : "/signin"
+						})._html("<i class='icon-down_arrow'></i>" + (signIn ? store.get("state").signInMoreText : store.get("state").noSigninMoreText))._removeClass("last")._on("click", signIn ? function(e) {
+							e.preventDefault();
+							$.router("/getmore_mysubs");
+						} : function(e) {
+							e.preventDefault();
+							$.router("/signin");
+						});
+						mysubs_page = 1;
+					} else {
+						var a = $.query(".main_mysubs")[0];
+						a && a._first()._append(elem.children[0]);
+					}
+					if (data.length>=20){
+						signIn && $.query(".mysubs_more")[0]._html("<i class='icon-down_arrow'></i>"+store.get("state").signInMoreText)._removeClass("error");
+					}else{
+						$.query(".mysubs_more")[0]._off("click")._attr({
+							href: "javascript:;"
+						})._html(store.get("state").lastMoreText)._addClass("last");
+					}
+					$.router("/closeloading");
+					$.router("/refresh_watch");
+				});
+			}, function(error) {
+				console.log(error);
+				!(args && args.id) && (mysubs_page-=1);
+				if (error === 10005) {
+					$.query(".mysubs_more")[0]._off("click")._attr({
+						href: "javascript:;"
+					})._html(store.get("state").lastMoreText)._addClass("last");
+				}else{
+					$.query(".mysubs_more")[0]._html("<i class='icon-refresh'></i>"+store.get("state").apiErrorMoreText)._addClass("error");
+				}
+				$.router("/closeloading");
+			});
+		},
+		"/reload_mysubs": function(e, args){
+			if (isSignIn() == false){
+				$.router("/signin");
+				return;
+			}
+			$.router("/loading");
+			var page = 1;
+			getData(api.my_subs, {
+				page: page,
+				pagesize: 20
+			}, function(data) {
+				store.commit({
+					mysubs:{
+						[page]: data
+					}
+				}, "commit mysubs page"+page+" data");
+				store.get("handle")["reload_mysubslist"](data);
+			}, function(error) {
+				console.log(error);
+				if (error === 10005){
+					var a = $.query("#mysubs_list")[0];
+					a && a._html('');
+					$.update("my-main", {
+						mysubs_data: [],
+						mysubserr_code: error
+					});
+				}else{
+					var data = store.get("mysubs");
+					data && data[1] ? store.get("handle")["reload_mysubslist"](data[1]) : $.update("my-main", {
+						mysubs_data: [],
+						mysubserr_code: /timeout|unknown/.test(error) ? 20008 : error
+					});
+				}
+				$.router("/closeloading");
+			});
+		},
+		"/loading": function(e, args){
+			$.query("#loading").forEach(function(n){
+				n._remove();
+			});
+			$.render("my-loading", {
+				content: args && args.content || store.get("state").loadingTipDefaultText
+			}, $.query("body"));
+		},
+		"/closeloading": function(e, args){
+			$.query("#loading")[0] && $.query("#loading")[0]._toggleClass("show hide");
+			timeout && clearTimeout(timeout);
+			timeout = setTimeout(function() {
+				$.query("#loading").forEach(function(n){
+					n._remove();
+				});
+			}, 500);
+		},
+		"/pulling": function(e, args){
+			$.query("#pulling").forEach(function(n){
+				n._remove();
+			});
+			$.render("my-pulling", {}, $.query("body"));
+		},
+		"/closepulling": function(e, args){
+			$.query("#pulling")[0] && $.query("#pulling")[0]._toggleClass("show hide");
+			timeout && clearTimeout(timeout);
+			timeout = setTimeout(function() {
+				$.query("#pulling").forEach(function(n){
+					n._remove();
+				});
+			}, 500);
+		},
+		"/getteachinfo": function(e, args){
+			if (args && typeof args.usid != "undefined" && args.usid && args.usid != "null" && args.usid != "" && args.usid.length && args.usid.length >= 8){
+				var then = function(bool){
+					getData(api.teach_info, {
+						id: args.usid
+					}, function(result) {
+						if (result.resultKey == "ok") {
+							$.render("my-teachinfo", {
+								handle:{
+									componentWillMount: function(next){
+										store.commit({
+											[args.usid]: {
+												data: result,
+												isfollow: bool
+											}
+										}, "commit teachinfo id:"+args.usid+" data");
+										var data = result.data.data;
+										next($.extend($.extend({}, data.Partner), {
+											photo: data.photo,
+											isfollow: bool,
+											signIn: signIn,
+											studioUrl: "//caidao.hexun.com/"+args.usid+"/"
+										}));
+									}
+								}
+							}, $.query("#" + args.id));
+						} else {
+							$.update("my-main", {
+								error_code: 404
+							});
+						}
+						window.scrollTo(1,1);
+						$.router("/closeloading");
+					}, function(err) {
+						$.update("my-main", {
+							error_code: 404
+						});
+						$.router("/closeloading");
+					});
+				};
+				$.router("/loading");
+				getData(api.isfollow, {
+					usid: args.usid
+				}, function(data){
+					if (data.statecode == "1"){
+						then(data.result);
+					}else{
+						then(false);
+					}
+				}, function(err){
+					then(false);
+				});
+			}else{
+				$.update("my-main", {
+					error_code: 404
+				});
+			}
+		},
+		"/getteacharticle": function(e, args){
+			if (args && typeof args.usid != "undefined" && args.usid && args.usid != "null" && args.usid != "" && args.usid.length && args.usid.length >= 8){
+				$.router("/loading");
+				getData(api.teach_article, {
+					teacherid: args.usid,
+					pagenum:1,
+					pagesize: 5
+				}, function(data){
+					if (data.list.length>0){
+						$.render("my-teacharticle", {
+							handle:{
+								componentWillMount: function(next){
+									store.commit({
+										[args.usid]: {
+											list: data
+										}
+									}, "commit teacharticle id:"+args.usid+" data");
+									var list = [];
+									$.each(data.list, function(i, d){
+										list.push($.extend({}, !d.articleUrl ? $.extend(d, {
+											articleUrl: "//caidao.hexun.com/"+d.teacherId+"/article"+d.id+".html"
+										}) : d));
+									});
+									next({
+										teacharticle: list
+									});
+								}
+							}
+						}, $.query("#"+args.id));
+					}else{
+
+					}
+					$.router("/closeloading");
+				}, function(err){
+					$.router("/closeloading");
+				});
+			}
+		},
+		"/followin": function(e, args){
+			if (isSignIn() == false){
+				$.router("/signin");
+				return;
+			}
+			$.router("/loading");
+			getData(api.followin, {
+				usid: args.usid
+			}, function(data){
+				if (data.statecode == "1"){
+					data.result == "1" && $.router("/getteachinfo?usid="+args.usid+"&id=teachinfo&url="+args.url);
+				}else{
+
+				}
+				$.router("/closeloading");
+			}, function(err){
+				$.router("/closeloading");
+			});
+		},
+		"/followin_out": function(e, args){
+			$.router("/opendialog?handle=followout&usid="+args.usid+"&url="+args.url+"&title="+store.get("state").followDialogTitle+"&msg="+store.get("state").followDialogContent);
+		},
+		"/followout": function(e, args){
+			if (isSignIn() == false){
+				$.router("/signin");
+				return;
+			}
+			$.router("/loading");
+			getData(api.followout, {
+				usid: args.usid
+			}, function(data){
+				if (data.statecode == "1"){
+					data.result == "1" && $.router("/getteachinfo?usid="+args.usid+"&id=teachinfo&url="+args.url);
+				}else{
+
+				}
+				$.router("/closeloading");
+			}, function(err){
+				$.router("/closeloading");
+			});
+		},
+		"/opendialog": function(e, args){
+			$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
+			$.render("my-dialog",{
+				type: "alert",
+				title: args.title,
+				content: args.msg,
+				handle:{
+					handleEnterClick: function(e){
+						$.router("/closexdialog");
+						args && args.handle && $.router("/"+args.handle+"?usid="+$.__mod__.jsonToUrlString(args, "&"));
+					}
+				}
+			}, $.createDom("div", {}), function(elem){
+				var p = elem.children[0];
+				$.query("body")[0]._append(p);
+				p._query(".alert_main")[0]._removeClass("hide")._addClass('show');
+			});
+		},
+		"/closexdialog": function(e, args){
+			refreshTimout && clearTimeout(refreshTimout);
+			$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
+		},
+		"/opentoptip": function(e, args){
+			$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
+			$.render("my-dialog",{
+				type: "toptip",
+				content: args.msg,
+				handle: "/closetoptip?"+$.__mod__.jsonToUrlString(args, "&")
+			}, $.createDom("div", {}), function(elem){
+				var p = elem.children[0];
+				$.query("body")[0]._append(p);
+				p._query(".toptip_main")[0]._removeClass("hide")._addClass('show');
+			});
+		},
+		"/canceltoptip": function(e, args){
+			$.router("/closexdialog");
+			$.router("/refresh_watch");
+		},
+		"/closetoptip": function(e, args){
+			$.router("/closexdialog");
+			args && args.handle && $.router("/"+args.handle+"?usid="+$.__mod__.jsonToUrlString(args, "&"));
+			window.scrollTo(1,1);
+		},
+		"/refresh_watch": function(e, args){
+			refreshTimout && clearTimeout(refreshTimout);
+			refreshTimout = setTimeout(function(){
+				$.router("/opentoptip?msg=您有未读信息，点击查看&handle="+(channel === 1 ? "reload_mysubs" : "reload_recommend"));
+			}, 30000);
+		}
+	});
+</script>

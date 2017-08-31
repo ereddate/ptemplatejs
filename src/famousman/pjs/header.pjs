@@ -1,0 +1,97 @@
+<template p-template="my-header">
+	<div class="header">
+		<div class="logo">
+			<a href="#" p-router:href="{{type == 2 ? '/recommend' : '/mysubscript'}}" class="logo_header" style="{{channel > 2 ? 'display:none' : 'display:block'}}">hexun.com</a>
+			<a href="#" p-router:href="{{type == 2 ? '/recommend' : '/mysubscript'}}" class="logo_header_goback" style="{{channel < 3 ? 'display:none' : 'display:block'}}"><i class="icon-uniE90B"></i></a>
+		</div>
+		<div class="channel {{type === 1 ? 'login' : ''}} {{channel < 3 ? '' : 'teachhome'}}">
+			<a href="#" p-router:href="/mysubscript" p-express:if="{{type}} === 1" class="mysubs {{channel === 1 ? 'on' : 'off'}}" style="{{channel > 2 ? 'display:none' : 'display:inline-block'}}">我的订阅</a>
+			<i p-express:if="{{type}} === 1" class="line" style="{{channel > 2 ? 'display:none' : 'display:inline-block'}}">/</i>
+			<a href="#" p-router:href="/recommend" class="recommend {{channel === 2 ? 'on' : 'off'}}" style="{{channel > 2 ? 'display:none' : 'display:inline-block'}}">名家推荐</a>
+			<a href="#" p-router:href="/teach_info" class="teachheader" style="{{channel < 3 ? 'display:none' : 'display:block'}}">名家主页</a>
+		</div>
+		<div class="user">
+			<a href="#" p-router:href="/signin" p-express:if="{{type}} === 2" style="{{channel > 2 ? 'display:none' : 'display:inline-block'}}"><i class="icon-me"></i></a>
+			<a href="#" p-router:href="/signout?usid={{usid}}" p-express:if="{{type}} === 1" style="{{channel > 2 ? 'display:none' : 'display:inline-block'}}"><i class="icon-out"></i></a>
+		</div>
+	</div>
+</template>
+<style>
+	.header{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		z-index:99999;
+		display:flex;
+		flex-flow:row;
+		height:2.0093rem;
+		background-color:rgb(213,60,62);
+		font-size:0.6955rem;
+		line-height:2.0093rem;
+		text-align:center;
+		a{
+			display:inline-block;
+			text-decoration:none;
+		}
+		i{
+			font-style: initial;
+		}
+		.logo{
+			width:2.3183rem;
+			.logo_header{
+				background:url("src/famousman/img/logo.png _base64") no-repeat top left;
+				background-size:contain;
+				text-indent:-99999px;
+				width:2.3184rem;
+				height:2.0093rem;
+				overflow:hidden;
+			}
+			.logo_header_goback{
+				width:2.0093rem;
+				height:2.0093rem;
+				overflow:hidden;
+				color:rgb(255,255,255);
+				i{
+					line-height:2.0093rem;
+				}
+			}
+			img{
+				width:50%;
+				height:100%;
+				&.loaded{
+					width:100%;
+				}
+			}
+		}
+		.channel{
+			width:80%;
+			&.login{
+				.line{
+					padding:0 0.1932rem;
+					color:rgb(191,32,32);
+				}
+			}
+			&.teachhome{
+				.teachheader{
+					color:rgb(255,255,255);
+				}
+			}
+			.on{
+				color:rgb(255,255,255);
+			}
+			.off{
+				color:rgb(255,142,142);
+			}
+		}
+		.user{
+			width:2.0093rem;
+			a{
+				color:rgb(255,255,255);
+				i{
+					line-height:2.0093rem;
+				}
+			}
+		}
+	}
+</style>

@@ -1,0 +1,111 @@
+<template p-template="my-dialog">
+	<div class="xdialog">
+		<div class="alert" p-express:if="'{{type}}' == 'alert'">
+			<article class="alert_main hide">
+				<!--header>
+					<h1>{{title}}</h1>
+				</header-->
+				<div class="content">
+					{{content}}
+				</div>
+				<div class="bottom">
+					<a href="#" p-handle:click.prevent="handleEnterClick" class="enter">确定</a><a href="#" p-router:href="/closexdialog" class="close">暂时不</a>
+				</div>
+			</article>
+		</div>
+		<div class="toptip" p-express:if="'{{type}}' == 'toptip'">
+			<article class="toptip_main hide">
+				<a href="#" p-router:href="{{handle}}" class="content"><i class="icon-refresh"></i>{{content}}</a><a href="#" p-router:href="/canceltoptip"><i class="icon--7"></i></a>
+			</article>
+		</div>
+	</div>
+</template>
+<style>
+	.alert{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index:999999;
+		text-align:center;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
+		.alert_main{
+			&.show{
+				animation: scaleUpCenter .5s ease both;
+			}
+			&.hide{
+				animation: scaleDownCenter .5s ease both;
+			}
+			height:4.8686rem;
+			width:10.4328rem;
+			overflow:hidden;
+			display:block;
+			align-self: auto;
+			background-color: rgb(255,255,255);
+			color: rgb(0,0,0);
+			font-size:0.5795rem;
+			border-radius: 0.3864rem;
+			.content{
+				line-height:3.2457rem;
+				font-weight:700;
+			}
+			.bottom{
+				display: flex;
+				flex-flow: row;
+				border-top:0.0386rem solid rgb(204,204,204);
+				a{
+					text-decoration:none;
+					display:inline-block;
+					width:50%;
+					line-height:1.6228rem;
+					&.close{
+						border-left:0.0386rem solid rgb(204,204,204);
+						color:rgb(213,60,62);
+					}
+					&.enter{
+						color:rgb(213,60,62);
+					}
+				}
+			}
+		}
+	}
+	.toptip{
+		.toptip_main{
+			display:flex;
+			flex-flow: row;
+			position:fixed;
+			top:2.0093rem;
+			left:0;
+			right:0;
+			&.show{
+				animation: moveFromTop .5s ease both;
+			}
+			&.hide{
+				animation: moveToTop .5s ease both;
+			}
+			background-color:rgb(135,206,250);
+			font-size:0.4637rem;
+			a{
+				text-decoration:none;
+				display:block;
+				padding:0.3864rem 0;
+				color:rgb(0,0,128);
+				text-align:center;
+				width:95%;
+				i{
+					margin-right:0.1932rem;
+				}
+				&:last-child{
+					width:5%;
+				}
+			}
+		}
+	}
+</style>

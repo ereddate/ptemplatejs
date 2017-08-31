@@ -1,0 +1,307 @@
+<template p-template="my-main">
+	<div class="page" p-express:if="{{error_code}} < 400">
+		<my-header p-binddata="this"></my-header>
+		<div class="main clearfix">
+			<div class="main_mysubs" p-express:if="{{channel}} === 1 && {{type}} === 1" style="{{mysubserr_code === 10005 ? 'background-color:#fff' : ''}}" data-a="{{mysubserr_code}}">
+				<div id="mysubs_list" style="{{mysubserr_code != 10005 ? 'display:block' : 'display:none'}}">
+					<ul class="module list">
+						<li><article class="item"><header><h1><a href="javascript:;"></a></h1><div><h2><a href="javascript:;" class="module_usname"></a></h2><span class="module_time"></span></div></header><div class="item_main"><h3 class="module_title"></h3><p class="module_content"></p></div></article></li>
+						<li><article class="item"><header><h1><a href="javascript:;"></a></h1><div><h2><a href="javascript:;" class="module_usname"></a></h2><span class="module_time"></span></div></header><div class="item_main"><h3 class="module_title"></h3><p class="module_content"></p></div></article></li>
+					</ul>
+				</div>
+				<a href="#" p-router:href="/signin" class="mysubs_more" style="{{mysubs_data && mysubs_data.length >= 20 ? 'display:block' : 'display:none'}}" p-express:if="{{type}} == 2"><i class="icon-down_arrow"></i>{{noSigninMoreText}}</a>
+				<a href="#" p-router:href="/getmore_mysubs" class="mysubs_more" style="{{mysubs_data && mysubs_data.length >= 20 ? 'display:block' : 'display:none'}}" p-express:if="{{type}} == 1"><i class="icon-down_arrow"></i>{{signInMoreText}}</a>
+				<a href="#" p-router:href="/reload_mysubs?id=mysubs_list" class="mysubs_more error" style="{{mysubserr_code != 10005 && mysubserr_code > 0 ? 'display:block' : 'display:none'}}" p-express:if="{{type}} == 1"><i class="icon-refresh"></i>{{loadingErrorMoreText}}</a>
+				<a href="javascript:;" class="mysubs_more last" style="{{mysubs_data && mysubs_data.length < 20 && mysubs_data.length > 0 ? 'display:block' : 'display:none'}}" p-express:if="{{type}} == 1"><i></i>{{lastMoreText}}</a>
+				<a href="#" p-router:href="/recommend?type={{type}}" class="nodata" style="{{mysubserr_code === 10005 ? 'display:block' : 'display:none'}}"></a>
+			</div>
+			<div class="main_recommend" p-express:if="{{channel}} === 2">
+				<div id="banners">
+				</div>
+				<div id="recommend_list">
+					<ul class="module list">
+						<li><article class="item"><header><h1><a href="javascript:;"></a></h1><div><h2><a href="javascript:;" class="module_usname"></a></h2><span class="module_time"></span></div></header><div class="item_main"><h3 class="module_title"></h3><p class="module_content"></p></div></article></li>
+						<li><article class="item"><header><h1><a href="javascript:;"></a></h1><div><h2><a href="javascript:;" class="module_usname"></a></h2><span class="module_time"></span></div></header><div class="item_main"><h3 class="module_title"></h3><p class="module_content"></p></div></article></li>
+					</ul>
+				</div>
+				<a href="#" p-router:href="/signin" class="recommend_more" style="{{recommend_data && recommend_data.length >= 20 ? 'display:block' : 'display:none'}}" p-express:if="{{type}} == 2"><i class="icon-down_arrow"></i>{{noSigninMoreText}}</a>
+				<a href="#" p-router:href="/getmore_recommend" class="recommend_more" style="{{recommend_data && recommend_data.length >= 20 ? 'display:block' : 'display:none'}}" p-express:if="{{type}} == 1"><i class="icon-down_arrow"></i>{{signInMoreText}}</a>
+				<a href="javascript:;" class="recommend_more last" style="{{recommend_data && recommend_data.length < 20 && recommend_data.length > 0 ? 'display:block' : 'display:none'}}" p-express:if="{{type}} == 1"><i></i>{{lastMoreText}}</a>
+				<a href="#" p-router:href="/reload_recommend?id=recommend_list" class="recommend_more error" style="{{recommenderr_code != 10005 && recommenderr_code > 0 ? 'display:block' : 'display:none'}}"><i class="icon-refresh"></i>{{loadingErrorMoreText}}</a>
+			</div>
+			<div class="main_teachhome" p-express:if="{{channel}} === 3">
+				<div id="teachinfo"></div>
+				<div class="teacharticle_list">
+					<h2><i class="icon-view"></i>他的观点</h2>
+					<div id="teacharticle"></div>
+				</div>
+			</div>
+		</div>
+		<my-footer p-binddata="this"></my-footer>
+	</div>
+	<div class="errpage" p-express:if="{{error_code}} > 400">
+		<div class="main clearfix">
+			<span>{{error_code === 404 ? '很抱歉，您所浏览的页面不存在！' : error_code === 500 ? '您网络已经离线，请连接网络...' : '未知错误'}}</span>
+			<a href="#" p-router:href="{{type === 2 ? '/recommend' : '/mysubscript'}}" class="returnindex">{{error_code === 404 ? '返回首页' : error_code === 500 ? '点击重试' : '返回首页'}}</a>
+		</div>
+	</div>
+</template>
+<script>
+	import "recommendlist mysubslist teachinfo teacharcitle";
+
+	callbacks.add(function(next){
+		$.render("my-gotop", {}, $.createDom("div", {}), function(elem){
+			$.query("body")[0]._append(elem.children[0]);
+		});
+		$.query("body")[0]._on("online", function(){
+			$.router(channel === 3 ? "/teach_info_fn?usid="+teachid+"&url="+teachurl : channel === 1 ? "/mysubscript_fn" : "/recommend_fn");
+		})._on("offline", function(){
+			$.router("/offline");
+		});
+		$.render("my-main", $.extend(store.get("state"), {
+			"recommend_data": [],
+			"mysubs_data": [],
+			"error_code": 0
+		}), $.query("#app"));
+		$.router(channel === 3 ? "/teach_info_fn?usid="+teachid+"&url="+teachurl : channel === 1 ? "/mysubscript_fn" : "/recommend_fn");
+		next();
+	}).done();
+</script>
+<style>
+	.page{
+		.main{
+			margin:2.0093rem 0 0;
+			min-height:25.7728rem;
+			.main_recommend{
+				background-color:rgb(244,245,247);
+				ul{
+					&.show{
+						animation: moveFromRight .5s ease both;
+					}
+					&.list{
+						li{
+							background-color:rgb(255,255,255);
+							margin:0 0 0.3864rem 0;
+							padding:0.5795rem;
+							article{
+								&.item{
+									font-size:0.5795rem;
+									header{
+										display:flex;
+										flex-flow:row;
+										margin:0 0 0.5795rem 0;
+										h1{
+											width:2.7434rem;
+											a{
+												display:block;
+												width:1.5842rem;
+												height:1.5842rem;
+												overflow:hidden;
+												border-radius:1.5862rem;
+												background-color:rgb(244,245,247);
+												img{
+													width:100%;
+												}
+											}
+										}
+										div{
+											width:95%;
+											h2{
+												font-weight:400;
+												font-size:0.5795rem;
+											}
+											p{
+												font-size:0.3477rem;
+												color:rgb(102,102,102);
+												display:flex;
+												flex-flow:row;
+												span{
+													width:50%;
+													&:last-child{
+														text-align:right;
+													}
+												}
+											}
+											a{
+												text-decoration:none;
+												color:rgb(0,0,0);
+											}
+											.v{
+												background:url("src/famousman/img/vip.png _base64") no-repeat top left;
+												width:0.6955rem;
+												height:0.5795rem;
+												overflow:hidden;
+												background-size:contain;
+												display:inline-block;
+												margin-left:0.1932rem;
+											}
+											.comm{
+												margin-left:0.1932rem;
+											}
+										}
+									}
+									.item_main{
+										h3{
+											font-size:0.6955rem;
+										}
+										p{
+											font-size:0.5409rem;
+											line-height:0.8114rem;
+											margin:0.1932rem 0 0;
+											a{
+												display:inline-block;
+												font-size:0.5409rem;
+												line-height:0.8114rem;
+												text-decoration:none;
+												color:rgb(218,60,60);
+												margin-left:0.1932rem;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				.recommend_more{
+					margin:0 auto;
+					text-align:center;
+					text-decoration:none;
+					background-color:rgb(255,255,255);
+					font-size:0.5795rem;
+					display:block;
+					padding:0.7728rem 0;
+					color:rgb(75,116,169);
+					i{
+						margin-right:0.3091rem;
+					}
+					&.last{
+						color:rgb(204,204,204);
+						background-color:rgb(244,245,247);
+					}
+					&.error{
+						color:rgb(0,0,128);
+						background-color:rgb(135,206,250);
+					}
+				}
+			}
+			.main_mysubs{
+				.main_recommend;
+				background-color:rgb(244,245,247);
+				.nodata{
+					background: url("src/famousman/img/havealook.png _base64") no-repeat center center;
+					background-size: contain;
+					margin:3.4775rem 2.3184rem 0 2.3184rem;
+					padding:2.0093rem 0 0;
+					height:9.0417rem;
+					text-align:center;
+					a{
+						margin:9.0147rem 0 0;
+						display:block;
+						text-decoration:none;
+						border:0.0386rem solid rgb(213,60,62);
+						color:rgb(213,60,62);
+						border-radius:0.0966rem;
+						padding:0.3864rem 0;
+						font-size:0.6955rem;
+					}
+				}
+				.mysubs_more{
+					margin:0 auto;
+					text-align:center;
+					text-decoration:none;
+					background-color:rgb(255,255,255);
+					font-size:0.5795rem;
+					display:block;
+					padding:0.7728rem 0;
+					color:rgb(75,116,169);
+					i{
+						margin-right:0.3091rem;
+					}
+					&.last{
+						color:rgb(204,204,204);
+						background-color:rgb(244,245,247);
+					}
+					&.error{
+						color:rgb(0,0,128);
+						background-color:rgb(135,206,250);
+					}
+				}
+			}
+			.main_teachhome{
+				background-color:rgb(244,245,247);
+				font-size:0.5409rem;
+				.teacharticle_list{
+					background-color:rgb(255,255,255);
+					h2{
+						line-height:1.5456rem;
+						padding-left:0.5795rem;
+						font-size:0.5409rem;
+						color:rgb(0,0,0);
+						border-bottom:0.0386rem solid rgb(244,245,247);
+						i{
+							margin-right:0.1932rem;
+						}
+					}
+				}
+			}
+			.module{
+				.module_usname{
+					width:1.9319rem;
+					height:0.7728rem;
+					background-color:rgb(244,245,247);
+					display:block;
+				}
+				.module_time{
+					width:4.6368rem;
+					height:0.7728rem;
+					background-color:rgb(244,245,247);
+					display:block;
+				}
+				.module_title{
+					width:100%;
+					height:0.9273rem;
+					background-color:rgb(244,245,247);
+					display:block;
+				}
+				.module_content{
+					width:100%;
+					height:2.3956rem;
+					background-color:rgb(244,245,247);
+					display:block;
+				}
+			}
+		}
+	}
+	.errpage{
+		text-align:center;
+		.main{
+			background:url(src/famousman/img/quote404.png _base64) no-repeat top left;
+			background-size:contain;
+			width:50%;
+			height:20.2472rem;
+			margin:40% auto 0 auto;
+			font-size:0.4636rem;
+			span{
+				display:block;
+				margin:140% auto 0 auto;
+				color:rgb(97,114,155);
+			}
+			a{
+				text-decoration:none;
+				&.returnindex{
+					color: rgb(235,99,100);
+					font-size: 0.5795rem;
+					width: 3.8639rem;
+					height: 1.1592rem;
+					line-height: 1.1592rem;
+					text-align: center;
+					border: 1px solid rgb(212,211,211);
+					display: block;
+					border-radius: 0.0965rem;
+					margin: 0.3864rem auto 0 auto;
+				}
+			}
+		}
+	}
+</style>

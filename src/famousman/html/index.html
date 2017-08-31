@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		{{ include("./src/famousman/html/modules/head.html", {
+			"title": "ptemplatejs demo",
+			"ver": "0.0.1",
+			"projectname": "famousman",
+			"modulename": "app",
+			"iscss": "true",
+			"random": "javascript:(Math.random(100)+'').replace(/\\./gim, '')",
+			"path": "//192.168.10.47/m/ptemplatejs/dist/"
+		}) }}
+		<style>
+			body { background: #fff; font-family: 微软雅黑; }
+			body, ul, p, header, h1, h2, h3, li, nav, ol { list-style: none; padding: 0; margin: 0; }
+			.clearfix { clear: both; display: block; }
+			.system_tip { display: none; position:fixed; top:0; left:0; right:0; text-align:center; font-size:0.5795rem; background-color:rgb(213,60,62); color:rgb(255,255,255);padding:1.1591rem;}
+			.active { display:block; }
+		</style>
+	</head>
+	<body>
+		<div id="systip" class="system_tip">您的浏览器版本太低，请更换chrome/safari。</div>
+		<div id="app"></div>
+		{{ include("./src/famousman/html/modules/footer.html", {
+			"ver": "0.0.1",
+			"projectname": "famousman",
+			"modulename": "app",
+			"random": "javascript:(Math.random(100)+'').replace(/\\./gim, '')",
+			"path": "//192.168.10.47/m/ptemplatejs/dist/"
+		}) }}
+	</body>
+</html>

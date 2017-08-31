@@ -1,0 +1,42 @@
+<template p-template="my-teacharticle">
+	<div class="teacharticle show">
+		<ul>
+			<li p-express:for="i in teacharticle">
+				<h3>{{articleTitle | limitTo : 15}}</h3>
+				<p>{{articleIntroduce | limitTo : 70}}... <a href="{{articleUrl}}" target="_blank">查看全文</a></p>
+			</li>
+		</ul>
+	</div>
+</template>
+<style>
+	.teacharticle{
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		ul{
+			li{
+				padding:0.5795rem;
+				margin:0;
+				border-bottom:0.0386rem solid rgb(244,245,247);
+				h3{
+					margin-bottom:0.5409rem;
+					font-size:0.6955rem;
+				}
+				p{
+					height:2.4343rem;
+					overflow:hidden;
+					line-height:0.8114rem;
+					font-size:0.5409rem;
+					a{
+						display:inline-block;
+						font-size:0.5409rem;
+						line-height:0.8114rem;
+						text-decoration:none;
+						color:rgb(218,60,60);
+						margin-left:0.1932rem;
+					}
+				}
+			}
+		}
+	}
+</style>
