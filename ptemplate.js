@@ -814,7 +814,7 @@
 					} else if (then.attachEvent) {
 						then.attachEvent("on" + ev, fn);
 					}
-					then["on" + ev] = fn;
+					//then["on" + ev] = fn;
 					mod.eventData.push(eventObj);
 				});
 				return this;
@@ -834,7 +834,7 @@
 						i += 1;
 						if (mod.is(a.element, then) && mod.is(a.eventName, ev)) {
 							removeEvent(then, ev, a.factory);
-							then["on" + ev] = null;
+							//then["on" + ev] = null;
 							mod.eventData.splice(i, 1);
 						}
 					})

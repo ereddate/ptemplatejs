@@ -53,7 +53,7 @@
 		$.render("my-gotop", {}, $.createDom("div", {}), function(elem){
 			$.query("body")[0]._append(elem.children[0]);
 		});
-		$.query("body")[0]._on("online", function(){
+		$.query(window)._on("online", function(){
 			$.router(channel === 3 ? "/teach_info_fn?usid="+teachid+"&url="+teachurl : channel === 1 ? "/mysubscript_fn" : "/recommend_fn");
 		})._on("offline", function(){
 			$.router("/offline");
