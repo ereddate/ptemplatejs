@@ -51,13 +51,7 @@
 			"autoreload": false
 		},
 		"ptemplatejs": {
-			"path": "./",
-			"ignore": [
-				"ajax",
-				"canvasdraw",
-				"video",
-				"animate"
-			]
+			"path": "./"
 		}
 	}
 }

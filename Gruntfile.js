@@ -131,7 +131,7 @@ module.exports = function(grunt) {
   app.configs.forEach(function(c) {
     var libConcats = [];
     libFiles.length > 0 && (libConcats.push(pkg.configs.ptemplatejs.path + pkg.name.replace("js", "") + ".js"), libFiles.forEach(function(f) {
-      if (/\.extend\./.test(f) && !(new RegExp("\\.(" + pkg.configs.ptemplatejs.ignore.join('|') + ")\\.").test(f))) {
+      if (/\.extend\./.test(f) && !(new RegExp("\\.(" + (c.ptemplatejs && c.ptemplatejs.ignore || []).join('|') + ")\\.").test(f))) {
         libConcats.push(f)
       }
     }));

@@ -31,6 +31,14 @@ module.exports = {
 			css: {
 				isfile: true
 			}
+		},
+		ptemplatejs:{
+			"ignore": [
+				"ajax",
+				"canvasdraw",
+				"video",
+				"animate"
+			]
 		}
 	}]
 }
