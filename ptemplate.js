@@ -428,6 +428,12 @@
 			eventData: [],
 			Styles: {},
 			_stores: {},
+			isWindow(obj) {
+				return obj != null && obj == obj.window
+			},
+			isDocument(obj) {
+				return obj != null && obj.nodeType == obj.DOCUMENT_NODE
+			},
 			diff: function(a, b) {
 				var c = {};
 				for (var i in b) {
