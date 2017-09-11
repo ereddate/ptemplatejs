@@ -40,5 +40,22 @@ module.exports = {
 				"animate"
 			]
 		}
+	}, {
+		projectName: "stock",
+		version: "0.0.1",
+		build: {
+			uglifyjs: true,
+			css: {
+				isfile: true
+			}
+		},
+		ptemplatejs:{
+			"ignore": [
+				"ajax",
+				"canvasdraw",
+				"video",
+				"animate"
+			]
+		}
 	}]
 }

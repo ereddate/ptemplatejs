@@ -40,7 +40,7 @@ module.exports = {
                 style: ""
               },
               html = [],
-              objName = /\/([^\.\/]+)\.(\d\.)*[a-zA-Z]+$/.exec(file)[1] || file,
+              objName = /\/([^\.\/]+)\.(\d\.)*[a-zA-Z]+$/.exec(file),
               tagName = "",
               b = new htmlparser.Parser({
                 onopentag: function(name, attr) {
@@ -84,6 +84,8 @@ module.exports = {
                   grunt.log.error('error. ' + error);
                 }
               });
+              objName = objName[1] || file;
+
             b.write(result);
             b.end();
             contents[objName] = tags;

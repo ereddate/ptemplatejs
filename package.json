@@ -13,6 +13,7 @@
 		"ereddate@gmail.com"
 	],
 	"scripts": {
+		"st": "grunt watch:stock",
 		"fm": "grunt watch:famousman",
 		"hn": "grunt watch:hackernews",
 		"pages": "grunt watch:pages",

@@ -102,6 +102,7 @@
 				}
 			},
 			_removeAttr(name) {
+				var that = this;
 				if (mod.isArray(name) || typeof name != "string" && "length" in name) {
 					var n = [];
 					for (var i = 0; i < name.length; i++) n.push(name[i].name);
@@ -109,7 +110,7 @@
 				}
 				typeof name == "string" && (name = name.split(' '));
 				name.forEach((n) => {
-					this.removeAttribute(n);
+					that.removeAttribute(n);
 				});
 				return this;
 			},
@@ -172,6 +173,7 @@
 			},
 			_clone(bool) {
 				var nE = this.cloneNode(!mod.is(typeof bool, "undefined") ? bool : true);
+				mod.mixElement(nE);
 				return nE;
 			},
 			_on(eventName, fn, args, bool) {
@@ -719,7 +721,9 @@
 							}
 						});
 						mData = mod.extend(mod.templates[obj.tagName.toLowerCase()].data, newObj);
-						pTemplate.render(obj.tagName.toLowerCase(), mData, [pTemplate.createDom("div", {})], function(parent) {
+						var template_name = obj.tagName.toLowerCase(),
+							newTemplate_name = template_name + "_" + (Math.random(100) + '').replace(/\./gim, '');
+						pTemplate.clone(template_name, newTemplate_name).render(newTemplate_name, mData, [pTemplate.createDom("div", {})], function(parent) {
 							obj.parentNode && obj.parentNode.replaceChild(parent.children[0], obj);
 						});
 					}
