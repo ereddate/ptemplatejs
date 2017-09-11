@@ -50,12 +50,12 @@ module.exports = function(grunt) {
     };
     gruntConfigs.babel[a.projectName] = {
       files: [{
-        src: "*.js",
+        src: "**/*.js",
         dest: distPath + a.projectName + "/js/" + a.version + "/",
         expand: true,
         cwd: distPath + a.projectName + "/js/" + a.version + "/"
       }, {
-        src: "*.js",
+        src: "**/*.js",
         dest: distPath + a.projectName + "/libs/" + a.version + "/",
         expand: true,
         cwd: distPath + a.projectName + "/libs/" + a.version + "/"
@@ -66,12 +66,12 @@ module.exports = function(grunt) {
         encoding: "utf-8"
       },
       files: [{
-        src: "*.html",
+        src: "**/*.html",
         dest: distPath + a.projectName + "/html/" + a.version + "/",
         expand: true,
         cwd: basePath + a.projectName + "/html/"
       }, {
-        src: "*.css",
+        src: "**/*.css",
         dest: distPath + a.projectName + "/css/" + a.version + "/",
         expand: true,
         cwd: distPath + a.projectName + "/css/" + a.version + "/"
@@ -107,6 +107,7 @@ module.exports = function(grunt) {
                 templates.modules[n].style = text;
               };
             if (obj.style && obj.style != "") {
+              //then(obj.style);
               less.render(obj.style, function(e, output) {
                 if (e) {
                   console.log(e);
@@ -156,7 +157,10 @@ module.exports = function(grunt) {
       files: ["./" + basePath + c.projectName + "/**/*.pjs", "package.json", "./" + basePath + c.projectName + "/**/*.js", "./" + basePath + "app.js", "gruntfile.js", "./" + basePath + c.projectName + "/**/*.html", "./" + basePath + c.projectName + "/**/*.less", "./" + basePath + c.projectName + "/**/*.css"],
       tasks: tasks,
       options: {
-        livereload: (pkg.configs.server.autoreload || true)
+        livereload: (pkg.configs.server.autoreload || true),
+        event: ["all"],
+        nospawn: true,
+        spawn: false
       }
     };
     gruntConfigs.uglify[c.projectName] = {
@@ -189,6 +193,7 @@ module.exports = function(grunt) {
     });
     var isCssFile = ("projectName" in pconfig) && pconfig.build && pconfig.build.css && pconfig.build.css.isfile;
     //console.log(isCssFile)
+
     var h = [];
 
     function readContent(r, projectName, file, bool) {
@@ -248,7 +253,19 @@ module.exports = function(grunt) {
       content.push(r.replace(/;;/gim, ";"));
       //content.push("})(this, pTemplate);");
       if (h.length > 0 && bool != true) {
+        /* console.log(file.replace(/\/js\//gim, "/css/").replace(/\.js/gim, ".less"))
+         var reg = /(.+\/)([^\/]+\.less)/.exec(file.replace(/\/js\//gim, "/css/").replace(/\.js/gim, ".less"));
+         console.log(reg)*/
         grunt.file.write(file.replace(/\/js\//gim, "/css/").replace(/\.js/gim, ".css"), h.join(''));
+        /*var parser = new (less.Parser)({
+          paths:[reg[1]],
+          filename: reg[2]
+        });
+        parser.parse(h.join(''), function(e, tree){
+          tree.toCSS({
+            compress: true
+          })
+        });*/
       }
       return content;
     }
@@ -276,7 +293,8 @@ module.exports = function(grunt) {
           c.modules.files.forEach(function(f) {
             for (var n in f) {
               var r = grunt.file.read(path.resolve(f[n]));
-              var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/" + n + ".js";
+              var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/**/" + n + ".js";
+              h = [];
               var content = readContent(r, projectName, file);
               content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, " + (pkg.configs.ptemplatejs.alias || "$") + "){"));
               content.push("})(window, pTemplate);");
@@ -284,10 +302,11 @@ module.exports = function(grunt) {
             }
           });
         } else {
-          var files = grunt.file.expand("./" + basePath + v + "/js/*.js");
+          var files = grunt.file.expand("./" + basePath + v + "/js/**/*.js");
           files.forEach(function(f) {
             var r = grunt.file.read(path.resolve(f));
             var file = f.replace(basePath, pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
+            h = [];
             var content = readContent(r, projectName, file);
             content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, " + (pkg.configs.ptemplatejs.alias || "$") + "){"));
             content.push("})(window, pTemplate);");
