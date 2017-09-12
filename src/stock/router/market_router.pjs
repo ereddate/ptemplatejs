@@ -1,0 +1,135 @@
+<script>
+	$.router({
+		"/market": function(e, args){
+			if (app_type != "web"){
+				$.router("/market_fn?channel=2");
+			}else{
+				location.href = location.href.split('?')[0] + "?channel=2";
+			}
+		},
+		"/market_fn": function(e, args){
+			window.scrollTo(1,1);
+			$.router("/closexdialog");
+			$.update("my-main", {
+				stock_data: [],
+				channel:args && parseInt(args.channel) || 2
+			});
+			$.router("/reload_market");
+			$.router("/stock_rank");
+		},
+		"/reload_market": function(e, args){
+			$.Callbacks().add(function(next){
+				$.render("my-stockgrail", {
+					handle:{
+						componentWillMount:function(next){
+							var id = args && args.g && $.extend($.extend({}, store.get("state")), {grailtype:parseInt(args.g)}).grailtype || store.get("state").grailtype;
+							next({
+								grailtype: id
+							});
+						}
+					}
+				}, $.createDom("div", {}), function(elem){
+					$.query("#stock_grail")[0]._html('')._append(elem.children[0]);
+					next();
+				});
+			}).add(function(next){
+				$.router("/refresh_grail");
+			}).done();
+		},
+		"/refresh_grail": function(e, args){
+			getData(api.shangzheng, {
+				codepar: store.get("state").grail_data.join(',')
+			}, function(result){
+				$.each(result.Data[0], function(i, item){
+					var a = $.query(".stock_grail")[0]._query("li")._eq(i)._query("span");
+					a[0]._html(item[2]);
+					var b = item[3]/item[7];
+					var c = item[4]/item[7];
+					(c>0?a[1]._removeClass("down")._addClass("up") : a[1]._removeClass("up")._addClass("down"))._html(b);
+					a[2]._html((item[5]/item[7])+" "+(c>0 ? "+"+c : c)+"%");
+				});
+			}, function(){
+			});
+		},
+		"/stock_rank": function(e, args){
+			$.router("/loading");
+			var callbacks = $.Callbacks();
+			callbacks.add(function(next){
+				signIn ? getData(api.get_selected, {}, function(result){
+					console.log(result);
+					$.extend(typeof args != "undefined" && args || (args = {}), {
+						innercode: result.innercode
+					});
+					next();
+				}, function(){
+					next();
+				}) : next();
+			}).add(function(next){
+				if (isSignIn() == true){
+					var data = set.storage.get(get.getUser());
+					if (data) {
+						$.extend(typeof args != "undefined" && args || (args = {}), {
+							starcode: data
+						});
+						/*$.router("/stock_mystar?" + $.__mod__.jsonToUrlString(args, "&"));*/
+					}
+				}
+				next();
+			}).add(function(next){
+				/*getData(api.shangzheng, {
+					codepar:args.innercode
+				}, function(result){
+					console.log(result);
+					next();
+				}, function(error){
+					console.log(error);
+					next();
+				});*/
+				next();
+			});
+			$.each(store.get("state").stock_ranks, function(i, n){
+				callbacks.add(function(next){
+					var title = n.title, more = n.more;
+					getData(api[n.api], {
+						id: n.block
+					}, function(result){
+						var data = [];
+						$.each(result.Data[0], function(i, item){
+							data.push({
+								name: item[1],
+								code: item[0],
+								price: (item[2]/item[5]).toFixed(2),
+								updownrate: parseFloat((item[3]/100).toFixed(2)),
+								updown: (item[4]/item[5]).toFixed(2),
+								blockid: item[6],
+								id: item[7],
+								isadd: typeof args != "undefined" && args.innercode && args.innercode.indexOf(item[7]) > -1 ? 2 : 1,
+								isstar: typeof args != "undefined" && args.starcode && args.starcode.indexOf(item[8]+item[0]) > -1 ? 2 : 1,
+								excode: item[8]+item[0],
+								type: !/hk/.test(item[8].toLowerCase()) ? 1 : 2
+							})
+						});
+						$.render("my-stockrank", {
+							title: title,
+							moreurl: more,
+							rank_data: {
+								data: data
+							}
+						}, $.createDom("div", {}), function(elem){
+							$.query("#stock_rank")[0]._query(".rank_"+i)[0] && $.query("#stock_rank")[0]._query(".rank_"+i)[0]._append(elem.children[0]);
+							next();
+						});
+					}, function(error){
+						next();
+					});
+				});
+			});
+			callbacks.done(function(){
+				$.router("/closeloading");
+			});
+		},
+		"/grailnav": function(e, args){
+			$.router("/reload_market?g="+args.type);
+		}
+	});
+</script>

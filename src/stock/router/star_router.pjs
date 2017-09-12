@@ -1,0 +1,238 @@
+<script>
+	var mysubs_page = 0;
+	$.router({
+		"/star": function(e, args){
+			if (app_type != "web"){
+				$.router("/star_fn?channel="+(args && args.channel || 3)+"&star="+(args && args.star || 1));
+			}else{
+				location.href = location.href.split('?')[0] + "?channel="+(args && args.channel || 3)+"&star="+(args && args.star || 1);
+			}
+		},
+		"/star_fn": function(e, args){
+			starchannel = args && parseInt(args.star) || 1;
+			window.scrollTo(1,1);
+			$.router("/closexdialog");
+			$.update("my-main", {
+				mysubs_data: [],
+				channel:args && parseInt(args.channel) || 3,
+				tab: starchannel
+			});
+			starchannel === 1 ? $.router("/stock_mystar") : starchannel === 2 ? $.router("/reload_mysubs?id=mysubs_list") : false;
+		},
+		"/stock_mystar": function(e, args){
+			if (isSignIn() == false) {
+				$.router("/market");
+				return;
+			}
+			var data = set.storage.get(get.getUser());
+			if (data) {
+				$.router("/loading");
+				data = data.toLowerCase();
+				var sh_stock = [], hk_stock = [];
+				$.each(data.split(','), function(i, n){
+					!/hk/.test(n) ? sh_stock.push(n) : hk_stock.push(n);
+				});
+				$.extend(typeof args != "undefined" && args || (args = {}), {
+					starcode: data
+				});
+				var callbacks = $.Callbacks();
+				callbacks.add(function(next){
+					signIn ? getData(api.get_selected, {}, function(result){
+						console.log(result);
+						$.extend(typeof args != "undefined" && args || (args = {}), {
+							innercode: result.innercode
+						});
+						next();
+					}, function(){
+						next();
+					}) : next();
+				});
+				var data = [];
+				if(sh_stock.length>0){
+					callbacks.add(function(next){
+						getData(api.shangzheng, {
+							codepar: sh_stock.join(',')
+						}, function(result) {
+							console.log(result);
+							$.each(result.Data[0], function(i, item) {
+								data.push({
+									name: item[2],
+									code: item[1],
+									price: (item[3] / item[7]).toFixed(2),
+									updownrate: parseFloat((item[4] / 100).toFixed(2)),
+									updown: (item[5] / item[7]).toFixed(2),
+									id: item[0],
+									isadd: typeof args != "undefined" && args.innercode && args.innercode.indexOf(item[0]) > -1 ? 2 : 1,
+									isstar: 2,
+									excode: item[8] + item[1],
+									type: 1
+								})
+							});
+							next();
+						}, function(error) {
+							console.log(error);
+							next();
+						});
+					});
+				}
+				if(hk_stock.length>0){
+					callbacks.add(function(next){
+						getData(api.hk, {
+							codepar: hk_stock.join(',')
+						}, function(result) {
+							console.log(result);
+							$.each(result.Data[0], function(i, item) {
+								data.push({
+									name: item[2],
+									code: item[1],
+									price: (item[3] / item[7]).toFixed(2),
+									updownrate: parseFloat((item[4] / 100).toFixed(2)),
+									updown: (item[5] / item[7]).toFixed(2),
+									id: item[0],
+									isadd: typeof args != "undefined" && args.innercode && args.innercode.indexOf(item[0]) > -1 ? 2 : 1,
+									isstar: 2,
+									excode: item[8] + item[1],
+									type: 2
+								})
+							});
+							next();
+						}, function(error) {
+							console.log(error);
+							next();
+						});
+					});
+				}
+				callbacks.add(function(next){
+					$.render("my-stockranklist", {
+						rank_data: {
+							data: data.length>0 ? data : []
+						}
+					}, $.createDom("div", {}), function(elem) {
+						$.query("#stock_mystar")[0] && $.query("#stock_mystar")[0]._html('')._append(elem.children[0]);
+						next();
+					});
+				});
+				callbacks.done(function(){
+					$.router("/closeloading");
+				});
+			}else{
+				$.render("my-stockranklist", {
+					rank_data: {
+						data: []
+					}
+				}, $.createDom("div", {}), function(elem) {
+					$.query("#stock_mystar")[0] && $.query("#stock_mystar")[0]._html('')._append(elem.children[0]);
+					$.router("/closeloading");
+				});
+			}
+		},
+		"/reload_mysubs": function(e, args){
+			if (isSignIn() == false){
+				$.router("/signin");
+				return;
+			}
+			$.router("/loading");
+			var page = 1;
+			getData(api.my_subs, {
+				page: page,
+				pagesize: 20
+			}, function(data) {
+				store.commit({
+					mysubs:{
+						[page]: data
+					}
+				}, "commit mysubs page"+page+" data");
+				store.get("handle")["reload_mysubslist"](data, args.id, page);
+			}, function(error) {
+				console.log(error);
+				if (error === 10005){
+					var a = $.query("#mysubs_list")[0];
+					a && a._html('');
+					$.update("my-main", {
+						mysubs_data: [],
+						mysubserr_code: error
+					});
+				}else{
+					var data = store.get("mysubs");
+					data && data[1] ? store.get("handle")["reload_mysubslist"](data[1], args.id) : $.update("my-main", {
+						mysubs_data: [],
+						mysubserr_code: /timeout|unknown/.test(error) ? 20008 : error
+					});
+				}
+				$.router("/closeloading");
+			});
+		},
+		"/getmore_mysubs": function(e, args){
+			if (isSignIn() == false){
+				$.router("/signin");
+				return;
+			}
+			$.query(".xdialog")[0] && (refreshTimout && clearTimeout(refreshTimout), $.router("/closexdialog"));
+			!(args && args.id) && (mysubs_page+=1);
+			$.router("/loading");
+			var page = args && args.page || mysubs_page;
+			getData(api.my_subs, {
+				page: page,
+				pagesize: 20
+			}, function(data) {
+				$.render("my-subslist", {
+					handle:{
+						componentWillMount: function(next){
+							store.commit({
+								mysubs:{
+									[page]: data
+								}
+							}, "commit mysubs page"+page+" data");
+							next({
+								mysubs_data: $.extend([], data.list)
+							});
+						}
+					}
+				}, $.createDom("div", {}), function(elem) {
+					if (args && args.id) {
+						var a = $.query("#" + args.id)[0];
+						a && a._html('')._append(elem.children[0]);
+						$.query(".mysubs_more")[0]._off("click")._attr({
+							href: signIn ? "/getmore_mysubs" : "/signin"
+						})._html("<i class='icon-down_arrow'></i>" + (signIn ? store.get("state").signInMoreText : store.get("state").noSigninMoreText))._removeClass("last")._on("click", signIn ? function(e) {
+							e.preventDefault();
+							$.router("/getmore_mysubs");
+						} : function(e) {
+							e.preventDefault();
+							$.router("/signin");
+						});
+						mysubs_page = 1;
+					} else {
+						var a = $.query("#mysubs_list")[0];
+						a && a._append(elem.children[0]);
+					}
+					if (data.list.length>=20){
+						signIn && $.query(".mysubs_more")[0]._html("<i class='icon-down_arrow'></i>"+store.get("state").signInMoreText)._removeClass("error");
+					}else{
+						$.query(".mysubs_more")[0]._off("click")._attr({
+							href: "javascript:;"
+						})._html(store.get("state").lastMoreText)._addClass("last");
+					}
+					$.router("/closeloading");
+				});
+			}, function(error) {
+				console.log(error);
+				!(args && args.id) && (mysubs_page-=1);
+				if (error === 10005) {
+					$.query(".mysubs_more")[0]._off("click")._attr({
+						href: "javascript:;"
+					})._html(store.get("state").lastMoreText)._addClass("last");
+				}else{
+					$.query(".mysubs_more")[0]._html("<i class='icon-refresh'></i>"+store.get("state").apiErrorMoreText)._addClass("error");
+				}
+				$.router("/closeloading");
+			});
+		},
+		"/mysubs_more": function(e, args){
+
+		},
+		"/mystock_more": function(e, args){
+
+		}
+	});
+</script>

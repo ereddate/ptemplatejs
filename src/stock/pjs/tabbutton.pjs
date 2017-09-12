@@ -1,0 +1,35 @@
+<template p-template="my-tabbutton">
+	<span class="tabbutton" p-express:for="i in tabs">
+		<a href="#" p-router:href="{{left_router}}" class="{{tab === 1 ? 'on' : 'off'}}">{{left}}</a>
+		<a href="#" p-router:href="{{center_router}}" class="{{tab === 2 ? 'on' : 'off'}}">{{center}}</a>
+		<a href="#" p-router:href="{{right_router}}" class="{{tab === 3 ? 'on' : 'off'}}">{{right}}</a>
+	</span>
+</template>
+<style>
+	.tabbutton{
+		margin:0 auto;
+		padding:0.3864rem;
+		clear:both;
+		display:flex;
+		flex-flow:row;
+		width:13.9103rem;
+		line-height:1.1592rem;
+		font-size:0.5795rem;
+		text-align:center;
+		a{
+			width:33.33%;
+			text-decoration:none;
+			background-color:rgb(255,255,255);
+			border-right:0.0386rem solid rgb(244,245,247);
+			border-bottom:0.0965rem solid rgb(255,255,255);
+			color:rgb(168,168,168);
+			&.on{
+				color:rgb(0,0,0);
+				border-bottom:0.0965rem solid rgb(0,0,0);
+			}
+			&:last-child{
+				border-right:0;
+			}
+		}
+	}
+</style>

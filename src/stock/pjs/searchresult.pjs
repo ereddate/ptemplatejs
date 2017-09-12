@@ -1,0 +1,65 @@
+<template p-template="my-searchresult">
+	<div id="stock_hq_searchresult" class="searchresult">
+		<div class="searchresult_header">
+			<h1 class="searchresult_header_item">
+				<span>搜索结果</span>
+			</h1>
+		</div>
+		<div class="searchresult_list">
+			<ul class="searchresultlist_header">
+				<li>标注</li>
+				<li class="first">简称</li>
+				<li>代码</li>
+				<li>操作</li>
+			</ul>
+			<div id="searchresult_list">
+				<span class="default_tip">等待...</span>
+			</div>
+		</div>
+	</div>
+</template>
+<script>
+	import "searchresultlist togglebutton";
+</script>
+<style>
+	.searchresult{
+		.searchresult_header{
+			height:2.3183rem;
+			h1{
+				font-weight:400;
+				background-color:rgb(244,245,247);
+				color:rgb(0,0,0);
+				font-size:0.5795rem;
+				padding:0 0.5795rem;
+				line-height:2.3183rem;
+				display:flex;
+				flex-flow:row;
+				span{
+					width:95%;
+				}
+				a{
+					width:5%;
+					text-decoration:none;
+					color:rgb(0,0,0);
+					font-size:0.5795rem;
+					text-align:center;
+				}
+				&.on{
+					position:fixed;
+					top:2.0093rem;
+					left:0;
+					right:0;
+					background-color:rgba(0,0,0,.5);
+				}
+			}
+		}
+		.default_tip{
+			display:block;
+			text-align:center;
+			margin:0 auto;
+			font-size:0.5795rem;
+			padding:0.5795rem;
+			color:rgb(168,168,168);
+		}
+	}
+</style>

@@ -1,0 +1,138 @@
+<template p-template="my-searchresultlist">
+	<div>
+		<div style="{{search_data.data.length > 0 ? 'display:block' : 'display:none'}}">
+			<div class="searchresultlist_box">
+				<ul p-express:for="i in search_data.data" class="searchresultlist_body">
+					<li>
+						<my-togglebutton-star isstar="{{isstar}}" id="{{excode}}"></my-togglebutton-star>
+					</li>
+					<li class="first">
+						<a href="{{url}}" target="_blank">{{name}}</a>
+					</li>
+					<li>{{code}}</li>
+					<li>
+						<my-togglebutton isadd="{{isadd}}" id="{{innercode}}"></my-togglebutton>
+					</li>
+				</ul>
+			</div>
+			<a href="#" p-router:href="/search_get_more?key={{key}}" class="search_more" style="{{search_data.data.length >= 10 ? 'display:block' : 'display:none'}}">查看更多结果</a>
+		</div>
+		<div style="{{search_data.data.length === 0 ? 'display:block' : 'display:none'}}" class="nodata">
+			已经到底了
+		</div>
+	</div>
+</template>
+<style>
+	.searchresult_list{
+		padding:0 0.5795rem;
+		background-color:rgb(255,255,255);
+		ul{
+			display:flex;
+			flex-flow:row;
+			&.searchresultlist_header{
+				li{
+					padding:0.5795rem 0;
+					color:rgb(168,168,168);
+				}
+			}
+			li{
+				padding:0.3864rem 0;
+				font-size:0.5795rem;
+				width:33.33%;
+				text-align:right;
+				border-bottom:0.0386rem solid rgb(244,245,247);
+				a{
+					text-decoration: none;
+					color:rgb(0,0,0);
+				}
+				&.first{
+					width:60%;
+					text-align:left;
+					a{
+						display:block;
+						text-decoration:none;
+						color:rgb(0,0,0);
+					}
+					span{
+						font-size:0.3864rem;
+						color:rgb(128,128,128);
+					}
+				}
+				&:first-child{
+					width:10%;
+					text-align: center;
+				}
+				&:last-child{
+					width:10%;
+					a{
+						padding:0 0.1932rem;
+						i{
+							flex-direction: row;
+							flex-wrap: nowrap;
+							justify-content: center;
+							align-content: center;
+							align-items: center;
+						}
+					}
+				}
+			}
+			&.up{
+				color:rgb(255,0,0);
+				li{
+					&.first{
+						color:rgb(0,0,0);
+						a{
+							color:rgb(0,0,0);
+						}
+					}
+				}
+			}
+			&.down{
+				color:rgb(50,205,50);
+				li{
+					&.first{
+						color:rgb(0,0,0);
+						a{
+							color:rgb(0,0,0);
+						}
+					}
+				}
+			}
+			&.searchresultlist_body{
+				li{
+					&.num{
+						line-height:1.5455rem;
+					}
+				}
+			}
+		}
+		a{
+			&.stock_more{
+				display:block;
+				padding:0.5795rem 0;
+				text-align:center;
+				text-decoration:none;
+				color:rgb(0,0,0);
+				font-size:0.5795rem;
+			}
+			&.search_more{
+				display:block;
+				padding:0.5795rem 0;
+				text-align:center;
+				text-decoration:none;
+				color:rgb(0,0,0);
+				font-size:0.5795rem;
+			}
+		}
+		.nodata{
+			color:rgb(204,204,204);
+			text-align:center;
+			font-size:0.5795rem;
+			padding:0.5795rem 0;
+			a{
+				color:rgb(0,0,0);
+				text-decoration:none;
+			}
+		}
+	}
+</style>

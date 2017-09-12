@@ -1,0 +1,11 @@
+<template p-template="my-togglebutton-star">
+	<span>
+		<a href="#" p-router:href="/addstar?id={{id}}" p-express:if="{{isstar}} === 1"><i class="icon-star"></i></a>
+		<a href="#" p-router:href="/delstar?id={{id}}" p-express:if="{{isstar}} === 2"><i class="icon-star del_star"></i></a>
+	</span>
+</template>
+<style>
+	.del_star{
+		color:rgb(255,215,0);
+	}
+</style>

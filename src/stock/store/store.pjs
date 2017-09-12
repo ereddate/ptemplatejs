@@ -1,0 +1,127 @@
+<script>
+	var store = $.store("my-main",{}),
+		channel = q && parseInt(q) || 1,
+		grail_type = g && parseInt(g) || 1,
+		starchannel = starchannel && parseInt(starchannel) || 1;
+	store.commit({
+		state:{
+			channel:channel,
+			signin: signIn ? 2 : 1,
+			project_name: "pTemplatejs Demo",
+			loadingTipDefaultText: "正在拉取数据...",
+			signInMoreText:"点击加载更多",
+			lastMoreText: "已经到底了",
+			loadingErrorMoreText: "拉取数据失败，请重试",
+			noSigninMoreText: "登录查看更多名家观点",
+			apiErrorMoreText: "网络问题，请点击重试",
+			followDialogTitle: "提示",
+			followDialogContent: "确定要取消关注吗？",
+			error_code: 0,
+			starchannel: 0,
+			recommenderr_code:0,
+			mysubserr_code: 0,
+			stock_data: [],
+			recommend_data: [],
+			mysubs_data: [],
+			tabs:[{
+				left: "我的股票",
+				left_router: "/star?star=1&channel=3",
+				center: "我的名家",
+				center_router: "/star?star=2&channel=3",
+				right: "我的自选",
+				right_router: "/star?star=3&channel=3"
+			}],
+			tab:0,
+			grailtype: grail_type,
+			grail_data: ["sse000001", "szse399001", "szse399006"],
+			stock_ranks: [{
+				title: "沪深A股",
+				block: 252,
+				api: "stock_rank",
+				more: "http://m.hexun.com/quote/stock.html"
+			},{
+				title: "沪深B股",
+				block: 253,
+				api: "stock_rank",
+				more: "http://m.hexun.com/quote/stock.html"
+			},{
+				title: "恒生指数",
+				block: 259,
+				api: "stock_hkrank",
+				more: "http://m.hexun.com/quote/hkstock.html"
+			}]
+		}
+	}).commit({
+		api:{
+			signin: "//reg.hexun.com/h5/login.aspx?gourl=",
+			signout: "//utility.tool.hexun.com/quit.aspx?gourl=",
+			shangzheng: "//webstock.quote.hermes.hexun.com/a/quotelist?code={{codepar}}&column=id,code,name,price,updownrate,updown,datetime,priceweight,excode",
+			hk: "//webhkstock.quote.hermes.hexun.com/hk/quotelist?code={{codepar}}&column=id,code,name,price,updownrate,updown,datetime,priceweight,excode",
+			news_url: "//bdmw.hexun.com/api/getMoreRecommend?start=0&cnt={{count}}&cateid=100228599",
+			stock_rank: "//webstock.quote.hermes.hexun.com/a/sortlist?block={{id}}&number=10&title=15&commodityid=0&direction=0&start=0&column=code,name,price,updownrate,updown,priceweight,blockid,id,excode",
+			stock_hkrank: "//webhkstock.quote.hermes.hexun.com/hk/sortlist?block={{id}}&number=10&title=15&commodityid=0&direction=0&start=0&column=code,name,price,updownrate,updown,priceweight,blockid,id,excode",
+			add_selected: "//mymoney.tool.hexun.com/2012/rest/addmystock.aspx?innercode={{code}}",
+			del_selected: "//mymoney.tool.hexun.com/2012/rest/removemystock.aspx?innercode={{code}}",
+			get_selected: "//mymoney.tool.hexun.com/2012/rest/getmystocklist.aspx",
+			search_get: "//so.hexun.com/mSiteData.do?type=stock&key={{key}}&page={{page}}",
+			teach_recommend: "//apicaidao.hexun.com/recommend/article/{{page}}/{{pagesize}}?tnn&acc",
+			my_subs: "//apicaidao.hexun.com/article/follow/{{page}}/{{pagesize}}?tnn&acc",
+			teach_info: "//partner.px.hexun.com/api/partner/get_partnershow_info?partnerId={{id}}",
+			teach_article: "//apicaidao.hexun.com/article/{{teacherid}}/{{pagenum}}/{{pagesize}}",
+			isfollow: "//follow.zq.hexun.com/relation/isattention.do?uid={{usid}}&source=2",
+			followin: "//follow.zq.hexun.com/relation/add.do?uid={{usid}}&source=2",
+			followout: "//follow.zq.hexun.com/relation/cancel.do?uid={{usid}}&source=2",
+			banners: "//m.hexun.com/api/getMoreFocus"
+		}
+	}).commit({
+		handle:{
+			reload_recommendlist: function(data, id, page){
+				$.render("my-recommendlist", {
+					recommend_data: data,
+					handle:{
+						componentWillMount: function(next){
+							$.update("my-main", {
+								recommend_data: data,
+								recommenderr_code: 0
+							});
+							next();
+						}
+					}
+				}, $.createDom("div", {}), function(elem) {
+					var a = $.query("#"+id)[0];
+					a && a._html('')._append(elem.children[0][page===1?"_removeClass":"_addClass"]("show"));
+					$.router("/banners?id=banners");
+				});
+				$.router("/closeloading");
+			},
+			reload_mysubslist: function(data, id, page){
+				$.render("my-subslist", {
+					handle:{
+						componentWillMount: function(next){
+							$.update("my-main", {
+								mysubs_data: $.extend([], data.list),
+								mysubserr_code: 0
+							});
+							next({
+								mysubs_data: $.extend([], data.list)
+							});
+						}
+					}
+				}, $.createDom("div", {}), function(elem) {
+					var a = $.query("#mysubs_list")[0];
+					a && a._html('')._append(elem.children[0][page===1?"_removeClass":"_addClass"]("show"));
+				});
+				$.router("/closeloading");
+			},
+			reload_banners: function(data, id){
+				$.render("my-scrollbanner", {
+					banners: data
+				}, $.query("#"+id), function(elem){
+					$.extend(set, set.scrollbanner(".scrollbanner", data.length));
+				});
+				$.router("/closeloading");
+			}
+		}
+	});
+	var api = store.get("api");
+</script>

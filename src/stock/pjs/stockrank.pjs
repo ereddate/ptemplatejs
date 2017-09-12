@@ -1,0 +1,52 @@
+<template p-template="my-stockrank">
+	<div id="stock_hq_rank" class="rank">
+		<div class="rank_header">
+			<h1 class="rank_header_item">
+				<span>{{title}}</span>
+				<a href="{{moreurl}}" target="_blank">
+					<i class="icon-more-vertical"></i>
+				</a>
+			</h1>
+		</div>
+		<div class="rank_list">
+			<my-stockranklist p-binddata="this"></my-stockranklist>
+		</div>
+	</div>
+</template>
+<script>
+	import "stockranklist togglebutton togglebutton_star";
+</script>
+<style>
+	.rank{
+		.rank_header{
+			height:2.3183rem;
+			h1{
+				font-weight:400;
+				background-color:rgb(244,245,247);
+				color:rgb(0,0,0);
+				font-size:0.5795rem;
+				padding:0 0.5795rem;
+				line-height:2.3183rem;
+				display:flex;
+				flex-flow:row;
+				span{
+					width:95%;
+				}
+				a{
+					width:5%;
+					text-decoration:none;
+					color:rgb(0,0,0);
+					font-size:0.5795rem;
+					text-align:center;
+				}
+				&.on{
+					position:fixed;
+					top:2.0093rem;
+					left:0;
+					right:0;
+					background-color:rgba(0,0,0,.5);
+				}
+			}
+		}
+	}
+</style>

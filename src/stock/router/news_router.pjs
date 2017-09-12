@@ -1,0 +1,99 @@
+<script>
+	$.router({
+		"/news": function(e, args){
+			if (app_type != "web"){
+				$.router("/news_fn?channel=1");
+			}else{
+				location.href = location.href.split('?')[0] + "?channel=1";
+			}
+		},
+		"/news_fn": function(e, args){
+			window.scrollTo(1,1);
+			$.router("/closexdialog");
+			$.update("my-main", {
+				stock_data: [],
+				channel: args && parseInt(args.channel) || 1
+			});
+			$.router("/reload_news");
+		},
+		"/reload_news": function(e, args){
+			$.router("/loading");
+			newspage = 0;
+			getData(api.news_url+"&cid="+cid, {
+				count: 30
+			}, function(data) {
+				$.render("my-stocklist", {
+					stock_data: data,
+					handle:{
+						componentWillMount:function(next){
+							store.commit({
+								news:{
+									[newspage]: data
+								}
+							});
+							$.update("my-main", {
+								stock_data: data,
+								error_code: 0
+							});
+							next();
+						}
+					}
+				}, $.createDom("div", {}), function(elem){
+					$.query("#stock_list")[0]._html('')._append(elem.children[0]);
+				});
+				$.router("/first");
+				$.router("/closeloading");
+			}, function(error) {
+				console.log(error);
+				$.router("/closeloading");
+				$.router("/opentoptip?msg=拉取数据失败，请点击重试！&handle="+(channel === 1 ? "reload_news" : "reload_market"));
+			});
+		},
+		"/getmore": function(e, args){
+			$.router("/loading");
+			getData(api.news_url+"&cid="+cid, {
+				count: 30
+			}, function(data) {
+				newspage+=1;
+				$.render("my-stocklist", {
+					stock_data: data,
+					handle:{
+						componentWillMount:function(next){
+							store.commit({
+								news:{
+									[newspage]: data
+								}
+							});
+							next();
+						}
+					}
+				}, $.createDom("div", {}), function(elem){
+					$.query("#stock_list")[0]._append(elem.children[0]._addClass("show"));
+					if (newspage+1>4){
+						$.router("/last");
+						return;
+					}
+					$.router("/first");
+				});
+				$.router("/closeloading");
+			}, function(error) {
+				console.log(error);
+				$.router("/closeloading");
+				$.query(".news_more")[0]._html("<i class='icon-refresh'></i>"+store.get("state").loadingErrorMoreText)._addClass("error");
+			});
+		},
+		"/first": function(e, args){
+			$.query(".news_more")[0]._off("click")._attr({
+				href: signIn ? "/getmore" : "/signin"
+			})._html("<i class='icon-down_arrow'></i>" + store.get("state").signInMoreText)._removeClass("last error")._on("click", function(e) {
+				e.preventDefault();
+				$.router("/getmore");
+			});
+		},
+		"/last": function(e, args){
+			$.query(".news_more")[0]._off("click")._attr({
+				href: "javascript:;"
+			})._html(store.get("state").lastMoreText)._removeClass("error")._addClass("last");
+		}
+	});
+</script>

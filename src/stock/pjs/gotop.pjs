@@ -1,0 +1,37 @@
+<template p-template="my-gotop">
+	<div class="gotop hide">
+		<a href="#" p-router:href="/gotop" class="icon-up_arrow"></a>
+	</div>
+</template>
+<script>
+	$.query(window)._on("scroll", function(e){
+		if (this._scrollTop() < screen.height/2){
+			$.query(".gotop")[0]._addClass('hide');
+		}else{
+			$.query(".gotop")[0]._removeClass('hide');
+		}
+	});
+</script>
+<style>
+	.gotop{
+		a{
+			position:fixed;
+			bottom:1.5456rem;
+			right:1.1592rem;
+			width:1.5456rem;
+			height:1.5456rem;
+			overflow:hidden;
+			background-color:rgba(0,0,0,.7);
+			color:rgb(255,255,255);
+			font-size:0.7728rem;
+			line-height:1.5rem;
+			text-align:center;
+			text-decoration:none;
+			border-radius:100%;
+			z-index:9998;
+		}
+		&.hide{
+			animation: fromHide .5s ease both;
+		}
+	}
+</style>

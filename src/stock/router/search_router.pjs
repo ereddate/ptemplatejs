@@ -1,0 +1,96 @@
+<script>
+	var searchTimeout = null;
+	$.router({
+		"/search": function(e, args){
+			if (app_type != "web"){
+				$.router("/search_fn?channel=4");
+			}else{
+				location.href = location.href.split('?')[0] + "?channel=4";
+			}
+		},
+		"/search_fn": function(e, args){
+			window.scrollTo(1,1);
+			$.router("/closexdialog");
+			$.update("my-main", {
+				stock_data: [],
+				channel: args && parseInt(args.channel) || 4,
+				handle:{
+					handleSearchInput: function(e){
+						searchTimeout && clearTimeout(searchTimeout);
+						searchTimeout = setTimeout(function(){
+							$.router("/search_get");
+						}, 1500);
+					}
+				}
+			});
+		},
+		"/search_get": function(e, args){
+			var key = $.query(".searchinput")[0]._val();
+			key = key.replace(/^\s+|\s+$/gim, "");
+			if (key != ""){
+				searchpage = 1;
+				$.query("#searchresult_list")[0] && $.query("#searchresult_list")[0]._html('');
+				$.router("/search_get_more?key="+key+"&page="+searchpage);
+			}else{
+				$.query("#searchresult_list")[0] && $.query("#searchresult_list")[0]._html('<span class="default_tip">等待...</span>');
+			}
+		},
+		"/search_get_more": function(e, args){
+			$.router("/loading");
+			var callbacks = $.Callbacks();
+			callbacks.add(function(next){
+				signIn ? getData(api.get_selected, {}, function(result){
+					console.log(result);
+					$.extend(typeof args != "undefined" && args || (args = {}), {
+						innercode: result.innercode
+					});
+					next();
+				}, function(){
+					next();
+				}) : next();
+			}).add(function(next){
+				if (isSignIn() == true){
+					var data = set.storage.get(get.getUser());
+					if (data) {
+						$.extend(typeof args != "undefined" && args || (args = {}), {
+							starcode: data
+						});
+						/*$.router("/stock_mystar?" + $.__mod__.jsonToUrlString(args, "&"));*/
+					}
+				}
+				next();
+			}).add(function(next){
+				getData(api.search_get, {
+					key: args.key,
+					page: args.page || (searchpage += 1)
+				}, function(result) {
+					console.log(result);
+					var data = [];
+					$.each(result, function(i, item) {
+						data.push($.extend(item, {
+							excode:(item.orgcode+item.code),
+							isadd: typeof args != "undefined" && args.innercode && args.innercode.indexOf(item.innerCode) > -1 ? 2 : 1,
+							isstar: typeof args != "undefined" && args.starcode && args.starcode.indexOf(item.orgcode+item.code) > -1 ? 2 : 1,
+							url: "//m.hexun.com/quote/" + (item.marketcode == "hk" ? "hkstock" : "stock") + "/" + item.code + ".html"
+						}))
+					});
+					$.query(".search_more")[0] && $.query(".search_more")[0]._remove();
+					$.render("my-searchresultlist", {
+						search_data: {
+							data: data
+						},
+						key: args.key
+					}, $.createDom("div", {}), function(elem) {
+						$.query("#searchresult_list")[0] && $.query("#searchresult_list")[0]._append(elem.children[0]);
+						$.router("/closeloading");
+						next();
+					});
+				}, function(error) {
+					console.log(error);
+					$.router("/closeloading");
+					next();
+				});
+			}).done();
+		}
+	});
+</script>

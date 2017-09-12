@@ -1,0 +1,23 @@
+<template p-template="my-recommendlist">
+	<ul class="recommendlist show" style="{{recommend_data && recommend_data.length > 0 ? 'display:block' : 'display:none'}}">
+		<li p-express:for="i in recommend_data">
+			<article class="item">
+				<header>
+					<h1><a href="#" p-router:href="/teach?usid={{teacherId}}&url={{studioUrl}}">
+						<lazyload src="{{imageUrl}}" class="loaded">
+							<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSJ3aGl0ZSI+CiAgPHBhdGggb3BhY2l0eT0iLjI1IiBkPSJNMTYgMCBBMTYgMTYgMCAwIDAgMTYgMzIgQTE2IDE2IDAgMCAwIDE2IDAgTTE2IDQgQTEyIDEyIDAgMCAxIDE2IDI4IEExMiAxMiAwIDAgMSAxNiA0Ii8+CiAgPHBhdGggZD0iTTE2IDAgQTE2IDE2IDAgMCAxIDMyIDE2IEwyOCAxNiBBMTIgMTIgMCAwIDAgMTYgNHoiPgogICAgPGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIGZyb209IjAgMTYgMTYiIHRvPSIzNjAgMTYgMTYiIGR1cj0iMC44cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+CiAgPC9wYXRoPgo8L3N2Zz4K" alt="{{teacherName}}" />
+						</lazyload>
+					</a></h1>
+					<div>
+						<h2><a href="#" p-router:href="/teach_info?usid={{teacherId}}">{{teacherName}}</a><i class="v"></i></h2>
+						<p><span>{{createTime | toATime}}</span><span>{{commentNum | empty : 0}}<i class="icon-comm comm"></i></span></p>
+					</div>
+				</header>
+				<div class="item_main">
+					<h3>{{articleTitle | limitTo : 15}}</h3>
+					<p>{{articleIntroduce | limitTo : 70}}... <a href="{{articleUrl}}" target="_blank">查看全文</a></p>
+				</div>
+			</article>
+		</li>
+	</ul>
+</template>

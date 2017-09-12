@@ -1,0 +1,53 @@
+<template p-template="my-stockgrail">
+	<div class="stock_grail">
+		<ul>
+			<li>
+				<span>名称</span>
+				<span>0000.00</span>
+				<span>00.00 0.00%</span>
+			</li>
+			<li>
+				<span>名称</span>
+				<span>0000.00</span>
+				<span>00.00 0.00%</span>
+			</li>
+			<li>
+				<span>名称</span>
+				<span>0000.00</span>
+				<span>00.00 0.00%</span>
+			</li>
+		</ul>
+	</div>
+</template>
+<style>
+	.stock_grail{
+		ul{
+			display:flex;
+			flex-flow:row;
+			li{
+				width:33.33%;
+				background-color:rgb(0,0,0);
+				color:rgb(255,255,255);
+				padding:0 0 0.3864rem 0;
+				span{
+					display:block;
+					text-align:center;
+					font-size:0.7729rem;
+					&.up{
+						color:rgb(255,0,0);
+					}
+					&.down{
+						color:rgb(50,205,50);
+					}
+					&:first-child{
+						font-size:0.7729rem;
+						padding:0.3864rem 0.3864rem 0.1932rem 0.3864rem;
+					}
+					&:last-child{
+						font-size:0.3864rem;
+					}
+				}
+			}
+		}
+	}
+</style>

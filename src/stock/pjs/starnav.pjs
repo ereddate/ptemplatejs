@@ -1,0 +1,18 @@
+<template p-template="my-starheader">
+	<div class="mystar_nav">
+		<my-tabbutton p-binddata="this"></my-tabbutton>
+	</div>
+</template>
+<script>
+	import "tabbutton";
+</script>
+<style>
+	.mystar_nav{
+		position:fixed;
+		top:2.0093rem;
+		left:0;
+		right:0;
+		height:2.0093rem;
+		background-color:rgb(244,245,247);
+	}
+</style>

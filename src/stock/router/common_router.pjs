@@ -1,0 +1,173 @@
+<script>
+	var timeout = null, newspage = 0, refreshTimout= null, searchpage = 0, currentkey = "";
+	$.router({
+		"/offline": function(e, args){
+			$.router("/closeloading");
+			$.router("/closexdialog");
+			$.set("my-main", {
+				error_code:500
+			});
+		},
+		"/addselect": function(e, args){
+			if (isSignIn() == false){
+				$.router("/signin");
+				return;
+			}
+			$.router("/loading");
+			var that = this;
+			getData(api.add_selected, {
+				code:args.id
+			}, function(result){
+				console.log(result);
+				$.render("my-togglebutton",{
+					id: args.id,
+					isadd: 2
+				}, that._parents("li"));
+				$.router("/closeloading");
+			}, function(error){
+				console.log(error);
+				$.router("/closeloading");
+			});
+		},
+		"/delselect": function(e, args){
+			if (isSignIn() == false){
+				$.router("/signin");
+				return;
+			}
+			$.router("/loading");
+			var that = this;
+			getData(api.del_selected, {
+				code:args.id
+			}, function(result){
+				console.log(result);
+				$.render("my-togglebutton",{
+					id: args.id,
+					isadd: 1
+				}, that._parents("li"));
+				$.router("/closeloading");
+			}, function(error){
+				console.log(error);
+				$.router("/closeloading");
+			});
+		},
+		"/addstar": function(e, args){
+			if (isSignIn() == false){
+				$.router("/signin");
+				return;
+			}
+			$.router("/loading");
+			var that = this;
+			var data = set.storage.get(get.getUser());
+			if (!data){
+				data = [];
+				data.push(args.id);
+			}else{
+				data = data.split(',');
+				data.push(args.id);
+			}
+			set.storage.set(get.getUser(), data.join(','));
+			$.render("my-togglebutton-star",{
+				id: args.id,
+				isstar: 2
+			}, that._parents("li"));
+			$.router("/closeloading");
+		},
+		"/delstar": function(e, args){
+			if (isSignIn() == false){
+				$.router("/signin");
+				return;
+			}
+			var data = set.storage.get(get.getUser());
+			if (data){
+				$.router("/loading");
+				var that = this;
+				data = data.split(',');
+				$.each(data, function(i, n){
+					if (n == args.id){
+						data = data.remove(i);
+						return false;
+					}
+				});
+				console.log(data);
+				set.storage.set(get.getUser(), data.join(','));
+				$.render("my-togglebutton-star",{
+					id: args.id,
+					isstar: 1
+				}, that._parents("li"));
+				$.router("/closeloading");
+			}
+		},
+		"/gotop": function(e, args){
+			window.scrollTo(1,1);
+		},
+		"/signin": function(e, args){
+			location.href = api.signin+encodeURIComponent(location.href);
+		},
+		"/signout": function(e, args){
+			location.href = api.signout+encodeURIComponent(location.href);
+		},
+		"/closexdialog": function(e, args){
+			typeof refreshTimout != "undefined" && clearTimeout(refreshTimout);
+			$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
+		},
+		"/opentoptip": function(e, args){
+			$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
+			$.render("my-dialog",{
+				type: "toptip",
+				content: args.msg,
+				handle: "/closetoptip?"+$.__mod__.jsonToUrlString(args, "&")
+			}, $.createDom("div", {}), function(elem){
+				var p = elem.children[0];
+				$.query("body")[0]._append(p);
+				p._query(".toptip_main")[0]._removeClass("hide")._addClass('show');
+			});
+		},
+		"/canceltoptip": function(e, args){
+			$.router("/closexdialog");
+		},
+		"/closetoptip": function(e, args){
+			$.router("/closexdialog");
+			args && args.handle && $.router("/"+args.handle+"?"+$.__mod__.jsonToUrlString(args, "&"));
+			window.scrollTo(1,1);
+		},
+		"/loading": function(e, args){
+			$.query("#loading").forEach(function(n){
+				n._remove();
+			});
+			$.render("my-loading", {
+				content: args && args.content || store.get("state").loadingTipDefaultText
+			}, $.query("body"));
+		},
+		"/closeloading": function(e, args){
+			$.query("#loading")[0] && $.query("#loading")[0]._toggleClass("show hide");
+			timeout && clearTimeout(timeout);
+			timeout = setTimeout(function() {
+				$.query("#loading").forEach(function(n){
+					n._remove();
+				});
+			}, 500);
+		},
+		"/opendialog": function(e, args){
+			$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
+			$.render("my-dialog",{
+				type: "alert",
+				title: args.title,
+				content: args.msg,
+				handle:{
+					handleEnterClick: function(e){
+						$.router("/closexdialog");
+						args && args.handle && $.router("/"+args.handle+"?usid="+$.__mod__.jsonToUrlString(args, "&"));
+					}
+				}
+			}, $.createDom("div", {}), function(elem){
+				var p = elem.children[0];
+				$.query("body")[0]._append(p);
+				p._query(".alert_main")[0]._removeClass("hide")._addClass('show');
+			});
+		},
+		"/closexdialog": function(e, args){
+			refreshTimout && clearTimeout(refreshTimout);
+			$.query(".xdialog")[0] && $.query(".xdialog")[0]._remove();
+		}
+	});
+</script>

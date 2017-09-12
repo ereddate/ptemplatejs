@@ -1,0 +1,54 @@
+<template p-template="my-loading">
+	<div class="loading show" id="loading">
+		<span class="loadbox">{{content}}</span>
+	</div>
+</template>
+<style>
+	.loading{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.01);
+		z-index:999999;
+		text-align:center;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: nowrap;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
+		.loadbox{
+			display:block;
+			align-self: auto;
+			background-color: rgb(0,0,0);
+			color: rgb(255,255,255);
+			padding:0.1932rem 0.7728rem;
+			font-size:.5rem;
+			border-radius: 0.3864rem;
+		}
+		&.show{
+			animation: moveFromCenter .5s ease both;
+		}
+		&.hide{
+			animation: moveToCenter .5s ease both;
+		}
+	}
+	@-webkit-keyframes moveFromCenter {
+		from { opacity:0; }
+		to {opacity:1;}
+	}
+	@keyframes moveFromCenter {
+		from { opacity:0; }
+		to {opacity:1;}
+	}
+	@-webkit-keyframes moveToCenter {
+		from { opacity:1;}
+		to { opacity:0;}
+	}
+	@keyframes moveToCenter {
+		from { opacity:1;}
+		to { opacity:0;}
+	}
+</style>

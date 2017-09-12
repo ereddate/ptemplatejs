@@ -1,0 +1,518 @@
+<script>
+	$.extend($.__mod__.tmplThesaurus, {
+		toTime: function(val, filterCondition){
+			return set.time(parseInt(val)*1000);
+		},
+		toATime: function(val, filterCondition){
+			return set.time(parseInt(val));
+		},
+		toImgUrl: function(val, filterCondition){
+			var reg = /\/\/(.+)\.(jpg|png)/.exec(val);
+			if (reg){
+				return "//minimg.hexun.com/"+reg[1]+"_c100x100."+reg[2];
+			}
+			return val;
+		},
+		toSiteUrl: function(val, filterCondition){
+			var reg = /\/\/([^\.]+)(\..+\/([\d-]+)\/([0-9]+)\.html)/.exec(val);
+			if (reg){
+				return "//m.hexun.com/"+reg[1]+"/"+reg[3]+"/"+reg[4]+".html";
+			}
+			return val;
+		},
+		toLongNum: function(val, filterCondition){
+			val = parseInt(val);
+			return val>99 ? "99+" : val;
+		},
+		fixrate: function(val, filterCondition){
+			val = parseFloat(val);
+			return val>0 ? "+"+val : val < 0 ? val : val;
+		}
+	});
+
+	Array.prototype.remove = function(val){
+		this.splice(val, 1);
+		return this;
+	};
+
+	function getTime(d, pattern) {
+		d = d ? new Date(d) : new Date();
+		pattern = pattern || 'yyyy-MM-dd';
+		var y = d.getFullYear().toString(),
+			o = {
+				M: d.getMonth() + 1,
+				d: d.getDate(), 
+				h: d.getHours(), 
+				m: d.getMinutes(), 
+				s: d.getSeconds() 
+			};
+		pattern = pattern.replace(/(y+)/ig, function(a, b) {
+			return y.substr(4 - Math.min(4, b.length));
+		});
+		for (var i in o) {
+			pattern = pattern.replace(new RegExp('(' + i + '+)', 'g'), function(a, b) {
+				return (o[i] < 10 && b.length > 1) ? '0' + o[i] : o[i];
+			});
+		}
+		return pattern;
+	}
+	function cookie() {
+		function getsec(str) {
+			var str1 = str.substring(1, str.length) * 1;
+			var str2 = str.substring(0, 1);
+			if (str2 == "s") {
+				return str1 * 1000;
+			} else if (str2 == "h") {
+				return str1 * 60 * 60 * 1000;
+			} else if (str2 == "d") {
+				return str1 * 24 * 60 * 60 * 1000;
+			}
+		}
+		return {
+			set: function(name, value, time) {
+				var strsec = getsec(time);
+				var exp = new Date();
+				exp.setTime(exp.getTime() + strsec * 1);
+				document.cookie = name + "=" + value + ";expires=" + exp.toGMTString();
+			},
+			del: function(name) {
+				this.set(name, '', 's-1');
+			},
+			get: function(name) {
+				var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+				if (arr = document.cookie.match(reg)){
+					return (arr[2]);
+				}else{
+					return null;
+				}
+			}
+		}
+	}
+
+	exports.get = {
+		time: getTime(new Date(), "MM-dd hh:mm"),
+		cookie: cookie(),
+		getData: function(url, options, success, error){
+			if (navigator.onLine){
+				var promise = typeof Promise != "undefined" ? new Promise((resolve, reject) => {
+					$.jsonp($.tmpl(url, options)).done(function(result){
+						if (typeof result.state != "undefined" && result.state === 1){
+							resolve(result);
+						}else if (typeof result.state != "undefined" && result.state != 1){
+							reject(result);
+						}else if (typeof result.code != "undefined" && result.code === 0){
+							resolve(result.data);
+						}else if (typeof result.code != "undefined" && result.code != 0){
+							reject(result.code);
+						}else {
+							resolve(result);
+						}
+					}, function(error){
+						reject(error);
+					});
+				}) : $.promise(function(resolve, reject){
+					$.jsonp($.tmpl(url, options)).done(function(result){
+						if (typeof result.state != "undefined" && result.state === 1){
+							resolve(result);
+						}else if (typeof result.state != "undefined" && result.state != 1){
+							reject(result);
+						}else if (typeof result.code != "undefined" && result.code === 0){
+							resolve(result.data);
+						}else if (typeof result.code != "undefined" && result.code != 0){
+							reject(result.code);
+						}else{
+							resolve(result);
+						}
+					}, function(error){
+						reject(error);
+					});
+				});
+				promise.then(function(data){
+					success(data);
+				}).catch(function(err){
+					error(err);
+				});
+			}else{
+				$.router("/offline");
+			}
+		},
+		isSignIn: function(){
+			var userToken = cookie().get("userToken");
+			return userToken == null || userToken == "0" || userToken == "" ? false : true;
+		},
+		getUser: function(){
+			var userToken = cookie().get("userToken"),result = false;
+			var v = unescape(userToken).split("|")[0];
+            if (typeof(v) != "undefined" && v != "") {
+              result = v;
+            }
+			return !result ? null : result;
+		},
+		ua: function(){
+			var ua = navigator.userAgent.toLowerCase(),
+				device = {
+					os: {
+						version: 0,
+						isiOS: ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ios") > -1,
+						isAndroid: ua.indexOf("android") > -1 || ua.indexOf("adr") > -1 || ua.indexOf("linux;") > -1
+					},
+					browser: {
+						version: 0,
+						isQQ: ua.indexOf("qq/") > -1,
+						isqqbrowser: ua.indexOf("mqqbrowser/") > -1,
+						isbaidubrowser: ua.indexOf("baidubrowser/") > -1,
+						isUC: ua.indexOf("ucbrowser/") > -1,
+						isWechat: ua.indexOf("micromessenger/") > -1,
+						isSamsung: ua.indexOf("samsungbrowser/") > -1,
+						isSogou: ua.indexOf("sogoumobilebrowser/") > -1,
+						isPinganWifi: ua.indexOf("pawifi") > -1,
+						isChrome: ua.indexOf('chrome') >-1,
+						isOpera: ua.indexOf('opera') >-1 || ua.indexOf('opr') >-1,
+						isFirefox: ua.indexOf('firefox') >-1
+					}
+				};
+			device.browser.isSafari = device.os.isiOS && ua.indexOf("safari/") > -1 && !device.browser.isqqbrowser;
+			return {
+				local: ua,
+				device: device
+			};
+		},
+		getURLKeyValue: function(url, name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"),
+				r = url.split('?').length>1 ? url.split('?')[1].match(reg) : null;
+			return null != r ? unescape(r[2]) : null
+		},
+		getcid: function() {
+		    var cookies = [],
+		        names = ["HexunTrack", "userToken", "hxwapcookieid"],
+		        ua = navigator.userAgent.toLowerCase(),
+		        getCookieid = function(key) {
+		            var aCookie = document.cookie.split(";"),
+		                result = false;
+		            $.each(aCookie, function(i, item) {
+		                var aCrumb = item.split("=");
+		                if (key === aCrumb[0].replace(/^\s*|\s*$/, "")) {
+		                    if (/HexunTrack/.test(key)) {
+		                        result = unescape(aCrumb[2]).split("&")[0];
+		                    } else if (/userToken/.test(key)) {
+		                        var v = unescape(aCrumb[1]).split("|")[0];
+		                        if (typeof(v) != "undefined" && v != "") {
+		                            result = v;
+		                        }
+		                    } else if (/hxwapcookieid/.test(key)) {
+		                        result = aCrumb[1];
+		                    }
+		                }
+		            });
+		            return result ? result : 0;
+		        };
+		    $.each(names, function(i, item) {
+		        var v = getCookieid(item);
+		        cookies.push(v != 0 && v != "0" ? v : 0);
+		    });
+		    return cookies;
+		}
+	};
+	exports.set = {
+		storage: {
+			set: function(name, val){
+				window.localStorage && window.localStorage.setItem(name, val);
+				return this;
+			},
+			get: function(name){
+				return window.localStorage && window.localStorage.getItem(name);
+			},
+			remove: function(name){
+				window.localStorage && window.localStorage.removeItem(name);
+				return this;
+			}
+		},
+		time: function(v) {
+			return getTime(v, "MM-dd");
+		},
+		scrollbanner: function(s,l){
+			var len = parseInt(l);
+			var f = $.getBaseFontSize();
+			var p = $.query(s)[0];
+			var ul = p._query("ul")[0];
+			var lis = ul._css({
+				width: ((len + 1) * p._width() / f) + "rem"
+			})._query("li");
+			lis.forEach(function(e) {
+				e._css({
+					width: p._width() / f + "rem"
+				})
+			});
+			var n = 0,
+				interval;
+			ul._append(lis[0]._clone(true))._query("li").forEach(function(e) {
+				var that = e._query("img")[0];
+				$.lazyload && $.lazyload(that);
+			});
+
+			function play(n) {
+				ul._css({
+					width: ((len + 1) * p._width() / f) + "rem",
+					transform: "translate3d(-" + (n * p._width() / f) + "rem, 0px, 0px)",
+					"transition-duration": "0.5s"
+				});
+			}
+
+			function startFn(b) {
+				b = b || 1;
+				n += b;
+				play(n);
+				if (n > len) {
+					n = 0;
+					ul._css({
+						width: ((len + 1) * p._width() / f) + "rem",
+						transform: "translate3d(-" + (n * p._width() / f) + "rem, 0px, 0px)",
+						"transition-duration": "0s"
+					});
+					start(true);
+					return;
+				}else if (n < 0){
+					n = len -2;
+					ul._css({
+						width: ((len+1) * p._width()/f) + "rem",
+						transform: "translate3d(-" + ((n+2) * p._width()/f) + "rem, 0px, 0px)",
+						"transition-duration": "0s"
+					})._css({
+						width: ((len+1) * p._width()/f) + "rem",
+						transform: "translate3d(-" + ((n) * p._width()/f) + "rem, 0px, 0px)",
+						"transition-duration": "0.5s"
+					});
+					start(true);
+					return;
+				}
+				start();
+			}
+
+			function start(bool) {
+				interval && clearTimeout(interval);
+				if (!bool) {
+					interval = setTimeout(function() {
+						startFn();
+					}, 3000);
+				} else {
+					startFn();
+				}
+			}
+			start();
+			$.touch.swipe && $.touch.swipe(s, function(e, dir){
+				if (dir == "left"){
+					interval && clearTimeout(interval);
+					console.log(dir);
+					startFn(1);
+				}else if (dir == "right"){
+					interval && clearTimeout(interval);
+					console.log(dir);
+					startFn(-1);
+				}
+			});
+			window.scrollTo(1, 1);
+			return {
+				left: function(){
+					interval && clearTimeout(interval);
+					startFn(1);
+				},
+				right: function(){
+					interval && clearTimeout(interval);
+					startFn(-1);
+				}
+			};
+		}
+	}
+</script>
+<style>
+	body{
+		-webkit-tap-highlight-color:rgba(0,0,0,0)
+	}
+	.clearfix{
+		clear:both;
+		overflow: hidden;
+	}
+	a,img{
+		-webkit-touch-callout:none;
+	}
+	@font-face {
+	  font-family: 'icomoon';
+	  src:  url('src/stock/fonts/icomoon.eot _base64');
+	  src:  url('src/stock/fonts/icomoon.eot _base64') format('embedded-opentype'),
+	    url('src/stock/fonts/icomoon.ttf _base64') format('truetype'),
+	    url('src/stock/fonts/icomoon.woff _base64') format('woff'),
+	    url('src/stock/fonts/icomoon.svg _base64') format('svg');
+	  font-weight: normal;
+	  font-style: normal;
+	}
+
+	[class^="icon-"], [class*=" icon-"] {
+	  /* use !important to prevent issues with browser extensions that change fonts */
+	  font-family: 'icomoon' !important;
+	  speak: none;
+	  font-style: normal;
+	  font-weight: normal;
+	  font-variant: normal;
+	  text-transform: none;
+	  line-height: 1;
+
+	  /* Better Font Rendering =========== */
+	  -webkit-font-smoothing: antialiased;
+	  -moz-osx-font-smoothing: grayscale;
+	}
+
+	.icon-alert-circle:before {
+	  content: "\e903";
+	}
+	.icon-at-sign:before {
+	  content: "\e90e";
+	}
+	.icon-download-cloud:before {
+	  content: "\e90f";
+	}
+	.icon-download:before {
+	  content: "\e912";
+	}
+	.icon-map-pin:before {
+	  content: "\e915";
+	}
+	.icon-more-vertical:before {
+	  content: "\e917";
+	}
+	.icon-phone:before {
+	  content: "\e91a";
+	}
+	.icon-star:before {
+	  content: "\e920";
+	}
+	.icon-upload-cloud:before {
+	  content: "\e91b";
+	}
+	.icon-zoom-in:before {
+	  content: "\e91c";
+	}
+	.icon-zoom-out:before {
+	  content: "\e91d";
+	}
+	.icon-comm:before {
+	  content: "\e900";
+	  color: #999;
+	}
+	.icon-house:before {
+	  content: "\e905";
+	  color: #666;
+	}
+	.icon-me:before {
+	  content: "\e906";
+	  color: #fff;
+	}
+	.icon-out:before {
+	  content: "\e907";
+	  color: #fff;
+	}
+	.icon-view:before {
+	  content: "\e909";
+	}
+	.icon-leftup_arrow:before {
+	  content: "\e921";
+	}
+	.icon-selectdown_arrow:before {
+	  content: "\e922";
+	}
+	.icon-cancel_selected:before {
+	  content: "\e91e";
+	}
+	.icon-fall:before {
+	  content: "\e918";
+	}
+	.icon-rise:before {
+	  content: "\e919";
+	}
+	.icon-refresh:before {
+	  content: "\e916";
+	}
+	.icon-uniE90B:before {
+	  content: "\e90b";
+	}
+	.icon-up_arrow:before {
+	  content: "\e910";
+	}
+	.icon-down_arrow:before {
+	  content: "\e911";
+	}
+	.icon--7:before {
+	  content: "\e913";
+	}
+	.icon-uniE914:before {
+	  content: "\e914";
+	}
+	.icon-uniE903:before {
+	  content: "\e91f";
+	}
+	.icon--:before {
+	  content: "\e904";
+	}
+	.icon-22:before {
+	  content: "\e908";
+	}
+	.icon-12:before {
+	  content: "\e90a";
+	}
+	.icon-uniE908:before {
+	  content: "\e90c";
+	}
+	.icon--4:before {
+	  content: "\e90d";
+	}
+	.icon-2:before {
+	  content: "\e901";
+	}
+	.icon--3:before {
+	  content: "\e902";
+	}
+
+
+	@-webkit-keyframes moveFromRight {
+		from { -webkit-transform: translateX(100%); }
+	}
+	@keyframes moveFromRight {
+		from { -webkit-transform: translateX(100%); transform: translateX(100%); }
+	}
+	@-webkit-keyframes fromHide {
+		from { opacity:1; }
+		to { opacity:0; }
+	}
+	@-webkit-keyframes fromShow {
+		from { opacity:0; }
+		to { opacity:1; }
+	}
+	@-webkit-keyframes scaleDownCenter {
+		from { }
+		to { opacity: 0; -webkit-transform: scale(.7); }
+	}
+	@keyframes scaleDownCenter {
+		from { }
+		to { opacity: 0; -webkit-transform: scale(.7); transform: scale(.7); }
+	}
+
+	@-webkit-keyframes scaleUpCenter {
+		from { opacity: 0; -webkit-transform: scale(.7); }
+	}
+	@keyframes scaleUpCenter {
+		from { opacity: 0; -webkit-transform: scale(.7); transform: scale(.7); }
+	}
+	@-webkit-keyframes moveToTop {
+		from { }
+		to { -webkit-transform: translateY(-100%); }
+	}
+	@keyframes moveToTop {
+		from { }
+		to { -webkit-transform: translateY(-100%); transform: translateY(-100%); }
+	}
+	@-webkit-keyframes moveFromTop {
+		from { -webkit-transform: translateY(-100%); }
+	}
+	@keyframes moveFromTop {
+		from { -webkit-transform: translateY(-100%); transform: translateY(-100%); }
+	}
+</style>

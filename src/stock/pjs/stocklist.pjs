@@ -1,0 +1,96 @@
+<template p-template="my-stocklist">
+	<ul class="list" style="{{stock_data && stock_data.length > 0 ? 'display:block' : 'display:none'}}">
+		<li p-express:for="i in stock_data">
+			<article class="item">
+				<span class="comment">{{commentNum | toLongNum}}</span>
+				<header>
+					<h1><a href="{{newsUrl | toSiteUrl}}" target="_blank" n-datagrand="rec_click">{{title | limitTo : 37}}</a></h1>
+					<p><span>{{mediaName | limitTo : 10}}</span><span>{{item_modify_time | toTime}}</span><!--span>{{commentNum | empty : 0}}<i class="icon-comm comm"></i></span--></p>
+				</header>
+				<div class="rightimg">
+					<a href="{{newsUrl | toSiteUrl}}" target="_blank" n-datagrand="rec_click">
+						<lazyload src="{{newsPicture | toImgUrl}}" class="loaded">
+							<img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSJ3aGl0ZSI+CiAgPHBhdGggb3BhY2l0eT0iLjI1IiBkPSJNMTYgMCBBMTYgMTYgMCAwIDAgMTYgMzIgQTE2IDE2IDAgMCAwIDE2IDAgTTE2IDQgQTEyIDEyIDAgMCAxIDE2IDI4IEExMiAxMiAwIDAgMSAxNiA0Ii8+CiAgPHBhdGggZD0iTTE2IDAgQTE2IDE2IDAgMCAxIDMyIDE2IEwyOCAxNiBBMTIgMTIgMCAwIDAgMTYgNHoiPgogICAgPGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIGZyb209IjAgMTYgMTYiIHRvPSIzNjAgMTYgMTYiIGR1cj0iMC44cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIC8+CiAgPC9wYXRoPgo8L3N2Zz4K" alt="{{title}}" />
+						</lazyload>
+					</a>
+				</div>
+			</article>
+		</li>
+	</ul>
+</template>
+<style>
+	.list{
+		&.show{
+			animation: moveFromRight .5s ease both;
+		}
+		li{
+			background-color:rgb(255,255,255);
+			margin:0 0 0.3864rem 0;
+			padding:0.5795rem;
+			article{
+				&.item{
+					font-size:0.5795rem;
+					display:flex;
+					flex-flow:row;
+					.comment{
+						width:12%;
+						height:3.8639rem;
+						overflow:hidden;
+						text-align:center;
+						font-weight:700;
+						color:rgb(255,102,0);
+						line-height: 3.8639rem;
+					}
+					header{
+						margin:0 0.3864rem 0.5795rem 0;
+						padding-left:0.3864rem;
+						width:65%;
+						h1{
+							font-weight:400;
+							font-size:0.5795rem;
+							a{
+								display:block;
+								text-decoration:none;
+								color:rgb(0,0,0);
+							}
+						}
+						p{
+							display:flex;
+							flex-flow:row;
+							font-size:0.3477rem;
+							color:rgb(192,192,192);
+							padding:0.3864rem 0;
+							span{
+								width:80%;
+								&:last-child{
+									width:20%;
+									text-align:right;
+								}
+							}
+						}
+						.comm{
+							margin-left:0.1932rem;
+						}					}
+					.rightimg{
+						width:3.8639rem;
+						a{
+							background-color:rgb(244,245,247);
+							width:3.8639rem;
+							height:3.8639rem;
+							overflow:hidden;
+							display:block;
+							text-align: center;
+							img{
+								width:1.5456rem;
+								height: 100%;
+								&.loaded{
+									width:100%;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+</style>

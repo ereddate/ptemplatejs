@@ -1,0 +1,11 @@
+<template p-template="my-togglebutton">
+	<span>
+		<a href="#" p-router:href="/addselect?id={{id}}" p-express:if="{{isadd}} === 1"><i class="icon-uniE903"></i></a>
+		<a href="#" p-router:href="/delselect?id={{id}}" p-express:if="{{isadd}} === 2"><i class="icon-cancel_selected cancel_selected"></i></a>
+	</span>
+</template>
+<style>
+	.cancel_selected{
+		color:rgb(168,168,168);
+	}
+</style>

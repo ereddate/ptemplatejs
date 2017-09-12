@@ -1,0 +1,87 @@
+<template p-template="my-header">
+	<div class="header">
+		<div class="header_main">
+			<div class="logo">
+				<a href="#" p-router:href="/news" class="gohome" p-express:if="{{channel}} < 6 && {{channel}} != 4 && {{channel}} != 2 && {{channel}} != 3" target="_blank">LOGO</a>
+				<a href="#" p-router:href="/search" p-express:if="{{channel}} == 2 && {{channel}} < 6" target="_blank"><i class="icon--3"></i></a>
+				<a href="#" p-router:href="{{channel === 6 ? '/famousman' : channel === 4 ? '/market' : channel === 3 ? '/famousman' : '/news'}}" class="logo_header_goback" p-express:if="/6|3|4/.test({{channel}})"><i class="icon-uniE90B"></i></a>
+			</div>
+			<div class="channel">
+				<a href="#" p-router:href="/news" p-express:if="{{channel}} < 6 && {{channel}} != 4 && {{channel}} != 3" class="news {{channel === 1 ? 'on' : 'off'}}">新闻</a>
+				<a href="#" p-router:href="/market" p-express:if="{{channel}} < 6 && {{channel}} != 4 && {{channel}} != 3" class="market {{channel === 2 ? 'on' : 'off'}}">行情</a>
+				<a href="#" p-router:href="/famousman" p-express:if="{{channel}} < 6 && {{channel}} != 4 && {{channel}} != 3" class="famousman {{channel === 5 ? 'on' : 'off'}}">名家</a>
+				<a href="#" p-router:href="/star" p-express:if="{{signin}} === 2 && {{channel}} < 6 && {{channel}} != 4" class="star {{channel === 3 ? 'on' : 'off'}}">订阅</a>
+				<a href="#" p-router:href="/teach" class="teachheader" p-express:if="{{channel}} === 6" style="{{channel === 6 ? 'display:block' : 'display:none'}}">名家主页</a>
+				<a href="#" p-router:href="/search" p-express:if="{{channel}} === 4">搜索</a>
+			</div>
+			<div class="user">
+				<a href="#" p-router:href="/signin" p-express:if="{{signin}} === 1"><i class="icon-me"></i></a>
+				<a href="#" p-router:href="/signout" p-express:if="{{signin}} === 2"><i class="icon-out"></i></a>
+			</div>
+		</div>
+	</div>
+</template>
+<style>
+	.header{
+		position:fixed;
+		top:0;
+		left:0;
+		right:0;
+		z-index:99999;
+		background-color:rgb(0,0,0);
+		font-size:0.6955rem;
+		line-height:2.0093rem;
+		text-align:center;
+		.header_header{
+			height:2.0093rem;
+			color:rgb(255,255,255);
+		}
+		.header_main{
+			display:flex;
+			flex-flow:row;
+			height:2.0093rem;
+		}
+		a{
+			display:inline-block;
+			text-decoration:none;
+			color:rgb(255,255,255);
+			i{
+				line-height:2.0093rem;
+			}
+		}
+		i{
+			font-style: initial;
+		}
+		.logo{
+			width:2.0093rem;
+			.logo_header_goback{
+				width:2.0093rem;
+				height:2.0093rem;
+				overflow:hidden;
+				color:rgb(255,255,255);
+				i{
+					line-height:2.0093rem;
+				}
+			}
+			.gohome{
+				padding: 0 0 0 0.5795rem;
+    			font-size: 0.5795rem;
+			}
+		}
+		.channel{
+			width:90%;
+			a{
+				margin:0 0.1932rem;
+			}
+			.on{
+				color:rgb(255,255,255);
+			}
+			.off{
+				color:rgb(128,128,128);
+			}
+		}
+		.user{
+			width:2.0093rem;
+		}
+	}
+</style>
