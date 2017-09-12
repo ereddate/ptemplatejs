@@ -75,6 +75,30 @@
 		}
 	}).commit({
 		handle:{
+			reload_news: function(data, id){
+				$.render("my-stocklist", {
+					stock_data: data,
+					handle:{
+						componentWillMount:function(next){
+							var json = {
+								news:{
+									[newspage]: data
+								}
+							};
+							store.commit(json);
+							set.storage.set("reload_news", JSON.stringify(json));
+							$.update("my-main", {
+								stock_data: data,
+								error_code: 0
+							});
+							next();
+						}
+					}
+				}, $.createDom("div", {}), function(elem){
+					$.query("#"+id)[0]._html('')._append(elem.children[0]);
+				});
+				$.router("/closeloading");
+			},
 			reload_recommendlist: function(data, id, page){
 				$.render("my-recommendlist", {
 					recommend_data: data,

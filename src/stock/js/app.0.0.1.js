@@ -1,6 +1,14 @@
+var doc = win.document,
+	body = doc.body || doc.documentElement;
 $.setBaseFontSize(16);
 
 import {get, set} from "common.script";
+
+var ua = get.ua();
+if (ua.device.os.isPC){
+	$.query("#systip")[0]._addClass("active");
+	return;
+}
 
 var type = get.getURLKeyValue(location.href, "type");
 var app_type = type || "web";
@@ -31,6 +39,18 @@ if (app_type != "web") {
 				num: b
 			});
 		}, 1000);
+		next();
+	});
+}else{
+	callbacks.add(function(next){
+		var urls = $.createDom("docmentfragment",{});
+		for (var i=0;i<5;i++) {
+			urls._append($.createDom("link", {
+				href: location.href.split('?')[0]+"?channel="+(i+1),
+				rel: "prefetch",
+			}));
+		}
+		$.query("head")[0]._append(urls);
 		next();
 	});
 }

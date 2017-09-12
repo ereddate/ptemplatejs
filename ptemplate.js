@@ -624,6 +624,7 @@
 				if ("string" != typeof obj && obj.toJSON)
 					return obj.toJSON();
 				var type = typeof obj;
+				console.log(type);
 				switch (type) {
 					case "string":
 						return '"' + obj.replace(/[\"\r\n\t\\]+/gim, ((a) => {

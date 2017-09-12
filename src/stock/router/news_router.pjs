@@ -22,31 +22,19 @@
 			getData(api.news_url+"&cid="+cid, {
 				count: 30
 			}, function(data) {
-				$.render("my-stocklist", {
-					stock_data: data,
-					handle:{
-						componentWillMount:function(next){
-							store.commit({
-								news:{
-									[newspage]: data
-								}
-							});
-							$.update("my-main", {
-								stock_data: data,
-								error_code: 0
-							});
-							next();
-						}
-					}
-				}, $.createDom("div", {}), function(elem){
-					$.query("#stock_list")[0]._html('')._append(elem.children[0]);
-				});
+				store.get("handle")["reload_news"](data, "stock_list");
 				$.router("/first");
-				$.router("/closeloading");
 			}, function(error) {
 				console.log(error);
-				$.router("/closeloading");
-				$.router("/opentoptip?msg=拉取数据失败，请点击重试！&handle="+(channel === 1 ? "reload_news" : "reload_market"));
+				var json = set.storage.get("reload_news");
+				if (json) {
+					json = JSON.parse(json);
+					store.get("handle")["reload_news"](json.news[0], "stock_list");
+					$.router("/first");
+				}else{
+					$.router("/closeloading");
+					$.router("/opentoptip?msg=拉取数据失败，请点击重试！&handle="+(channel === 1 ? "reload_news" : "reload_market"));
+				}
 			});
 		},
 		"/getmore": function(e, args){

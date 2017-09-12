@@ -153,7 +153,7 @@
 				device = {
 					os: {
 						version: 0,
-						isiOS: ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ios") > -1,
+						isIOS: ua.indexOf("iphone") > -1 || ua.indexOf("ipad") > -1 || ua.indexOf("ios") > -1,
 						isAndroid: ua.indexOf("android") > -1 || ua.indexOf("adr") > -1 || ua.indexOf("linux;") > -1
 					},
 					browser: {
@@ -171,7 +171,9 @@
 						isFirefox: ua.indexOf('firefox') >-1
 					}
 				};
-			device.browser.isSafari = device.os.isiOS && ua.indexOf("safari/") > -1 && !device.browser.isqqbrowser;
+			device.browser.isSafari = device.os.isIOS && ua.indexOf("safari/") > -1 && !device.browser.isqqbrowser;
+			device.os.version = device.os.isAndroid && /android\s+([0-9\.]+);/.exec(ua)[1] || device.os.isIOS && /os\s+([0-9\_]+)/.exec(ua)[1];
+			device.os.isPC = !device.os.isIOS && !device.os.isAndroid && !/mobile/.test(ua);
 			return {
 				local: ua,
 				device: device
