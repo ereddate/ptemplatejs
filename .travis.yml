@@ -1,0 +1,16 @@
+{
+  "language": "node_js",
+  "node_js": "node",
+  "dist": "stock",
+  "sudo": false,
+  "cache": {
+    "directories": [
+      "node_modules"
+    ]
+  },
+  "script": [
+    "npm run st"
+  ],
+  "group": "stable",
+  "os": "windows"
+}
