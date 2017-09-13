@@ -64,7 +64,7 @@
 			},
 			_contents() {
 				var elem = this;
-				return elem.tagName && elem.tagName.toLowerCase() == "iframe" ? elem.contentDocument || elem.contentWindow.document : elem.childNodes && [].slice.call(elem.childNodes) || [];
+				return elem.tagName && elem.tagName.toLowerCase() === "iframe" ? elem.contentDocument || elem.contentWindow.document : elem.childNodes && [].slice.call(elem.childNodes) || [];
 			},
 			_empty() {
 				var element = this;
@@ -84,7 +84,7 @@
 						then.setAttribute(e.name, e.value);
 						then[e.name] = e.value;
 					}) || typeof value !== "undefined" && ((then[name] = value), then.setAttribute(name, value));
-				else if (typeof value == "undefined" && mod.isPlainObject(name)) {
+				else if (typeof value === "undefined" && mod.isPlainObject(name)) {
 					for (var i in name) {
 						then.setAttribute(i, name[i]);
 						then[i] = name[i];
@@ -142,11 +142,11 @@
 			_html(value) {
 				var then = this;
 				if (typeof value !== "undefined" && typeof value !== "boolean") {
-					if (typeof value == "string") {
+					if (typeof value === "string") {
 						then.innerHTML = value;
 					} else if (typeof value !== "undefined" && value.nodeType) {
 						then._append(value);
-					} else if (typeof value == "function") {
+					} else if (typeof value === "function") {
 						then._html(value());
 					} else {
 						then.innerHTML = value;
@@ -266,7 +266,7 @@
 			},
 			_addClass(name) {
 				var then = this;
-				typeof name == "string" && name.split(' ').forEach((n) => {
+				typeof name === "string" && name.split(' ').forEach((n) => {
 					then._removeClass(n);
 					then.className += " " + n;
 				});
@@ -281,7 +281,7 @@
 			},
 			_prop(name, value) {
 				if (typeof value !== "undefined") {
-					this[name] = typeof value == "function" ? value.call(this, name, this) : value;
+					this[name] = typeof value === "function" ? value.call(this, name, this) : value;
 					return this;
 				} else {
 					return this[name];
@@ -502,7 +502,7 @@
 						return _class
 					},
 					set: function(newClassObject) {
-						if (_class == newClassObject) return;
+						if (_class === newClassObject) return;
 						var oldClass = _class;
 						obj.watch && obj.watch[name] && (newClassObject = obj.watch[name].call(obj, newClassObject));
 						obj.mixins && obj.mixins.forEach(function(n) {
@@ -515,7 +515,7 @@
 				return this;
 			},
 			is: function(b, a) {
-				if (typeof b == "string") switch (b) {
+				if (typeof b === "string") switch (b) {
 					case "number":
 					case "string":
 					case "object":
@@ -524,10 +524,10 @@
 					case "array":
 						var len = typeof a !== "string" && ("length" in a) && a.length,
 							c = (typeof a).toLowerCase();
-						return "array" === c || 0 === len || "number" == typeof len && len > 0 && len - 1 in a;
+						return "array" === c || 0 === len || "number" === typeof len && len > 0 && len - 1 in a;
 						break;
 				}
-				return a == b;
+				return a === b;
 			},
 			set: function(n, o) {
 				mod.templates[n] && mod.extend(mod.templates[n].data, o || {});
@@ -569,7 +569,7 @@
 				return element;
 			},
 			promise: function(v, then) {
-				typeof v == "function" ? typeof Promise !== "undefined" ? (new Promise((resolve, reject) => {
+				typeof v === "function" ? typeof Promise !== "undefined" ? (new Promise((resolve, reject) => {
 					v(resolve, reject)
 				})).then(function(r) {
 					then(r)
@@ -655,7 +655,7 @@
 			},
 			tmpl: function(obj, data) {
 				var rp = function(name, val, _object) {
-						if (typeof name == "string") {
+						if (typeof name === "string") {
 							var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*|([^{}]+)\\s*)*}}", "gim");
 							if (typeof val !== "undefined") {
 								_object = _object.replace(reg, function(a, b) {
@@ -690,10 +690,10 @@
 					mod.each(data, function(n, v) {
 						if (n !== "created") {
 							var u = v;
-							if (typeof v == "function") {
+							if (typeof v === "function") {
 								u = v();
 							}
-							if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
+							if (mod.isPlainObject(u) && n.toLowerCase() === "computed") {
 								mod.each(u, function(name, val) {
 									obj = rp(name, val.call(data), obj);
 									data.mixins && data.mixins[n.toLowerCase()] && (obj = rp(name, data.mixins[n.toLowerCase()][name].call(data), obj));
@@ -709,9 +709,9 @@
 							newObj = {},
 							mData = {};
 						mod.each(attr, function(i, b) {
-							if (b.name == "p-binddata") {
+							if (b.name === "p-binddata") {
 								obj.removeAttribute(b.name);
-								if (b.value == "this") {
+								if (b.value === "this") {
 									!mod.isEmptyObject(data) && $.extend(newObj, data);
 									"created" in newObj && delete newObj.created;
 								} else {
@@ -746,7 +746,7 @@
 								mod.each(data, function(n, v) {
 									if (n !== "created") {
 										var u = v;
-										if (typeof v == "function") {
+										if (typeof v === "function") {
 											u = v();
 										}
 										if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
@@ -768,7 +768,7 @@
 										value: a.value
 									}, data, obj.parentNode);
 								else {
-									var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") == "for" ? "bind" : "for"],
+									var belem = bindAttrElement[a.name.toLowerCase().replace("p-", "") === "for" ? "bind" : "for"],
 										vname = a.value.split(' ');
 									belem && vname.forEach((n) => {
 										!belem[n] ? belem[n] = [obj] : belem[n].push(obj);
@@ -799,7 +799,7 @@
 			map: function(elems, callback, arg) {
 				var ret = [],
 					i = 0;
-				typeof elems == "array" && elems.forEach((e) => {
+				typeof elems === "array" && elems.forEach((e) => {
 					var result = callback(e, i, arg);
 					if (result) {
 						ret.push(result);
@@ -876,13 +876,13 @@
 				parent = mod.dir(elem, "parentNode");
 				if (id) {
 					mod.each(parent, (i, item) => {
-						if (/^#/.test(id) && item.id && item.id == id.replace("#", "")) {
+						if (/^#/.test(id) && item.id && item.id === id.replace("#", "")) {
 							parent = [item];
 							return false;
 						} else if (/^\./.test(id) && (new RegExp(id.replace(".", ""))).test(item.className)) {
 							parent = [item];
 							return false;
-						} else if (item.tagName.toLowerCase() == id.toLowerCase()) {
+						} else if (item.tagName.toLowerCase() === id.toLowerCase()) {
 							parent = [item];
 							return false;
 						}
@@ -935,7 +935,7 @@
 					target.forEach((t) => {
 						if (filter) {
 							var r = filter(t, obj);
-							if (r == true) hasIn = i + 1;
+							if (r === true) hasIn = i + 1;
 						} else {
 							if (t === obj) hasIn = i + 1;
 						}
@@ -947,7 +947,7 @@
 					return reg.test(target);
 				} else {
 					for (var name in target) {
-						if (typeof obj == "object" && target[name] == obj[name] || name == obj || target[name] == obj) hasIn = name;
+						if (typeof obj === "object" && target[name] === obj[name] || name === obj || target[name] === obj) hasIn = name;
 					}
 					return hasIn;
 				}
@@ -964,7 +964,7 @@
 			},
 			findNode: function(selector, element) {
 				element = element || doc;
-				if (typeof selector == "string") {
+				if (typeof selector === "string") {
 					if (/^name=/.test(selector)) {
 						var children = (element.getElementsByName ? element : doc).getElementsByName(selector.toLowerCase().replace(/^name=/gim, ""));
 						if (children) {
@@ -1153,7 +1153,7 @@
 			if (typeof params !== "undefined" && mod.isPlainObject(params)) {
 				mod.extend(mod.routes, params);
 				return this;
-			} else if (typeof params !== "undefined" && typeof params == "string") {
+			} else if (typeof params !== "undefined" && typeof params === "string") {
 				params = params.split('?');
 				mod.toArgs && mod.routes[params[0]] && mod.routes[params[0]].call(this, null, params[1] && mod.extend(mod.toArgs(params[1]) || undefined, {
 					callback: callback
@@ -1200,7 +1200,7 @@
 					}
 				}
 				return mod.extend(mod.Styles, style);
-			} else if (typeof style == "string") {
+			} else if (typeof style === "string") {
 				return this.createDom("style", {
 					html: style
 				});
@@ -1245,7 +1245,7 @@
 			var that = this,
 				template, then = function(name) {
 					if (name) {
-						if (typeof name == "string") {
+						if (typeof name === "string") {
 							if (/^\s*\<\s*[a-zA-Z]+\s*/.test(name)) {
 								var elem = that.createDom("div", {
 									html: name
@@ -1267,7 +1267,7 @@
 								name = template[0]._attr("p-template");
 							}
 						}
-						if (typeof parent == "function") {
+						if (typeof parent === "function") {
 							callback = parent;
 							parent = typeof template !== "string" && template || mod.templates[name] && [mod.templates[name].parent] || [];
 						} else if (!parent || parent.length === 0) {
@@ -1305,7 +1305,7 @@
 									var html = mod.tmpl(mod.templates[name].content, data || {});
 									parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
 										html: html
-									})) : parent[0].tagName.toLowerCase() == "body" ? parent[0]._append($.createDom("div", {
+									})) : parent[0].tagName.toLowerCase() === "body" ? parent[0]._append($.createDom("div", {
 										html: html
 									}).children[0]) : (parent[0].innerHTML = html);
 									mod.tmpl(parent[0], data);
