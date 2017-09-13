@@ -9,7 +9,7 @@
     ]
   },
   "script": [
-    "npm run st"
+    "npm test"
   ],
   "group": "stable",
   "os": "windows"
