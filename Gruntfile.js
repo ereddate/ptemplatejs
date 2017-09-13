@@ -181,6 +181,7 @@ module.exports = function(grunt) {
         dest: 'dist/' + c.projectName + "/libs/" //输出到此目录下
       }]
     };
+    grunt.registerTask('build_'+c.projectName, tasks);
   });
 
   grunt.registerTask("pjsbuild", "pjs build", function(v) {
