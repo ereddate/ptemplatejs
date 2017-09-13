@@ -431,10 +431,10 @@
 			Styles: {},
 			_stores: {},
 			isWindow(obj) {
-				return obj !== null && obj == obj.window
+				return obj !== null && obj === obj.window
 			},
 			isDocument(obj) {
-				return obj !== null && obj.nodeType == obj.DOCUMENT_NODE
+				return obj !== null && obj.nodeType === obj.DOCUMENT_NODE
 			},
 			diff: function(a, b) {
 				var c = {};
@@ -519,7 +519,7 @@
 					case "number":
 					case "string":
 					case "object":
-						return a == b;
+						return a === b;
 						break;
 					case "array":
 						var len = typeof a !== "string" && ("length" in a) && a.length,
@@ -619,7 +619,7 @@
 				return tag;
 			},
 			stringify: function(obj) {
-				if (null == obj)
+				if (null === obj)
 					return "null";
 				if ("string" !== typeof obj && obj.toJSON)
 					return obj.toJSON();
@@ -749,7 +749,7 @@
 										if (typeof v === "function") {
 											u = v();
 										}
-										if (mod.isPlainObject(u) && n.toLowerCase() == "computed") {
+										if (mod.isPlainObject(u) && n.toLowerCase() === "computed") {
 											mod.each(u, function(name, val) {
 												a.value = rp(name, val.call(data), a.value);
 												data.mixins && data.mixins[n.toLowerCase()] && (a.value = rp(name, data.mixins[n.toLowerCase()][name].call(data), a.value));
