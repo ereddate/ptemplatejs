@@ -79,11 +79,11 @@
 			},
 			_attr(name, value) {
 				var then = this;
-				if (typeof value != "undefined")
-					typeof name != "string" && [].slice.call(name).forEach((e) => {
+				if (typeof value !== "undefined")
+					typeof name !== "string" && [].slice.call(name).forEach((e) => {
 						then.setAttribute(e.name, e.value);
 						then[e.name] = e.value;
-					}) || typeof value != "undefined" && ((then[name] = value), then.setAttribute(name, value));
+					}) || typeof value !== "undefined" && ((then[name] = value), then.setAttribute(name, value));
 				else if (typeof value == "undefined" && mod.isPlainObject(name)) {
 					for (var i in name) {
 						then.setAttribute(i, name[i]);
@@ -103,12 +103,12 @@
 			},
 			_removeAttr(name) {
 				var that = this;
-				if (mod.isArray(name) || typeof name != "string" && "length" in name) {
+				if (mod.isArray(name) || typeof name !== "string" && "length" in name) {
 					var n = [];
 					for (var i = 0; i < name.length; i++) n.push(name[i].name);
 					name = n.join(' ');
 				}
-				typeof name == "string" && (name = name.split(' '));
+				typeof name === "string" && (name = name.split(' '));
 				name.forEach((n) => {
 					that.removeAttribute(n);
 				});
@@ -119,32 +119,32 @@
 					nodeType = then.nodeType;
 				if (nodeType) {
 					if ((nodeType === 1 || nodeType === 9 || nodeType === 11) && typeof then.textContent === "string") {
-						if (typeof value != "undefined") {
+						if (typeof value !== "undefined") {
 							then.textContent = value;
 							return this;
 						} else {
 							return then.textContent;
 						}
 					} else if (nodeType === 3 || nodeType === 4) {
-						if (typeof value != "undefined") {
+						if (typeof value !== "undefined") {
 							then.nodeValue = value;
 							return this;
 						} else {
 							return then.nodeValue;
 						}
 					} else {
-						return typeof value != "undefined" ? this : "";
+						return typeof value !== "undefined" ? this : "";
 					}
 				} else {
-					return typeof value != "undefined" ? this : "";
+					return typeof value !== "undefined" ? this : "";
 				}
 			},
 			_html(value) {
 				var then = this;
-				if (typeof value != "undefined" && typeof value != "boolean") {
+				if (typeof value !== "undefined" && typeof value !== "boolean") {
 					if (typeof value == "string") {
 						then.innerHTML = value;
-					} else if (typeof value != "undefined" && value.nodeType) {
+					} else if (typeof value !== "undefined" && value.nodeType) {
 						then._append(value);
 					} else if (typeof value == "function") {
 						then._html(value());
@@ -159,12 +159,12 @@
 			},
 			_val(value) {
 				if ("value" in this) {
-					if (typeof value != "undefined") {
+					if (typeof value !== "undefined") {
 						this._attr("value", value);
 					} else {
 						return this.value;
 					}
-				} else if (typeof value != "undefined") {
+				} else if (typeof value !== "undefined") {
 					this._html(value);
 				} else {
 					return this._html();
@@ -280,7 +280,7 @@
 				return this;
 			},
 			_prop(name, value) {
-				if (typeof value != "undefined") {
+				if (typeof value !== "undefined") {
 					this[name] = typeof value == "function" ? value.call(this, name, this) : value;
 					return this;
 				} else {
@@ -291,7 +291,7 @@
 				if (/^data-/.test(name)) {
 					return this._attr(name, value);
 				}!this._elementData && (this._elementData = {});
-				if (typeof value != "undefined") {
+				if (typeof value !== "undefined") {
 					this._elementData[name] = value;
 					return this;
 				} else {
@@ -308,7 +308,7 @@
 			_toggleClass(name) {
 				var then = this;
 				name.split(' ').forEach((n) => {
-					then.className != "" && mod.has(then.className, n) ? then._removeClass(n) : then._addClass(n);
+					then.className !== "" && mod.has(then.className, n) ? then._removeClass(n) : then._addClass(n);
 				});
 				return this;
 			},
@@ -330,7 +330,7 @@
 						parseFloat(getStyle.getPropertyValue('padding-left')) +
 						parseFloat(getStyle.getPropertyValue('padding-right')) +
 						parseFloat(getStyle.getPropertyValue('border-right-width'))
-				} else if (value != undefined) {
+				} else if (value !== undefined) {
 					this.style.width = value;
 				} else {
 					return this.offsetWidth -
@@ -363,7 +363,7 @@
 						parseFloat(getStyle.getPropertyValue('padding-top')) +
 						parseFloat(getStyle.getPropertyValue('padding-bottom')) +
 						parseFloat(getStyle.getPropertyValue('border-bottom-width'))
-				} else if (value != undefined) {
+				} else if (value !== undefined) {
 					this.style.height = value;
 				} else {
 					return this.offsetHeight -
@@ -403,14 +403,14 @@
 			},
 			_scrollLeft(value) {
 				if (val === undefined) {
-					return this.window == this ? ("pageXOffset" in win) ? win["pageXOffset"] : this.document.documentElement["scrollTop"] : this["scrollLeft"];
+					return this.window === this ? ("pageXOffset" in win) ? win["pageXOffset"] : this.document.documentElement["scrollTop"] : this["scrollLeft"];
 				}
 				this["scrollLeft"] = val;
 				return this;
 			},
 			_scrollTop(value) {
 				if (value === undefined) {
-					return this.window == this ? ("pageYOffset" in win) ? win["pageYOffset"] : this.document.documentElement["scrollTop"] : this["scrollTop"];
+					return this.window === this ? ("pageYOffset" in win) ? win["pageYOffset"] : this.document.documentElement["scrollTop"] : this["scrollTop"];
 				}
 				this["scrollTop"] = value;
 				return this;
@@ -431,21 +431,21 @@
 			Styles: {},
 			_stores: {},
 			isWindow(obj) {
-				return obj != null && obj == obj.window
+				return obj !== null && obj == obj.window
 			},
 			isDocument(obj) {
-				return obj != null && obj.nodeType == obj.DOCUMENT_NODE
+				return obj !== null && obj.nodeType == obj.DOCUMENT_NODE
 			},
 			diff: function(a, b) {
 				var c = {};
 				for (var i in b) {
-					if (!(i in a) || a[i] && a[i] != b[i]) c[i] = b[i];
+					if (!(i in a) || a[i] && a[i] !== b[i]) c[i] = b[i];
 				}
 				return c;
 			},
 			toStyle(val) {
 				let style = [];
-				for (let name in val) name != "" && style.push(name.replace(/\s+/gim, "") + ":'" + val[name] + "'");
+				for (let name in val) name !== "" && style.push(name.replace(/\s+/gim, "") + ":'" + val[name] + "'");
 				var a = [];
 				style.forEach((e) => {
 					e = e.split(':');
@@ -461,7 +461,7 @@
 						if (mod.is(typeof value, "function")) {
 							var r = value.call(elem, name);
 							mod.setAttrs(elem, name, r);
-						} else if (mod.is(typeof value, "string") && elem.nodeType != 11) {
+						} else if (mod.is(typeof value, "string") && elem.nodeType !== 11) {
 							elem._text(value)
 						} else {
 							var textnode = doc.createTextNode(value);
@@ -497,7 +497,7 @@
 				return obj;
 			},
 			createObject: function(obj, name, _class, callback) {
-				(typeof Reflect != "undefined" && Reflect.defineProperty ? Reflect.defineProperty : Object.defineProperty)(obj, name, {
+				(typeof Reflect !== "undefined" && Reflect.defineProperty ? Reflect.defineProperty : Object.defineProperty)(obj, name, {
 					get: function() {
 						return _class
 					},
@@ -522,7 +522,7 @@
 						return a == b;
 						break;
 					case "array":
-						var len = typeof a != "string" && ("length" in a) && a.length,
+						var len = typeof a !== "string" && ("length" in a) && a.length,
 							c = (typeof a).toLowerCase();
 						return "array" === c || 0 === len || "number" == typeof len && len > 0 && len - 1 in a;
 						break;
@@ -555,7 +555,7 @@
 			jsonToUrlString: function(obj, at) {
 				var str = [];
 				mod.each(obj, (name, val) => {
-					typeof val != "undefined" && str.push(name + "=" + val.toString());
+					typeof val !== "undefined" && str.push(name + "=" + val.toString());
 				});
 				return str.length > 0 ? str.join(at) : "";
 			},
@@ -569,7 +569,7 @@
 				return element;
 			},
 			promise: function(v, then) {
-				typeof v == "function" ? typeof Promise != "undefined" ? (new Promise((resolve, reject) => {
+				typeof v == "function" ? typeof Promise !== "undefined" ? (new Promise((resolve, reject) => {
 					v(resolve, reject)
 				})).then(function(r) {
 					then(r)
@@ -621,7 +621,7 @@
 			stringify: function(obj) {
 				if (null == obj)
 					return "null";
-				if ("string" != typeof obj && obj.toJSON)
+				if ("string" !== typeof obj && obj.toJSON)
 					return obj.toJSON();
 				var type = typeof obj;
 				console.log(type);
@@ -657,13 +657,13 @@
 				var rp = function(name, val, _object) {
 						if (typeof name == "string") {
 							var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*|([^{}]+)\\s*)*}}", "gim");
-							if (typeof val != "undefined") {
+							if (typeof val !== "undefined") {
 								_object = _object.replace(reg, function(a, b) {
 									if (b) {
 										b = b.split(':');
 										if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
 											var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](val, b[1] && b[1].replace(/^\s+/gim, "") || undefined, name);
-											a = typeof c != "undefined" ? c : a;
+											a = typeof c !== "undefined" ? c : a;
 										} else if (/[\?\:><\=\!\+\-\*\/]+/.test(a)) {
 											try {
 												var d = new Function(name, "return " + a.replace(/&quot;/gim, "'").replace(/[{}]+/gim, "") + ";");
@@ -688,7 +688,7 @@
 					};
 				if (mod.is(typeof obj, "string")) {
 					mod.each(data, function(n, v) {
-						if (n != "created") {
+						if (n !== "created") {
 							var u = v;
 							if (typeof v == "function") {
 								u = v();
@@ -744,7 +744,7 @@
 						attrs.forEach(function(a) {
 							if (!data || !mod.isEmptyObject(data)) {
 								mod.each(data, function(n, v) {
-									if (n != "created") {
+									if (n !== "created") {
 										var u = v;
 										if (typeof v == "function") {
 											u = v();
@@ -896,7 +896,6 @@
 				return (Array.isArray || _instanceOf(Array))(obj);
 			},
 			isEmptyObject: function(obj) {
-				var name;
 				for (var name in obj) {
 					return false;
 				}
@@ -958,7 +957,7 @@
 				var num = num || 16,
 					iWidth = document.documentElement.clientWidth,
 					iHeight = document.documentElement.clientHeight,
-					fontSize = window.orientation && (window.orientation == 90 || window.orientation == -90) || iHeight < iWidth ? iHeight / num : iWidth / num;
+					fontSize = window.orientation && (window.orientation === 90 || window.orientation === -90) || iHeight < iWidth ? iHeight / num : iWidth / num;
 				window.baseFontSize = fontSize;
 				document.getElementsByTagName('html')[0].style.fontSize = fontSize.toFixed(2) + 'px';
 				return fontSize;
@@ -1092,7 +1091,7 @@
 				var diff = mod.diff(this.log[n].data, this.data),
 					that = this;
 				mod.each(diff, function(name, v) {
-					if (that.log[n].data[name] && that.data[name] != that.log[n].data[name]) {
+					if (that.log[n].data[name] && that.data[name] !== that.log[n].data[name]) {
 						that.data[name] = that.log[n].data[name];
 					} else {
 						delete that.data[name];
@@ -1151,10 +1150,10 @@
 		},
 		router: function(params, callback) {
 			!mod.routes && (mod.routes = {});
-			if (typeof params != "undefined" && mod.isPlainObject(params)) {
+			if (typeof params !== "undefined" && mod.isPlainObject(params)) {
 				mod.extend(mod.routes, params);
 				return this;
-			} else if (typeof params != "undefined" && typeof params == "string") {
+			} else if (typeof params !== "undefined" && typeof params == "string") {
 				params = params.split('?');
 				mod.toArgs && mod.routes[params[0]] && mod.routes[params[0]].call(this, null, params[1] && mod.extend(mod.toArgs(params[1]) || undefined, {
 					callback: callback
@@ -1196,7 +1195,7 @@
 					if (name in mod.Styles)
 						style[name] = mod.toStyle(style[name]);
 					else {
-						(typeof Reflect != "undefined" && Reflect.deleteProperty ? Reflect.deleteProperty : Object.deleteProperty)(style, name);
+						(typeof Reflect !== "undefined" && Reflect.deleteProperty ? Reflect.deleteProperty : Object.deleteProperty)(style, name);
 						style[name] = mod.Styles[name];
 					}
 				}
@@ -1219,7 +1218,7 @@
 			return data;
 		},
 		getStyle: function(name) {
-			return typeof mod.Styles[name] != "undefined" && mod.Styles[name];
+			return typeof mod.Styles[name] !== "undefined" && mod.Styles[name];
 		},
 		createDom: function( /*name, attrs, children, ...*/ ) {
 			return mod.createDom.apply(mod, arguments);
@@ -1270,9 +1269,9 @@
 						}
 						if (typeof parent == "function") {
 							callback = parent;
-							parent = typeof template != "string" && template || mod.templates[name] && [mod.templates[name].parent] || [];
+							parent = typeof template !== "string" && template || mod.templates[name] && [mod.templates[name].parent] || [];
 						} else if (!parent || parent.length === 0) {
-							parent = typeof template != "string" && template || mod.templates[name] && [mod.templates[name].parent] || [];
+							parent = typeof template !== "string" && template || mod.templates[name] && [mod.templates[name].parent] || [];
 						} else if (!mod.isArray(parent) && parent.nodeType) {
 							parent = [parent];
 						}
