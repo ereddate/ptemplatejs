@@ -9,14 +9,7 @@
     ]
   },
   "script": [
-    "grunt pjsloader:stock",
-    "grunt lessToStyle:stock",
-    "grunt pjsbuild:stock",
-    "grunt concat:stock",
-    "grunt tmpl:stock",
-    "grunt babel:stock",
-    "grunt uglify:stock",
-    "grunt zip:stock"
+    "grunt build_stock"
   ],
   "os": "windows"
 }
