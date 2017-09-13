@@ -18,8 +18,7 @@
 		"hn": "grunt watch:hackernews",
 		"pages": "grunt watch:pages",
 		"book": "grunt watch:book",
-		"testa": "grunt watch:test",
-		"test": "vows --spec"
+		"test": "grunt watch:test"
 	},
 	"dependencies": {
 		"babel-preset-es2015": "^6.24.1",
