@@ -76,7 +76,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				then(resolve, reject)
 			});
 			promise.then(function(result) {
-				data.handle && data.handle[d.resolve].call(obj, result);
+				data.handle && data.handle[d.resolve].call(obj, result, function(elem){
+					elem.parentNode && elem.parentNode.replaceChild(elem, obj);
+				});
 			}).catch(function(err) {
 				data.handle && data.handle[d.reject].call(obj, err);
 			});
