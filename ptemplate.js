@@ -559,6 +559,14 @@
 				});
 				return str.length > 0 ? str.join(at) : "";
 			},
+			urlStringToJson: function(obj, at){
+				var str = {};
+				mod.each(obj.split(at), (i, val) => {
+					val = val.split('=');
+					str[val[0]] = val[1];
+				});
+				return str;
+			},
 			mixElement: function(element) {
 				mod.isArray(element) ? element.forEach(function(n) {
 					mod.extend(n, pSubClass);
@@ -661,6 +669,11 @@
 								_object = _object.replace(reg, function(a, b) {
 									if (b) {
 										b = b.split(':');
+										if (typeof val === "function"){
+											val = val(a, b);
+										}else if (mod.isArray(val)){
+											val = val.join('');
+										}
 										if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
 											var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](val, b[1] && b[1].replace(/^\s+/gim, "") || undefined, name);
 											a = typeof c !== "undefined" ? c : a;
@@ -1260,6 +1273,7 @@
 							}
 						} else if (name.nodeType) {
 							template = [name];
+							mod.mixElement(name);
 							name = name._attr("p-template");
 						} else if (mod.isPlainObject(name) && "render" in name) {
 							template = [name.render(that.createDom)];

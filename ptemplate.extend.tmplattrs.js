@@ -26,7 +26,67 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		});
 		return b;
 	};
+	var count = 0;
+	var tmplpromise = {
+		jsonp: function(obj, type, a, data, _parent) {
+			var localData = data;
+			if (navigator.onLine) {
+				var id = "p_promise_dom_" + (Math.random(100) + '').replace(/\./gim, ''),
+					newObj = obj.cloneNode(true),
+					then = function(b, c) {
+						$.jsonp(a.value).done(function(result) {
+							b(result);
+						}, function(error) {
+							c(error);
+						});
+					};
+				obj.parentNode && obj.parentNode.replaceChild($.createDom(obj.tagName, {
+					id: id
+				}), obj);
+				var promise = typeof Promise !== "undefined" ? new Promise((resolve, reject) => {
+					then(resolve, reject)
+				}) : $.promise(function(resolve, reject) {
+					then(resolve, reject)
+				});
+				promise.then(function(result) {
+					var name = "promise_data";
+					if (localData.promise_data) {
+						name = localData.promise_data;
+					}
+					var data = result.data ? result.data : result;
+					$.render(newObj, {
+						[name]: data,
+						count: data.length
+					}, $.query("#" + id));
+				}).catch(function(err) {
+					console.log(err);
+				});
+			} else {
+				console.log(a.name + " offline.");
+			}
+		},
+		custom: function(obj, type, a, data, _parent) {
+			var d = $.__mod__.urlStringToJson(a.value, ", "),
+				then = function(b, c) {
+					data.handle && data.handle[d.promise].call(obj, b, c);
+				};
+			var promise = typeof Promise !== "undefined" ? new Promise((resolve, reject) => {
+				then(resolve, reject)
+			}) : $.promise(function(resolve, reject) {
+				then(resolve, reject)
+			});
+			promise.then(function(result) {
+				data.handle && data.handle[d.resolve].call(obj, result);
+			}).catch(function(err) {
+				data.handle && data.handle[d.reject].call(obj, err);
+			});
+		}
+	};
 	$.__mod__.tmplAttributes && $.extend($.__mod__.tmplAttributes, {
+		promise: function(obj, type, a, data, _parent) {
+			obj._removeAttr(a.name);
+			typeof tmplpromise[type] !== "undefined" && tmplpromise[type](obj, type, a, data, _parent);
+		},
 		router: function(obj, type, a, data, _parent) {
 			var routers = a.value.split('?');
 			if ($.__mod__.routes && $.__mod__.routes[routers[0]]) {
@@ -51,7 +111,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					obj._attr(type, val);
 				}
 				obj._removeAttr(a.name);
-			}else{
+			} else {
 				obj._attr(type, a.value)._removeAttr(a.name);
 			}
 		},
@@ -258,7 +318,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							case "tap":
 							case "pinched":
 							case "swipe":
-								obj._on("click", function(e){
+								obj._on("click", function(e) {
 									e.preventDefault();
 								});
 								$.__mod__.touch[type[0]](obj, function(e, args) {
@@ -292,5 +352,6 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					break;
 			}
 		}
-	})
+	});
+	$.__mod__.tmplAttributes.promise.tmplpromise = tmplpromise;
 })(window, pTemplate)
