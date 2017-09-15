@@ -1341,12 +1341,19 @@
 								},
 								then = function(data) {
 									if (data.components) {
-										parent[0]._html('');
-										mod.each(data.components, function(i, component) {
-											$.render(component, mod.filter(data, "components"), $.createDom("div", {}), function(elem) {
-												parent[0]._append(elem.children[0]);
+										if ($.Callbacks){
+											parent[0]._html('');
+											var callbacks = $.Callbacks();
+											mod.each(data.components, function(i, component) {
+												callbacks.add(function(next){
+													$.render(component, mod.filter(data, "components"), $.createDom("div", {}), function(elem) {
+														parent[0]._append(elem.children[0]);
+														next();
+													});
+												});
 											});
-										});
+											callbacks.done();
+										}
 									}else{
 										nextFn(data);
 									}
