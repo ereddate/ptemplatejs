@@ -559,7 +559,7 @@
 				});
 				return str.length > 0 ? str.join(at) : "";
 			},
-			urlStringToJson: function(obj, at){
+			urlStringToJson: function(obj, at) {
 				var str = {};
 				mod.each(obj.split(at), (i, val) => {
 					val = val.split('=');
@@ -669,9 +669,9 @@
 								_object = _object.replace(reg, function(a, b) {
 									if (b) {
 										b = b.split(':');
-										if (typeof val === "function"){
+										if (typeof val === "function") {
 											val = val(a, b);
-										}else if (mod.isArray(val)){
+										} else if (mod.isArray(val)) {
 											val = val.join('');
 										}
 										if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
@@ -974,6 +974,15 @@
 				window.baseFontSize = fontSize;
 				document.getElementsByTagName('html')[0].style.fontSize = fontSize.toFixed(2) + 'px';
 				return fontSize;
+			},
+			filter: function(obj, filterstr){
+				filterstr = filterstr.split(' ');
+				mod.each(filterstr, function(i, k){
+					if (typeof obj[k] !== "undefined"){
+						delete obj[k];
+					}
+				});
+				return obj;
 			},
 			findNode: function(selector, element) {
 				element = element || doc;
@@ -1294,7 +1303,7 @@
 								if (data.commit) {
 									data = data.get();
 								}
-								var then = function(data) {
+								var nextFn = function(data) {
 									!mod.templates[name] && that.createTemplate(name, {
 										parent: parent[0],
 										content: template[0].innerHTML,
@@ -1329,6 +1338,18 @@
 									data.handle && data.handle.componentDidMount ? data.handle.componentDidMount.call(data, function(args) {
 										data.created ? that.nextTick(args ? mod.extend(data, args) : data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 									}) : data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+								},
+								then = function(data) {
+									if (data.components) {
+										parent[0]._html('');
+										mod.each(data.components, function(i, component) {
+											$.render(component, mod.filter(data, "components"), $.createDom("div", {}), function(elem) {
+												parent[0]._append(elem.children[0]);
+											});
+										});
+									}else{
+										nextFn(data);
+									}
 								};
 								data.handle && data.handle.componentWillMount ? data.handle.componentWillMount.call(data, function(args) {
 									var result = args ? mod.extend(data, args) : data;
