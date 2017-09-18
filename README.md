@@ -1,5 +1,5 @@
 # pTemplateJs 
-模板、数据绑定、数据过滤、事件处理、条件及列表渲染、样式控制等等。
+模板、数据绑定、数据过滤、事件处理、条件及列表渲染、样式控制、路由、数据仓库、组件化等等。
 
 <a href="https://travis-ci.org/ereddate/ptemplatejs/jobs/274873714"><img src="https://travis-ci.org/ereddate/ptemplatejs.svg?branch=master" /></a>
 
