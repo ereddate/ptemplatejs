@@ -1250,7 +1250,7 @@
 			return mod.createDom.apply(mod, arguments);
 		},
 		createTemplate: function(name, args, bool) {
-			var template = args.content || mod.findNode("template:" + name),
+			var template = args && args.content || mod.findNode("template:" + name),
 				ops = {
 					parent: undefined,
 					content: typeof template === "string" ? template : template.length > 0 ? template[0].innerHTML : "",
