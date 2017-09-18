@@ -1259,7 +1259,7 @@
 			!mod.templates[name] && (mod.templates[name] = args ? mod.extend(bool ? ops : ops.data, args) && ops : ops);
 			return this;
 		},
-		components: function(){
+		components: function() {
 			var args = arguments,
 				len = args.length,
 				components = [];
@@ -1276,7 +1276,7 @@
 					}
 				});
 				return mod.components[name];
-			}else if (len === 1){
+			} else if (len === 1) {
 				return mod.components[args[0]];
 			}
 			return null;
@@ -1329,7 +1329,8 @@
 								if (data.commit) {
 									data = data.get();
 								}
-								var nextFn = function(data) {
+								mod.mixElement(parent[0]);
+								var nextFn = function(data, bool) {
 										!mod.templates[name] && that.createTemplate(name, {
 											parent: parent[0],
 											content: template[0].innerHTML,
@@ -1351,7 +1352,6 @@
 												mod.templates[name].reload();
 											})
 										});
-										mod.mixElement(parent[0]);
 										parent[0]._attr("v-id", name);
 										var html = mod.tmpl(mod.templates[name].content, data || {});
 										parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
@@ -1363,9 +1363,9 @@
 										parent[0]._query("img").forEach(function(e) {
 											mod.lazyload && e._attr("p-lazyload") && mod.lazyload(e);
 										});
-										data.handle && data.handle.componentDidMount ? data.handle.componentDidMount.call(data, function(args) {
+										!bool ? data.handle && data.handle.componentDidMount ? data.handle.componentDidMount.call(data, function(args) {
 											data.created ? that.nextTick(args ? mod.extend(data, args) : data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
-										}) : data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+										}) : data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]) : bool();
 									},
 									then = function(data) {
 										if (data.components) {
@@ -1373,19 +1373,27 @@
 												parent[0]._html('');
 												var callbacks = $.Callbacks(),
 													components = data.components;
-												if (mod.isPlainObject(components) && "data" in components){
+												if (mod.isPlainObject(components) && "data" in components) {
 													$.extend(data, components.data);
 													components = components.components;
 												}
+												data = mod.filter(data, "components");
+												callbacks.add(function(next) {
+													nextFn(data, next);
+												});
 												mod.each(components, function(i, component) {
 													callbacks.add(function(next) {
-														$.render(component, mod.filter(data, "components"), $.createDom("div", {}), function(elem) {
-															parent[0]._append(elem.children && elem.children[0] || elem);
+														$.render(component, data, $.createDom("div", {}), function(elem) {
+															parent[0]._append(elem.children[0] || elem);
 															next();
 														});
 													});
 												});
-												callbacks.done();
+												callbacks.done(function() {
+													data.handle && data.handle.componentDidMount ? data.handle.componentDidMount.call(data, function(args) {
+														data.created ? that.nextTick(args ? mod.extend(data, args) : data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+													}) : data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+												});
 											}
 										} else {
 											nextFn(data);
