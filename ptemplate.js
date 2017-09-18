@@ -428,6 +428,7 @@
 			tmplTags: {},
 			routes: {},
 			eventData: [],
+			components: {},
 			Styles: {},
 			_stores: {},
 			isWindow(obj) {
@@ -895,6 +896,9 @@
 						} else if (/^\./.test(id) && (new RegExp(id.replace(".", ""))).test(item.className)) {
 							parent = [item];
 							return false;
+						} else if (item._attr(id)) {
+							parent = [item];
+							return false;
 						} else if (item.tagName.toLowerCase() === id.toLowerCase()) {
 							parent = [item];
 							return false;
@@ -975,10 +979,10 @@
 				document.getElementsByTagName('html')[0].style.fontSize = fontSize.toFixed(2) + 'px';
 				return fontSize;
 			},
-			filter: function(obj, filterstr){
+			filter: function(obj, filterstr) {
 				filterstr = filterstr.split(' ');
-				mod.each(filterstr, function(i, k){
-					if (typeof obj[k] !== "undefined"){
+				mod.each(filterstr, function(i, k) {
+					if (typeof obj[k] !== "undefined") {
 						delete obj[k];
 					}
 				});
@@ -1246,14 +1250,36 @@
 			return mod.createDom.apply(mod, arguments);
 		},
 		createTemplate: function(name, args, bool) {
-			var template = mod.findNode("template:" + name),
+			var template = args.content || mod.findNode("template:" + name),
 				ops = {
 					parent: undefined,
-					content: template.length > 0 ? template[0].innerHTML : "",
+					content: typeof template === "string" ? template : template.length > 0 ? template[0].innerHTML : "",
 					data: {}
 				};
 			!mod.templates[name] && (mod.templates[name] = args ? mod.extend(bool ? ops : ops.data, args) && ops : ops);
 			return this;
+		},
+		components: function(){
+			var args = arguments,
+				len = args.length,
+				components = [];
+			if (len > 1) {
+				var name = args[0],
+					data = args[1];
+				for (var i = 2; i < len; i++) {
+					components.push(args[i]);
+				}
+				$.extend(mod.components, {
+					[name]: {
+						data: data,
+						components: components
+					}
+				});
+				return mod.components[name];
+			}else if (len === 1){
+				return mod.components[args[0]];
+			}
+			return null;
 		},
 		mixElement: function(elem) {
 			mod.mixElement(elem);
@@ -1304,60 +1330,67 @@
 									data = data.get();
 								}
 								var nextFn = function(data) {
-									!mod.templates[name] && that.createTemplate(name, {
-										parent: parent[0],
-										content: template[0].innerHTML,
-										data: data,
-										callback: callback,
-										reload: function() {
-											that.render(name, data, parent, callback);
-										}
-									}, true) || mod.extend(mod.templates[name], {
-										parent: parent[0],
-										data: data,
-										callback: callback,
-										reload: function() {
-											that.render(name, data, parent, callback);
-										}
-									});
-									mod.each(mod.templates[name].data, function(n, val) {
-										mod.createObject(mod.templates[name].data, n, val, function(a, b) {
-											mod.templates[name].reload();
-										})
-									});
-									var html = mod.tmpl(mod.templates[name].content, data || {});
-									parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
-										html: html
-									})) : parent[0].tagName.toLowerCase() === "body" ? parent[0]._append($.createDom("div", {
-										html: html
-									}).children[0]) : (parent[0].innerHTML = html);
-									mod.tmpl(parent[0], data);
-									parent[0]._query("img").forEach(function(e) {
-										mod.lazyload && e._attr("p-lazyload") && mod.lazyload(e);
-									});
-									data.handle && data.handle.componentDidMount ? data.handle.componentDidMount.call(data, function(args) {
-										data.created ? that.nextTick(args ? mod.extend(data, args) : data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
-									}) : data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
-								},
-								then = function(data) {
-									if (data.components) {
-										if ($.Callbacks){
-											parent[0]._html('');
-											var callbacks = $.Callbacks();
-											mod.each(data.components, function(i, component) {
-												callbacks.add(function(next){
-													$.render(component, mod.filter(data, "components"), $.createDom("div", {}), function(elem) {
-														parent[0]._append(elem.children[0]);
-														next();
+										!mod.templates[name] && that.createTemplate(name, {
+											parent: parent[0],
+											content: template[0].innerHTML,
+											data: data,
+											callback: callback,
+											reload: function() {
+												that.render(name, data, parent, callback);
+											}
+										}, true) || mod.extend(mod.templates[name], {
+											parent: parent[0],
+											data: data,
+											callback: callback,
+											reload: function() {
+												that.render(name, data, parent, callback);
+											}
+										});
+										mod.each(mod.templates[name].data, function(n, val) {
+											mod.createObject(mod.templates[name].data, n, val, function(a, b) {
+												mod.templates[name].reload();
+											})
+										});
+										mod.mixElement(parent[0]);
+										parent[0]._attr("v-id", name);
+										var html = mod.tmpl(mod.templates[name].content, data || {});
+										parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
+											html: html
+										})) : parent[0].tagName.toLowerCase() === "body" ? parent[0]._append($.createDom("div", {
+											html: html
+										}).children[0]) : (parent[0].innerHTML = html);
+										mod.tmpl(parent[0], data);
+										parent[0]._query("img").forEach(function(e) {
+											mod.lazyload && e._attr("p-lazyload") && mod.lazyload(e);
+										});
+										data.handle && data.handle.componentDidMount ? data.handle.componentDidMount.call(data, function(args) {
+											data.created ? that.nextTick(args ? mod.extend(data, args) : data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+										}) : data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+									},
+									then = function(data) {
+										if (data.components) {
+											if ($.Callbacks) {
+												parent[0]._html('');
+												var callbacks = $.Callbacks(),
+													components = data.components;
+												if (mod.isPlainObject(components) && "data" in components){
+													$.extend(data, components.data);
+													components = components.components;
+												}
+												mod.each(components, function(i, component) {
+													callbacks.add(function(next) {
+														$.render(component, mod.filter(data, "components"), $.createDom("div", {}), function(elem) {
+															parent[0]._append(elem.children && elem.children[0] || elem);
+															next();
+														});
 													});
 												});
-											});
-											callbacks.done();
+												callbacks.done();
+											}
+										} else {
+											nextFn(data);
 										}
-									}else{
-										nextFn(data);
-									}
-								};
+									};
 								data.handle && data.handle.componentWillMount ? data.handle.componentWillMount.call(data, function(args) {
 									var result = args ? mod.extend(data, args) : data;
 									then(result);

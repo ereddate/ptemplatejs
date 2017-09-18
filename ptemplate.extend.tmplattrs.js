@@ -76,7 +76,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				then(resolve, reject)
 			});
 			promise.then(function(result) {
-				data.handle && data.handle[d.resolve].call(obj, result, function(elem){
+				data.handle && data.handle[d.resolve].call(obj, result, function(elem) {
 					elem.parentNode && elem.parentNode.replaceChild(elem, obj);
 				});
 			}).catch(function(err) {
@@ -84,7 +84,63 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			});
 		}
 	};
+	// 获取光标位置
+	function getCursortPosition(ctrl) {
+		var CaretPos = 0; // IE Support
+		if (document.selection) {
+			ctrl.focus();
+			var Sel = document.selection.createRange();
+			Sel.moveStart('character', -ctrl.value.length);
+			CaretPos = Sel.text.length;
+		}
+		// Firefox support
+		else if (ctrl.selectionStart || ctrl.selectionStart == '0')
+			CaretPos = ctrl.selectionStart;
+		return (CaretPos);
+	}
+
+	// 设置光标位置
+	function setCaretPosition(ctrl, pos) {
+		if (ctrl.setSelectionRange) {
+			ctrl.focus();
+			ctrl.setSelectionRange(pos, pos);
+		} else if (ctrl.createTextRange) {
+			var range = ctrl.createTextRange();
+			range.collapse(true);
+			range.moveEnd('character', pos);
+			range.moveStart('character', pos);
+			range.select();
+		}
+	}
 	$.__mod__.tmplAttributes && $.extend($.__mod__.tmplAttributes, {
+		model: function(obj, type, a, data, _parent) {
+			var mod = obj._parents("v-id"),
+				v = mod._attr("v-id");
+			switch (obj.tagName.toLowerCase()) {
+				case "input":
+					obj._off("input")._on("input", function(e) {
+						this.inputtimeout && clearTimeout(this.inputtimeout);
+						var that = this;
+						this.inputtimeout = setTimeout(function() {
+							that._set(v, {
+								[a.value]: that._val()
+							});
+						}, 500);
+					});
+					break;
+				case "select":
+					obj._off("change")._on("change", function(e) {
+						this.inputtimeout && clearTimeout(this.inputtimeout);
+						var that = this;
+						this.inputtimeout = setTimeout(function() {
+							that._set(v, {
+								[a.value]: that._val()
+							});
+						}, 500);
+					});
+					break;
+			}
+		},
 		promise: function(obj, type, a, data, _parent) {
 			obj._removeAttr(a.name);
 			typeof tmplpromise[type] !== "undefined" && tmplpromise[type](obj, type, a, data, _parent);
