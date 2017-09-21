@@ -1,4 +1,4 @@
-/*!
+ï»¿/*!
  * ptemplatejs v1.0.0
  * @author yandong
  *
@@ -84,7 +84,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			});
 		}
 	};
-	// »ñÈ¡¹â±êÎ»ÖÃ
+	// è·å–å…‰æ ‡ä½ç½®
 	function getCursortPosition(ctrl) {
 		var CaretPos = 0; // IE Support
 		if (document.selection) {
@@ -99,7 +99,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		return (CaretPos);
 	}
 
-	// ÉèÖÃ¹â±êÎ»ÖÃ
+	// è®¾ç½®å…‰æ ‡ä½ç½®
 	function setCaretPosition(ctrl, pos) {
 		if (ctrl.setSelectionRange) {
 			ctrl.focus();

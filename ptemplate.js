@@ -343,7 +343,7 @@
 			},
 			_show() {
 				this._css({
-					display: "block"
+					display: "inline-block"
 				});
 				return this;
 			},
@@ -1304,7 +1304,7 @@
 								elem._remove();
 							} else {
 								var t = mod.findNode("template:" + name);
-								template = !t || t.length > 0 ? t : mod.templates[name].content;
+								template = !t || t.length > 0 ? t : mod.templates[name] && mod.templates[name].content || "";
 							}
 						} else if (name.nodeType) {
 							template = [name];
@@ -1333,7 +1333,7 @@
 								var nextFn = function(data, bool) {
 										!mod.templates[name] && that.createTemplate(name, {
 											parent: parent[0],
-											content: template[0].innerHTML,
+											content: typeof template !== "string" && template[0] ? template[0].innerHTML : template,
 											data: data,
 											callback: callback,
 											reload: function() {
