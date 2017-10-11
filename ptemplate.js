@@ -958,7 +958,7 @@
 						}
 						i += 1;
 					});
-					return hasIn;
+					return hasIn !== false ? true : false;
 				} else if (_instanceOf(String)) {
 					var reg = new RegExp(obj, "gim");
 					return reg.test(target);
