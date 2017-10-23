@@ -13,6 +13,7 @@
 		"ereddate@gmail.com"
 	],
 	"scripts": {
+		"web": "grunt watch:web",
 		"st": "grunt watch:stock",
 		"fm": "grunt watch:famousman",
 		"hn": "grunt watch:hackernews",
@@ -22,6 +23,7 @@
 	},
 	"dependencies": {
 		"babel-preset-es2015": "^6.24.1",
+		"clear-css": "^1.0.0",
 		"grunt": "^1.0.1",
 		"grunt-babel": "^6.0.0",
 		"grunt-cli": "^1.2.0",
