@@ -40,6 +40,17 @@
 			}
 		};
 	var pSubClass = {
+			_replace(a, b){
+				var node = a;
+				if (b.parentNode && node){
+					if (b.parentNode.lastChild === b){
+						b.parentNode.appendChild(node);
+					}else{
+						b.parentNode.insertBefore(node, b);
+					}
+					b.parentNode.removeChild(b);
+				}
+			},
 			_set(n, ops) {
 				mod.set(n, ops);
 				return this;
@@ -80,7 +91,7 @@
 			_attr(name, value) {
 				var then = this;
 				if (typeof value !== "undefined")
-					typeof name !== "string" && [].slice.call(name).forEach((e) => {
+					typeof name !== "string" && name && [].slice.call(name).length && [].slice.call(name).length > 0 && [].slice.call(name).forEach((e) => {
 						then.setAttribute(e.name, e.value);
 						then[e.name] = e.value;
 					}) || typeof value !== "undefined" && ((then[name] = value), then.setAttribute(name, value));
@@ -341,9 +352,9 @@
 				}
 				return this;
 			},
-			_show() {
+			_show(bool) {
 				this._css({
-					display: "inline-block"
+					display: bool ? "block" : "inline-block"
 				});
 				return this;
 			},
@@ -577,22 +588,22 @@
 				});
 				return element;
 			},
-			promise: function(v, then) {
+			promise: function(v, then, args) {
 				typeof v === "function" ? typeof Promise !== "undefined" ? (new Promise((resolve, reject) => {
 					v(resolve, reject)
 				})).then(function(r) {
-					then(r)
+					then(r, args)
 				}, function(error) {
 					console.log("error." + error);
-					then(null)
+					then(null, args)
 				}) : $.promise && $.promise(function(resolve, reject) {
 					v(resolve, reject)
 				}).then(function(r) {
-					then(r)
+					then(r, args)
 				}).catch(function(error) {
 					console.log("error." + error);
-					then(null)
-				}) : then(v);
+					then(null, args)
+				}) : then(v, args);
 			},
 			createDom: function() {
 				var args = arguments,
@@ -684,7 +695,7 @@
 												var c = d(val);
 												a = c;
 											} catch (e) {
-												console.log("->", e, reg, a, b, name, val)
+												//console.log("->", e, reg, a, b, name, val)
 											}
 										}
 									} else {
@@ -739,7 +750,16 @@
 						var template_name = obj.tagName.toLowerCase(),
 							newTemplate_name = template_name + "_" + (Math.random(100) + '').replace(/\./gim, '');
 						pTemplate.clone(template_name, newTemplate_name).render(newTemplate_name, mData, [pTemplate.createDom("div", {})], function(parent) {
-							obj.parentNode && obj.parentNode.replaceChild(parent.children[0], obj);
+							var node = parent.children[0];
+							if (obj.parentNode && node){
+								if (obj.parentNode.lastChild === obj){
+									obj.parentNode.appendChild(node);
+								}else{
+									obj.parentNode.insertBefore(node, obj);
+								}
+								obj.parentNode.removeChild(obj);
+							}
+							//obj.parentNode && obj.parentNode.replaceChild(parent.children[0], obj);
 						});
 					}
 					if (obj.tagName && mod.tmplTags && mod.tmplTags[obj.tagName.toLowerCase()]) {
@@ -938,9 +958,15 @@
 			extend: function(a, b) {
 				if (Object.assign) {
 					return Object.assign(a, b);
-				} else {
+				} else if (mod.isPlainObject(b)) {
 					a = a || {};
 					for (var i in b) a[i] = b[i];
+					return a;
+				} else if (mod.isArray(b)) {
+					a = a || [];
+					for (var i = 0; i < b.length; i++) a[i] = b[i];
+					return a;
+				} else {
 					return a;
 				}
 			},
@@ -1005,9 +1031,13 @@
 							return [].slice.call(children);
 						}
 					} else if (/\[[^\[\]]+\]/.test(selector)) {
+						var nodes = element.querySelectorAll(selector);
+						if ([].slice.call(nodes).length >0){
+							return [].slice.call(nodes);
+						}
 						var reg = /([^\[\]]+)\s*\[([^\[\]]+)\]/.exec(selector);
 						if (reg) {
-							var nodes = [];
+							nodes = [];
 							[].slice.call(element.querySelectorAll(reg[1])).forEach((e) => {
 								var exp = new RegExp(reg[2].split('=')[1].replace(/\:/gim, "\\s*\\:\\s*"), "gim"),
 									is = exp.test(e.getAttribute(reg[2].split('=')[0]));
@@ -1197,10 +1227,12 @@
 				if (!mod.isEmptyObject(a)) {
 					mod.each(a, function(n, v) {
 						mod.createObject(mod.templates[name].data, n, v, function() {
-							mod.templates[name].reload && mod.templates[name].reload();
+							var c = mod.templates[name];
+							mod.templates[name].reload && mod.templates[name].reload(c.name, c.data, c.parent, c.callback);
 						});
 					});
-					mod.templates[name].reload && mod.templates[name].reload();
+					var c = mod.templates[name];
+					mod.templates[name].reload && mod.templates[name].reload(c.name, c.data, c.parent, c.callback);
 				}
 			}
 			return this;
@@ -1290,8 +1322,9 @@
 			return this;
 		},
 		render: function(name, data, parent, callback) {
+			var args = arguments;
 			var that = this,
-				template, then = function(name) {
+				template, then = function(name, args) {
 					if (name) {
 						if (typeof name === "string") {
 							if (/^\s*\<\s*[a-zA-Z]+\s*/.test(name)) {
@@ -1325,31 +1358,41 @@
 							parent = [parent];
 						}
 						if (parent && parent.length > 0 && parent[0]) {
-							var next = function(data) {
+							var next = function(data, args) {
 								if (data.commit) {
 									data = data.get();
 								}
 								mod.mixElement(parent[0]);
 								var nextFn = function(data, bool) {
-										!mod.templates[name] && that.createTemplate(name, {
-											parent: parent[0],
-											content: typeof template !== "string" && template[0] ? template[0].innerHTML : template,
-											data: data,
-											callback: callback,
-											reload: function() {
-												that.render(name, data, parent, callback);
-											}
-										}, true) || mod.extend(mod.templates[name], {
-											parent: parent[0],
-											data: data,
-											callback: callback,
-											reload: function() {
-												that.render(name, data, parent, callback);
-											}
-										});
+										if (!mod.templates[name]) {
+											that.createTemplate(name, {
+												parent: parent[0],
+												name: name,
+												content: typeof template !== "string" && template[0] ? template[0].innerHTML : template,
+												data: data,
+												callback: callback,
+												reload: function(name, data, parent, cb) {
+													that.render(name, data, parent, cb);
+												}
+											}, true);
+										} else {
+											//var n = (name+Math.random(1000)).replace(/\./gim, "");
+											//that.clone(name, n);
+											mod.extend(mod.templates[name], {
+												parent: parent[0],
+												name: name,
+												data: data,
+												callback: callback,
+												reload: function(name, data, parent, cb) {
+													that.render(name, data, parent, cb);
+												}
+											});
+											//name = n;
+										}
 										mod.each(mod.templates[name].data, function(n, val) {
 											mod.createObject(mod.templates[name].data, n, val, function(a, b) {
-												mod.templates[name].reload();
+												var c = mod.templates[name];
+												mod.templates[name].reload(c.name, c.data, c.parent, c.callback);
 											})
 										});
 										parent[0]._attr("v-id", name);
@@ -1367,7 +1410,7 @@
 											data.created ? that.nextTick(args ? mod.extend(data, args) : data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 										}) : data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]) : bool();
 									},
-									then = function(data) {
+									then = function(data, args) {
 										if (data.components) {
 											if ($.Callbacks) {
 												parent[0]._html('');
@@ -1379,7 +1422,7 @@
 												}
 												data = mod.filter(data, "components");
 												callbacks.add(function(next) {
-													nextFn(data, next);
+													nextFn(data, next, args);
 												});
 												mod.each(components, function(i, component) {
 													callbacks.add(function(next) {
@@ -1390,25 +1433,25 @@
 													});
 												});
 												callbacks.done(function() {
-													data.handle && data.handle.componentDidMount ? data.handle.componentDidMount.call(data, function(args) {
-														data.created ? that.nextTick(args ? mod.extend(data, args) : data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
+													data.handle && data.handle.componentDidMount ? data.handle.componentDidMount.call(data, function(c) {
+														data.created ? that.nextTick(c ? mod.extend(data, c) : data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 													}) : data.created ? that.nextTick(data, data.created, parent[0]) : that.nextTick(data, callback, parent[0]);
 												});
 											}
 										} else {
-											nextFn(data);
+											nextFn(data, null, args);
 										}
 									};
-								data.handle && data.handle.componentWillMount ? data.handle.componentWillMount.call(data, function(args) {
-									var result = args ? mod.extend(data, args) : data;
-									then(result);
-								}) : then(data);
+								data.handle && data.handle.componentWillMount ? data.handle.componentWillMount.call(data, function(c) {
+									var result = c ? mod.extend(data, c) : data;
+									then(result, args);
+								}) : then(data, args);
 							};
-							mod.promise(data, next);
+							mod.promise(data, next, args);
 						}
 					}
 				};
-			mod.promise(name, then);
+			mod.promise(name, then, args);
 			return this;
 		},
 		tmpl: function(elem, data) {
