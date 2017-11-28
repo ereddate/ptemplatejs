@@ -3,7 +3,7 @@
 
 <a href="https://travis-ci.org/ereddate/ptemplatejs/jobs/274873714"><img src="https://travis-ci.org/ereddate/ptemplatejs.svg?branch=master" /></a>
 
-<p><a href="http://img.hexun.com/2016/ereddate/hackernews/html/0.0.1/index.html" target="_blank">在线demo1</a> <a href="http://img.hexun.com/2016/ereddate/famousman/html/0.0.1/index.html?type=app" target="_blank">在线demo2</a> <a href="http://img.hexun.com/2016/ereddate/stock/html/0.0.1/index.html?type=app" target="_blank">在线demo3</a> <a href="http://www.iliulan.com/" target="_blank">在线demo4</a></p>
+<p><a href="http://img.hexun.com/2016/ereddate/hackernews/html/0.0.1/index.html" target="_blank">在线demo1</a> <a href="http://img.hexun.com/2016/ereddate/famousman/html/0.0.1/index.html?type=app" target="_blank">在线demo2</a> <a href="http://img.hexun.com/2016/ereddate/stock/html/0.0.1/index.html?type=app" target="_blank">在线demo3</a> <a href="http://www.iliulan.com/" target="_blank">在线demo4</a> <a href="http://nwapi.hexun.com/topic/" target="_blank">在线demo5</a></p>
 <p>(兼容android\ios系统下, safari\chrome\firefox\opera\猎豹浏览器及其他浏览器)</p>
 
 <p>jQuery.ptemplatejs插件，jQuery专用，用法基本相同。
