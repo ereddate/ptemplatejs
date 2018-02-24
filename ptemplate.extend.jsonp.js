@@ -52,10 +52,10 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					script.src = url + (/\?/.test(url) ? "&" : "?") + (ops && ops.callback || "callback") + "=" + callback;
 					script.onload = function(a) {
 					};
-					script.onerror = function() {
+					script.onerror = function(err) {
 						head.removeChild(this);
 						window[callback] = null;
-						fail(error);
+						fail(error, err || "request error");
 					};
 				} catch (e) {
 					fail(error, e.message);

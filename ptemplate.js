@@ -88,6 +88,9 @@
 				var then = this;
 				return mod.parents(then, selector);
 			},
+			_parent(){
+				return this.parentNode && mod.mixElement(this.parentNode) || this;
+			},
 			_attr(name, value) {
 				var then = this;
 				if (typeof value !== "undefined")
@@ -542,7 +545,7 @@
 				return a === b;
 			},
 			set: function(n, o) {
-				mod.templates[n] && mod.extend(mod.templates[n].data, o || {});
+				mod.templates[n] && mod.extend(mod.templates[n].data.props || mod.templates[n].data, o || {});
 			},
 			each: function(a, b, c) {
 				var d, e = 0,
@@ -592,17 +595,17 @@
 				typeof v === "function" ? typeof Promise !== "undefined" ? (new Promise((resolve, reject) => {
 					v(resolve, reject)
 				})).then(function(r) {
-					then(r, args)
+					then(r, args);
 				}, function(error) {
 					console.log("error." + error);
-					then(null, args)
+					then(null, args);
 				}) : $.promise && $.promise(function(resolve, reject) {
-					v(resolve, reject)
+					v(resolve, reject);
 				}).then(function(r) {
-					then(r, args)
+					then(r, args);
 				}).catch(function(error) {
 					console.log("error." + error);
-					then(null, args)
+					then(null, args);
 				}) : then(v, args);
 			},
 			createDom: function() {
@@ -736,8 +739,16 @@
 						mod.each(attr, function(i, b) {
 							if (b.name === "p-binddata") {
 								obj.removeAttribute(b.name);
-								if (b.value === "this") {
-									!mod.isEmptyObject(data) && $.extend(newObj, data);
+								if (/^this(\..+)*/.test(b.value)) {
+									if (b.value === "this"){
+										!mod.isEmptyObject(data) && $.extend(newObj, data);
+									}else{
+										var reg = /^this(\..+)*/.exec(b.value);
+										if (reg.length>1 && !mod.isEmptyObject(data)){
+											var aD = new Function("data", "return data"+reg[1])(data);
+											$.extend(newObj, aD);
+										}
+									}
 									"created" in newObj && delete newObj.created;
 								} else {
 									newObj[b.value] = data[b.value];
@@ -916,7 +927,7 @@
 						} else if (/^\./.test(id) && (new RegExp(id.replace(".", ""))).test(item.className)) {
 							parent = [item];
 							return false;
-						} else if (item._attr(id)) {
+						} else if (item._attr && item._attr(id.replace(".","").replace("#",""))) {
 							parent = [item];
 							return false;
 						} else if (item.tagName.toLowerCase() === id.toLowerCase()) {
@@ -1389,8 +1400,9 @@
 											});
 											//name = n;
 										}
-										mod.each(mod.templates[name].data, function(n, val) {
-											mod.createObject(mod.templates[name].data, n, val, function(a, b) {
+										
+										mod.each(mod.templates[name].data.props || mod.templates[name].data, function(n, val) {
+											mod.createObject(mod.templates[name].data.props || mod.templates[name].data, n, val, function(a, b) {
 												var c = mod.templates[name];
 												mod.templates[name].reload(c.name, c.data, c.parent, c.callback);
 											})

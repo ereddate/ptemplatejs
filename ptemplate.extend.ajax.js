@@ -92,6 +92,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			options.url = appendQuery(options.url, options.data), options.data = undefined
 	}
 
+
 	$.ajax = function(options) {
 		var settings = $.extend({}, options || {}),
 			urlAnchor
@@ -187,15 +188,15 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 	}
 
 	// handle optional data/success arguments
-	function parseArguments(url, data, success, error, dataType) {
+	function parseArguments(url, data, success, error, dataType, options) {
 		if (typeof data === "function") dataType = success, success = data, data = undefined
-		return {
+		return $.extend({
 			url: url,
 			data: data,
 			success: success,
 			error: error,
 			dataType: dataType
-		}
+		}, options);
 	}
 
 	$.get = function( /* url, data, success, error, dataType */ ) {
@@ -221,12 +222,16 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			hash = $.__mod__.isPlainObject(obj)
 		$.each(obj, function(key, value) {
 			type = typeof value;
-			if (scope) key = traditional ? scope :
-				scope + '[' + (hash || type == 'object' || type == 'array' ? key : '') + ']'
-			if (!scope && array) params.add(value.name, value.value)
-			else if (type == "array" || (!traditional && type == "object"))
-				serialize(params, value, traditional, key)
-			else params.add(key, value)
+			if (value) {
+				if (scope) key = traditional ? scope :
+					scope + '[' + (hash || type == 'object' || type == 'array' ? key : '') + ']'
+				if (!scope && array) params.add(value.name, value.value)
+				else if (type == "array" || (!traditional && type == "object"))
+					serialize(params, value, traditional, key)
+				else params.add(key, value)
+			} else {
+				params.add(key, value)
+			}
 		})
 	}
 	$.__mod__.serialize = function(obj, traditional) {

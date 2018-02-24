@@ -17,7 +17,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				} : {
 					src: url
 				}, ops || {}));
-				elem._on("load", function(e){
+				elem._on("load error", function(e){
 					callback && callback.call(this, e);
 				});
 				$.query("head")[0]._append(elem);

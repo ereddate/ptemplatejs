@@ -266,7 +266,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					var index = parseInt(obj._attr("p-index")) || 0,
 						result = isExpress(a, /index/.test(a.value) ? index : data, /index/.test(a.value) ? "index" : "data");
 					if (!result) {
-						result = new RegExp(a.value).test(obj._html());
+						result = new RegExp(a.value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5\uf900-\ufa2d<>\*\+\-\/\.]/gim, function(c){
+							return /\s+/.test(c) ? c : "\\"+c;
+						})).test(obj._html());
 					}
 					if (!result) {
 						_parent && _parent._remove(obj);
