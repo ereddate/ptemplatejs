@@ -123,7 +123,8 @@ module.exports = function(grunt) {
                   console.log(e);
                 }
                 var text = output.css;
-                text = cleanCSS.process(text);
+                text = (new cleanCSS({}).minify(text)).styles;//cleanCSS.process(text);
+                //console.log(text);
                 then(text);
               });
             }
