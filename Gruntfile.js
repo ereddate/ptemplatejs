@@ -28,6 +28,7 @@ module.exports = function(grunt) {
           report: "gzip"
         }
       },
+      copy: {},
       babel: {
         options: {
           sourceMap: true,
@@ -77,13 +78,22 @@ module.exports = function(grunt) {
         cwd: distPath + a.projectName + "/css/" + a.version + "/"
       }]
     };
+    gruntConfigs.copy[a.projectName] = {
+      files: [{
+        expand: true,
+        cwd: basePath + a.projectName + '/imgs/',
+        dest: distPath + a.projectName + '/imgs/',
+        src: "**/*.{png,jpg,gif}"
+      }]
+    };
   })
 
   grunt.registerTask("pjsloader", "pjs loader", function(v) {
     templates = a.getData(v);
   });
 
-  var less = require("less");
+  var less = require("less"),
+    cleanCSS = require('clean-css');
   grunt.registerTask("lessToStyle", "lessToStyle", function(v) {
     var pconfig = {};
     var promise = function(next) {
@@ -113,6 +123,7 @@ module.exports = function(grunt) {
                   console.log(e);
                 }
                 var text = output.css;
+                text = cleanCSS.process(text);
                 then(text);
               });
             }
@@ -147,7 +158,7 @@ module.exports = function(grunt) {
       },
       files: concats
     };
-    var tasks = ["pjsloader:" + c.projectName, "lessToStyle:" + c.projectName, "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName];
+    var tasks = ["pjsloader:" + c.projectName, "lessToStyle:" + c.projectName, "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName, "copy:" + c.projectName];
     tasks.push("babel:" + c.projectName);
     if (c.build && c.build.uglifyjs === true) {
       tasks.push("uglify:" + c.projectName);
@@ -181,7 +192,7 @@ module.exports = function(grunt) {
         dest: 'dist/' + c.projectName + "/libs/" //输出到此目录下
       }]
     };
-    grunt.registerTask('build_'+c.projectName, tasks);
+    grunt.registerTask('build_' + c.projectName, tasks);
   });
 
   grunt.registerTask("pjsbuild", "pjs build", function(v) {
@@ -298,7 +309,7 @@ module.exports = function(grunt) {
               h = [];
               var content = readContent(r, projectName, file);
               content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, " + (pkg.configs.ptemplatejs.alias || "$") + "){"));
-              content.push("})(window, pTemplate);");
+              content.push("})(window, typeof pTemplate !== 'undefined' && pTemplate || {});");
               savefile(file, content.join(''));
             }
           });
@@ -310,7 +321,7 @@ module.exports = function(grunt) {
             h = [];
             var content = readContent(r, projectName, file);
             content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, " + (pkg.configs.ptemplatejs.alias || "$") + "){"));
-            content.push("})(window, pTemplate);");
+            content.push("})(window, typeof pTemplate !== 'undefined' && pTemplate || {});");
             savefile(file, content.join(''));
           })
         }
@@ -327,6 +338,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-zip");
   grunt.loadNpmTasks("grunt-babel");
   grunt.loadNpmTasks("grunt-cmd-concat");
+  grunt.loadNpmTasks("grunt-contrib-copy");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.registerTask('default', 'watch');
 }
