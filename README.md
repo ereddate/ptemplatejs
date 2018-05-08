@@ -51,7 +51,7 @@ DOM将拥有类似jquery相同的私有dom操作方法，如this._append()、thi
 ```
 # MIT License
 ```
-Copyright (c) 2016-2017 dong yan (阎冬) <ereddate@gmail.com>
+Copyright (c) 2016-2018 dong yan (阎冬) <ereddate@gmail.com>
 
 The MIT License
 
