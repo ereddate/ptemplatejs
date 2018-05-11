@@ -11,6 +11,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			let args = arguments && [...arguments] || [],
 				len = args.length,
 				then = this;
+			then.args = [];
 			then.emit = [];
 			len > 0 && args.forEach((a) => {
 				then.add(a);
@@ -25,14 +26,14 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							callback && callback.call(then, resolve);
 						} catch (e) {
 							console.log(e);
-							reject();
+							reject(e);
 						}
 					}).then(done, done) : $.promise((resolve, reject) => {
 						try {
 							callback && callback.call(then, resolve);
 						} catch (e) {
 							console.log(e);
-							reject();
+							reject(e);
 						}
 					}).then(done).catch(done);
 				}, 25)
@@ -67,21 +68,26 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			if (typeof Symbol != "undefined"){
 				let a = then.emit[Symbol.iterator](),
 					b = a.next();
+
 				if (!b.done) {
 					then.emit.splice(0, 1);
-					b.value(() => {
-						then.done(callback)
+					b.value((d) => {
+						then.args.push(d);
+						then.done(function(){
+							callback && callback.call(then, then.args);
+						})
 					})
 				} else {
-					callback && callback.call(then);
+					callback && callback.call(then, then.args);
 				}
 			}else{
 				var next = function(n){
 					var len = then.emit.length;
 					if (n>=len){
-						callback && callback.call(then);
+						callback && callback.call(then, then.args);
 					}else{
-						then.emit[n] && then.emit[n](function(){
+						then.emit[n] && then.emit[n](function(d){
+							then.args.push(d);
 							next(n+1);
 						});
 					}
