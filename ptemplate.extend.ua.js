@@ -31,10 +31,10 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				isMxios: ua.indexOf('mxios/') > -1,
 				isTimMobile: ua.indexOf('tim/') > -1,
 				isHXApp: ua.indexOf('hxappversion') > -1 || ua.indexOf('hxapp') > -1,
-				isWeiBo: ua.indexOf('weibo/') > -1
+				isWeiBo: ua.indexOf('weibo') > -1
 			},
 			model: {
-				isIphoneX: /iphone[\s\S]*os x/.test(ua) && device.browser.isiOS && screen.height === 812 && screen.width == 375,
+				isIphoneX: /iphone[\s\S]*os x/.test(ua) && screen.height === 812 && screen.width == 375,
 				isHUAWEI: /huawei/.test(ua)
 			}
 		};

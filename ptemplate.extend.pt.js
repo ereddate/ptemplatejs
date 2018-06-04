@@ -39,15 +39,22 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 	};
 	pt.fn = pt.prototype = {
 		init: function(options) {
-			$.extend(this, options);
-			$.router(this.router);
-			var store = $.store(this.store.name || "PT_store", {});
-			store.commit(this.store);
 			var then = this;
-			typeof this.ready !== "undefined" && $.ready(function() {
-				then.ready(store.get());
+			var promise = new Promise((resolve, reject) => {
+				try {
+					$.extend((then.data = {}), options);
+					$.router(then.data.router);
+					var store = $.store(then.data.store.name || "PT_store", {});
+					store.commit(then.data.store);
+					typeof then.data.ready !== "undefined" ?
+						then.data.ready(store, function(args) {
+							resolve(then, args);
+						}) : resolve(then);
+				} catch (e) {
+					reject(e)
+				}
 			});
-			return this;
+			return promise;
 		}
 	};
 	pt.fn.init.prototype = pt.fn;

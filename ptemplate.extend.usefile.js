@@ -8,14 +8,15 @@
 typeof window.pTemplate != "undefined" && (function(win, $) {
 	$.extend($.__mod__, {
 		use: function(url, callback, ops) {
-			var type = /\.(js|css)\?*/.exec(url);
+			var type = /\.(js|css)\?*/.exec(url),
+				lastArg = (/\?/.test(url) ? "&" : "?") + "t=ptemplatejs_use_" + (Math.random(10000) + "").replace(/\./gim, "");
 			if (type) {
 				var elem = $.createDom(type[1] == "css" ? "link" : "script", $.extend(type[1] == "css" ? {
-					href: url,
+					href: url + lastArg,
 					rel: "text/stylesheet",
 					type: "text/css"
 				} : {
-					src: url
+					src: url + lastArg
 				}, ops || {}));
 				elem._on("load error", function(e) {
 					callback && callback.call(this, e);

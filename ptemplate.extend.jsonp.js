@@ -49,7 +49,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						}
 					}, ops && ops.timeout || 5000);
 					script.id = callback;
-					script.src = url + (/\?/.test(url) ? "&" : "?") + (ops && ops.callback || "callback") + "=" + callback;
+					script.src = url + (/\?/.test(url) ? "&" : "?") + (ops && ops.callback || "callback") + "=" + (ops && ops.callbackName || callback);
 					script.onload = function(a) {
 					};
 					script.onerror = function(err) {

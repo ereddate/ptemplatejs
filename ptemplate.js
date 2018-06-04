@@ -40,12 +40,12 @@
 			}
 		};
 	var pSubClass = {
-			_replace(a, b){
+			_replace(a, b) {
 				var node = a;
-				if (b.parentNode && node){
-					if (b.parentNode.lastChild === b){
+				if (b.parentNode && node) {
+					if (b.parentNode.lastChild === b) {
 						b.parentNode.appendChild(node);
-					}else{
+					} else {
 						b.parentNode.insertBefore(node, b);
 					}
 					b.parentNode.removeChild(b);
@@ -88,7 +88,7 @@
 				var then = this;
 				return mod.parents(then, selector);
 			},
-			_parent(){
+			_parent() {
 				return this.parentNode && mod.mixElement(this.parentNode) || this;
 			},
 			_attr(name, value) {
@@ -326,6 +326,10 @@
 				});
 				return this;
 			},
+			_toggle(bool) {
+				(typeof bool === 'undefined' ? this._css('display') === 'none' : bool) ? this._show(): this._hide();
+				return this;
+			},
 			_hasClass(name) {
 				var then = this,
 					bool = [];
@@ -537,7 +541,7 @@
 						return a === b;
 						break;
 					case "array":
-						var len = typeof a !== "string" && ("length" in a) && a.length,
+						var len = typeof a !== "string" && a && ("length" in a) && a.length,
 							c = (typeof a).toLowerCase();
 						return "array" === c || 0 === len || "number" === typeof len && len > 0 && len - 1 in a;
 						break;
@@ -549,8 +553,8 @@
 			},
 			each: function(a, b, c) {
 				var d, e = 0,
-					f = a.length,
-					g = mod.is("array", a);
+					g = mod.is("array", a),
+					f = a && a.length || 0;
 				if (c) {
 					if (g) {
 						for (; f > e; e++)
@@ -740,12 +744,12 @@
 							if (b.name === "p-binddata") {
 								obj.removeAttribute(b.name);
 								if (/^this(\..+)*/.test(b.value)) {
-									if (b.value === "this"){
+									if (b.value === "this") {
 										!mod.isEmptyObject(data) && $.extend(newObj, data);
-									}else{
+									} else {
 										var reg = /^this(\..+)*/.exec(b.value);
-										if (reg.length>1 && !mod.isEmptyObject(data)){
-											var aD = new Function("data", "return data"+reg[1])(data);
+										if (reg.length > 1 && !mod.isEmptyObject(data)) {
+											var aD = new Function("data", "return data" + reg[1])(data);
 											$.extend(newObj, aD);
 										}
 									}
@@ -762,10 +766,10 @@
 							newTemplate_name = template_name + "_" + (Math.random(100) + '').replace(/\./gim, '');
 						pTemplate.clone(template_name, newTemplate_name).render(newTemplate_name, mData, [pTemplate.createDom("div", {})], function(parent) {
 							var node = parent.children[0];
-							if (obj.parentNode && node){
-								if (obj.parentNode.lastChild === obj){
+							if (obj.parentNode && node) {
+								if (obj.parentNode.lastChild === obj) {
 									obj.parentNode.appendChild(node);
-								}else{
+								} else {
 									obj.parentNode.insertBefore(node, obj);
 								}
 								obj.parentNode.removeChild(obj);
@@ -927,7 +931,7 @@
 						} else if (/^\./.test(id) && (new RegExp(id.replace(".", ""))).test(item.className)) {
 							parent = [item];
 							return false;
-						} else if (item._attr && item._attr(id.replace(".","").replace("#",""))) {
+						} else if (item._attr && item._attr(id.replace(".", "").replace("#", ""))) {
 							parent = [item];
 							return false;
 						} else if (item.tagName.toLowerCase() === id.toLowerCase()) {
@@ -1043,7 +1047,7 @@
 						}
 					} else if (/\[[^\[\]]+\]/.test(selector)) {
 						var nodes = element.querySelectorAll(selector);
-						if ([].slice.call(nodes).length >0){
+						if ([].slice.call(nodes).length > 0) {
 							return [].slice.call(nodes);
 						}
 						var reg = /([^\[\]]+)\s*\[([^\[\]]+)\]/.exec(selector);
@@ -1280,7 +1284,7 @@
 				len = args.length,
 				that = this;
 			if (len === 1) {
-				return mod._stores[name].get();
+				return mod._stores[name];
 			} else {
 				return new Store(name, data);
 			}
@@ -1400,7 +1404,7 @@
 											});
 											//name = n;
 										}
-										
+
 										mod.each(mod.templates[name].data.props || mod.templates[name].data, function(n, val) {
 											mod.createObject(mod.templates[name].data.props || mod.templates[name].data, n, val, function(a, b) {
 												var c = mod.templates[name];

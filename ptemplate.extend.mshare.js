@@ -41,16 +41,34 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			var then = this;
 			switch (type) {
 				case "weixin":
-					$.jsonp(then.ticket.api || "", {}, {
-						timeout: then.ticket.timeout || 3000
+					$.jsonp(mShare.ticket.api || "", {}, {
+						timeout: mShare.ticket.timeout || 10000,
+						callbackName: "pTemplate.mShare.wxonload"
 					}).done(function(str) {
 						console.log(str)
 					}, function(err) {
 						console.log(err)
 					});
 					break;
+				case "public":
+					jQuery("head").append(jQuery('<script src="//qzonestyle.gtimg.cn/qzone/qzact/common/share/share.js"></script>').on("load error", function() {
+						var ajaxurl = "//wapi.hexun.com/Api_getTicket.cc?t=" + mShare.wxnoncestr + "&callback=pTemplate.mShare.publiconload";
+						jQuery.ajax({
+							dataType: "jsonp",
+							type: "get",
+							url: ajaxurl,
+							success: function(str) {}
+						});
+					}));
+					break;
 				default:
-					mShare.mqqload();
+					if (typeof mqq === "undefined") {
+						jQuery("head").append(jQuery('<script src="//open.mobile.qq.com/sdk/qqapi.js?_bid=152"></script>').on("load error", function() {
+							mShare.mqqload();
+						}));
+					} else {
+						mShare.mqqload();
+					}
 					break;
 			}
 			return this;
@@ -235,10 +253,34 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 
 			return temp.toLowerCase();
 		},
+		publiconload: function(str) {
+			//注册
+			var self = this;
+			var wxdate = new Date();
+			var wxtimestamp = wxdate.getFullYear() + wxdate.getMonth() + wxdate.getDate() + wxdate.getTime();
+			var wxLink = location.href;
+			var wxticket = str.ticket;
+			//console.log("jsapi_ticket=" + wxticket + "&noncestr=" + self.wxnoncestr + "&timestamp=" + wxtimestamp + "&url=" + wxLink)
+			var wxsignature = mShare.signature("jsapi_ticket=" + wxticket + "&noncestr=hexun" + self.wxnoncestr + "&timestamp=" + wxtimestamp + "&url=" + wxLink);
+			setShareInfo({
+				title: self.wxtitle, // 分享标题
+				summary: self.wxdescContent, // 分享内容
+				pic: self.wximgUrl, // 分享图片
+				url: wxLink, // 分享链接
+				// 微信权限验证配置信息，若不在微信传播，可忽略
+				WXconfig: {
+					swapTitleInWX: true, // 是否标题内容互换（仅朋友圈，因朋友圈内只显示标题）
+					appId: 'wxaa529a3e82b2c5b2', // 公众号的唯一标识
+					timestamp: wxtimestamp, // 生成签名的时间戳
+					nonceStr: "hexun" + self.wxnoncestr, // 生成签名的随机串
+					signature: wxsignature // 签名
+				}
+			});
+		},
 		mqqload: function() {
 			var self = this;
 			if (typeof mqq !== "undefined") {
-				mqq.invoke("share", "toQQ", {
+				/*mqq.invoke("share", "toQQ", {
 					imgUrl: self.wximgUrl,
 					title: "[TITLE]" + self.wxtitle,
 					desc: "[DESC]" + self.wxdescContent,
@@ -283,6 +325,15 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					dataUrl: ''
 				}, function(o) {
 					self.success && self.success(evt);
+				});*/
+				mqq.invoke("share", "setShare", {
+					type: "share",
+					image: [self.wximgUrl],
+					title: [self.wxtitle],
+					summary: [self.wxdescContent],
+					shareURL: [location.href]
+				}, function(evt) {
+					
 				});
 			}
 		},
