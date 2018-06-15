@@ -32,7 +32,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				url = typeof url == "string" ? url.split(' ') : url;
 				$.each(url, function(i, item) {
 					callbacks.add(function(next) {
-						$.useData && $.useData.alias[item] && (item = $.useData.base + $.useData.alias[item]);
+						$.useData && $.useData.alias[item] ? (item = $.useData.base + $.useData.alias[item]) : item;
 						$.__mod__.use(item, function() {
 							next();
 						}, ops);

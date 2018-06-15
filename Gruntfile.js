@@ -236,7 +236,7 @@ module.exports = function(grunt) {
           var g = [],
             f = d || e;
           f.split(' ').forEach(function(m) {
-            // console.log("206", m)
+             //console.log("239: ---", m)
             m = m.split('.');
             c && g.push("var __" + m[0] + "_l = {exports:{}}; function __" + m[0] + "(exports){");
             if (!pconfig.uglifyjs) {
