@@ -31,11 +31,15 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				isMxios: ua.indexOf('mxios/') > -1,
 				isTimMobile: ua.indexOf('tim/') > -1,
 				isHXApp: ua.indexOf('hxappversion') > -1 || ua.indexOf('hxapp') > -1,
-				isWeiBo: ua.indexOf('weibo') > -1
+				isWeiBo: ua.indexOf('weibo') > -1,
+				isMiuiBrowser: ua.indexOf('miuibrowser/') > -1
 			},
 			model: {
 				isIphoneX: /iphone[\s\S]*os x/.test(ua) && screen.height === 812 && screen.width == 375,
-				isHUAWEI: /huawei/.test(ua)
+				isHUAWEI: /huawei/.test(ua),
+				isOPPO: /oppo/.test(ua),
+				isMEIZU: /meizu/.test(ua),
+				isXIAOMI: /xiaomi/.test(ua) || /miuibrowser\//.test(ua)				
 			}
 		};
 	device.browser.isSafari = device.os.isiOS && ua.indexOf("safari/") > -1 && !device.browser.isqqbrowser;

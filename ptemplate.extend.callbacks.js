@@ -2,6 +2,17 @@
  * ptemplatejs v1.0.0
  * @author yandong
  *
+	var callbacks = $.Callbacks();
+	callbacks.add((next) = > {
+		next('a')
+	}).add((next) => {
+		next('b')
+	}).fire('c', 'd').delay(1000, (next) => {
+		next('e')
+	}).done((a) => {
+		console.log(a) //['a','b','c','d','e']
+	});
+
  * https://github.com/ereddate/ptemplatejs
  */
 'use strict';
@@ -17,7 +28,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				then.add(a);
 			});
 		}
-		add(callback) {
+		add(callback, time) {
 			let then = this;
 			then.emit.push((done) => {
 				setTimeout(() => {
@@ -35,10 +46,24 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							console.log(e);
 							reject(e);
 						}
-					}).then(done).catch(done);
-				}, 25)
+					}).then(done, done);
+				}, time || 1)
 			});
 			return then;
+		}
+		fire() {
+			var args = arguments,
+				len = args.length;
+			if (len>0){
+				let then = this;
+				then.emit.push((done) => {
+					setTimeout(() => {
+						this.args = this.args.concat([].slice.call(args));
+						done();
+					}, 1);
+				});
+			}
+			return this;
 		}
 		delay(time, callback) {
 			let then = this;
@@ -58,7 +83,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							console.log(e);
 							reject();
 						}
-					}).then(done).catch(done);
+					}).then(done, done);
 				}, time || 1000);
 			});
 			return then;
@@ -72,7 +97,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				if (!b.done) {
 					then.emit.splice(0, 1);
 					b.value((d) => {
-						then.args.push(d);
+						d && then.args.push(d);
 						then.done(function(){
 							callback && callback.call(then, then.args);
 						})
@@ -87,7 +112,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						callback && callback.call(then, then.args);
 					}else{
 						then.emit[n] && then.emit[n](function(d){
-							then.args.push(d);
+							d && then.args.push(d);
 							next(n+1);
 						});
 					}

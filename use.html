@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<script src="ptemplatejs.0.0.1.js"></script>
+		<style>
+			body{background:#efefef;}
+			body,ul,li,p,h1{margin:0;padding:0;list-style:none;}
+		</style>
+	</head>
+	<body>
+		<script>
+			$.useConfig({
+				alias:{
+					test: "test.0.0.1.js"
+				},
+				base: "http://192.168.10.47/other/src/test/js/"
+			});
+			define(function(require, exports, module){
+				$.use("test", function(){
+					var test = require("test");
+					test.done(function(){
+						$.use("test", function(){
+							var testA = require("test");
+							testA.done(function(){
+								$.use("test", function(){
+									var testB = require("test");
+									testB.done();
+								});
+							});
+						});
+					});
+				});
+			});
+		</script>
+	</body>
+</html>

@@ -50,17 +50,6 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						console.log(err)
 					});
 					break;
-				case "public":
-					jQuery("head").append(jQuery('<script src="//qzonestyle.gtimg.cn/qzone/qzact/common/share/share.js"></script>').on("load error", function() {
-						var ajaxurl = "//wapi.hexun.com/Api_getTicket.cc?t=" + mShare.wxnoncestr + "&callback=pTemplate.mShare.publiconload";
-						jQuery.ajax({
-							dataType: "jsonp",
-							type: "get",
-							url: ajaxurl,
-							success: function(str) {}
-						});
-					}));
-					break;
 				default:
 					if (typeof mqq === "undefined") {
 						jQuery("head").append(jQuery('<script src="//open.mobile.qq.com/sdk/qqapi.js?_bid=152"></script>').on("load error", function() {
@@ -253,30 +242,6 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 
 			return temp.toLowerCase();
 		},
-		publiconload: function(str) {
-			//注册
-			var self = this;
-			var wxdate = new Date();
-			var wxtimestamp = wxdate.getFullYear() + wxdate.getMonth() + wxdate.getDate() + wxdate.getTime();
-			var wxLink = location.href;
-			var wxticket = str.ticket;
-			//console.log("jsapi_ticket=" + wxticket + "&noncestr=" + self.wxnoncestr + "&timestamp=" + wxtimestamp + "&url=" + wxLink)
-			var wxsignature = mShare.signature("jsapi_ticket=" + wxticket + "&noncestr=hexun" + self.wxnoncestr + "&timestamp=" + wxtimestamp + "&url=" + wxLink);
-			setShareInfo({
-				title: self.wxtitle, // 分享标题
-				summary: self.wxdescContent, // 分享内容
-				pic: self.wximgUrl, // 分享图片
-				url: wxLink, // 分享链接
-				// 微信权限验证配置信息，若不在微信传播，可忽略
-				WXconfig: {
-					swapTitleInWX: true, // 是否标题内容互换（仅朋友圈，因朋友圈内只显示标题）
-					appId: 'wxaa529a3e82b2c5b2', // 公众号的唯一标识
-					timestamp: wxtimestamp, // 生成签名的时间戳
-					nonceStr: "hexun" + self.wxnoncestr, // 生成签名的随机串
-					signature: wxsignature // 签名
-				}
-			});
-		},
 		mqqload: function() {
 			var self = this;
 			if (typeof mqq !== "undefined") {
@@ -333,7 +298,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					summary: [self.wxdescContent],
 					shareURL: [location.href]
 				}, function(evt) {
-					
+
 				});
 			}
 		},
@@ -347,17 +312,32 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			var wxticket = str.ticket;
 			var wxsignature = mShare.signature("jsapi_ticket=" + wxticket + "&noncestr=" + self.wxnoncestr + "&timestamp=" + wxtimestamp + "&url=" + wxLink);
 			wx.config({
-				debug: false, 
+				debug: false,
 				appId: self.appId || '',
 				timestamp: wxtimestamp,
 				nonceStr: self.wxnoncestr,
 				signature: wxsignature,
-				jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo']
+				jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'updateAppMessageShareData', 'updateTimelineShareData']
 			});
 			wx.ready(function() {
+				wx.updateAppMessageShareData({
+					title: self.wxtitle,
+					desc: self.wxdescContent,
+					link: wxLink,
+					imgUrl: self.wximgUrl,
+				}, function(res) {
+					
+				});
+				wx.updateTimelineShareData({
+					title: self.wxtitle,
+					link: wxLink,
+					imgUrl: self.wximgUrl,
+				}, function(res) {
+					
+				});
 				wx.onMenuShareTimeline({
 					title: self.wxtitle,
-					link: wxLink, 
+					link: wxLink,
 					imgUrl: self.wximgUrl,
 					success: function() {
 						success && success();
@@ -381,7 +361,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					}
 				});
 				wx.onMenuShareQQ({
-					title: self.wxtitle, 
+					title: self.wxtitle,
 					desc: self.wxdescContent,
 					link: wxLink,
 					imgUrl: self.wximgUrl,
@@ -394,7 +374,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				});
 				wx.onMenuShareWeibo({
 					title: self.wxtitle,
-					desc: self.wxdescContent, 
+					desc: self.wxdescContent,
 					link: wxLink,
 					imgUrl: self.wximgUrl,
 					success: function() {

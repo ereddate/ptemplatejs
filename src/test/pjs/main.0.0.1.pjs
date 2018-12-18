@@ -1,0 +1,43 @@
+<template p-template="my-main">
+	<div class="main">
+		<div>MAIN {{status}}
+			<p><a href="javascript:;" p-router:href="/test">click Test</a></p>
+			<div class="tabs">
+			</div>
+		</div>
+	</div>
+</template>
+<script>
+	define("mymain", [], (require, exports, module) => {
+		exports.done = (data, app) => {
+			$.use("components", () => {
+				require("components").done((components) => {
+					$.render("my-main", $.extend(data, {
+						components: components
+					}), $.query("#app"));
+					$.useConfig({
+						alias:{
+							tabs: "tabs.0.0.1.js"
+						}
+					});
+					$.use("tabs", () => {
+						require("tabs").done(data.props, $.query(".tabs"), app);
+					});
+				})
+			});
+		}
+	});
+</script>
+<style>
+	@base: 23.44rem;
+	body{
+		.main{
+			font-size:(20/@base);
+			a{
+				font-size:(12/@base);
+				color:#999;
+				text-decoration:none;
+			}
+		}
+	}
+</style>

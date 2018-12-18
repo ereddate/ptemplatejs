@@ -1,0 +1,81 @@
+<template p-template="my-tabs">
+	<div class="tabs_main">
+		<div class="tabs_main_item tabs_two" p-express:if="{{tabsLen}} === 2">
+			<div class="tabs_main_item_header">
+				<a href="javascript:;" class="on" p-router:href="/tabTo?id=1">{{tabsItem_left}}</a>
+				<a href="javascript:;" p-router:href="/tabTo?id=2">{{tabsItem_right}}</a>
+			</div>
+			<div class="tabs_main_item_body">
+				<div class="tabs_left tabs_main_item_body_item on">1</div>
+				<div class="tabs_right tabs_main_item_body_item">2</div>
+			</div>
+		</div>
+		<div class="tabs_main_item tabs_three" p-express:if="{{tabsLen}} === 3">
+			<div class="tabs_main_item_header">
+				<a href="javascript:;" class="on" p-router:href="/tabTo?id=1">{{tabsItem_left}}</a>
+				<a href="javascript:;" p-router:href="/tabTo?id=2">{{tabsItem_center}}</a>
+				<a href="javascript:;" p-router:href="/tabTo?id=3">{{tabsItem_right}}</a>
+			</div>
+			<div class="tabs_main_item_body">
+				<div class="tabs__left tabs_main_item_body_item on">1</div>
+				<div class="tabs_center tabs_main_item_body_item">2</div>
+				<div class="tabs_right tabs_main_item_body_item">3</div>
+			</div>
+		</div>
+	</div>
+</template>
+<script>
+	define("tabs", [], (require, exports, module) => {
+		exports.done = (data, parent, app) => {
+			app.router({
+				"/tabTo": (e, args) => {
+					var id = args && args.id || 1;
+					var that = e.target;
+					that._parent()._findNode("a")._each((i, item) => {
+						item._removeClass("on");
+					});
+					that._addClass("on");
+					var items = that._parent()._next()._findNode(".tabs_main_item_body_item");
+					items._each((i, item) => {
+						item._removeClass("on");
+					});
+					items._eq(parseFloat(id)-1)._addClass("on");
+				}
+			});
+			$.render("my-tabs", data, parent);
+		}
+	});
+</script>
+<style>
+	@base: 23.44rem;
+	.tabs_main{
+		.tabs_main_item{
+			.tabs_main_item_header{
+				display:flex;
+				a{
+					width:50%;
+					text-align:center;
+					font-size:20/@base;
+					&.on{
+						background-color:#efefef;
+					}
+				}
+			}
+			.tabs_main_item_body{
+				.tabs_main_item_body_item{
+					display:none;
+					&.on{
+						display:block;
+					}
+				}
+			}
+			&.tabs_three{
+				.tabs_main_item_header{
+					a{
+						width:33.3333%;
+					}
+				}
+			}
+		}
+	}
+</style>

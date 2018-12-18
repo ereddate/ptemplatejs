@@ -1,15 +1,22 @@
-# pTemplateJs 
-模板、数据绑定、数据过滤、事件处理、条件及列表渲染、样式控制、路由、数据仓库、组件化等等。
+# pTemplateJs
+pTemplateJs方便快捷的javascript开发框架。
 
-<a href="https://travis-ci.org/ereddate/ptemplatejs/jobs/274873714"><img src="https://travis-ci.org/ereddate/ptemplatejs.svg?branch=master" /></a>
+[![输入图片说明](https://travis-ci.org/ereddate/ptemplatejs.svg?branch=master "在这里输入图片标题")](https://travis-ci.org/ereddate/ptemplatejs/jobs/274873714)
 
-<p><a href="https://gitee.com/ereddate2017/ptemplatejs" target="_blank">pTemplateJs 码云社区（快速更新）</a></p>
 
-<p><a href="http://img.hexun.com/2016/ereddate/hackernews/html/0.0.1/index.html" target="_blank">在线demo1</a> <a href="http://img.hexun.com/2016/ereddate/famousman/html/0.0.1/index.html?type=app" target="_blank">在线demo2</a> <a href="http://img.hexun.com/2016/ereddate/stock/html/0.0.1/index.html?type=app" target="_blank">在线demo3</a> <a href="http://www.iliulan.com/" target="_blank">在线demo4</a> <a href="http://nwapi.hexun.com/topic/" target="_blank">在线demo5</a></p><p><a href="https://m.hexun.com/activity/indexGuess.html" target="_blank">在线demo6</a></p>
-<p>(兼容android\ios系统下, safari\chrome\firefox\opera\猎豹浏览器及其他浏览器)</p>
+```
+github: https://github.com/ereddate/ptemplatejs 
+oschina: http://git.oschina.net/ereddate2017/ptemplatejs (快速更新)
+```
 
-<p>jQuery.ptemplatejs插件，jQuery专用，用法基本相同。
-<a href="http://git.oschina.net/ereddate2017/jquery-ptemplatejs" target="_blank">详细说明及使用请查看</a> 
+[在线demo1](http://img.hexun.com/2016/ereddate/hackernews/html/0.0.1/index.html)
+[在线demo2](http://img.hexun.com/2016/ereddate/famousman/html/0.0.1/index.html?type=app)
+[在线demo3](http://img.hexun.com/2016/ereddate/stock/html/0.0.1/index.html?type=app)
+[在线demo4](http://www.iliulan.com/)
+[在线demo5](http://nwapi.hexun.com/topic/)
+(兼容android\ios系统下, safari\chrome\firefox\opera\猎豹浏览器及其他浏览器)
+
+[ptemplatejs-jQuery插件](http://git.oschina.net/ereddate2017/jquery-ptemplatejs) (用法基本相同）
 
 # 交流
 QQ群：9786575
@@ -47,32 +54,8 @@ pTemplate.render(
                   .render("name",{}, parent, function(parent){...})
                   .clone("name", "newName")
                   ...
+pTemplate.render(<h1>{{txt}}</h1>, {txt:"hello"}, $.query("body")); 支持html直接写入js。
 使用pTemplate.set()或事件中的this._set()方法更新模板的数据，将使模板对应的DOM刷新。
 DOM将拥有类似jquery相同的私有dom操作方法，如this._append()、this._frist()、this._css()、this._attr()等等。
 调用内部方法，可以使用pTemplate.__mod__.方法名取得。
-```
-# MIT License
-```
-Copyright (c) 2016-2018 dong yan (阎冬) <ereddate@gmail.com>
-
-The MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```

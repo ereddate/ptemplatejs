@@ -1,3 +1,8 @@
+<template p-template="my-main">
+	<div class="main">
+		<img src="#" p-fickle:src="//i0.hexun.com/2016/mhd/redpacket/img/3-2.png" >
+	</div>
+</template>
 <script>
 	$.setBaseFontSize(16);
 	var baseFontSize = window.baseFontSize || $.getBaseFontSize(),
@@ -32,6 +37,8 @@
 			}
 		}
 	});
+
+	$.render("my-main", {}, $.query("body"));
 </script>
 <style>
 	p{

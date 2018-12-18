@@ -1,5 +1,5 @@
 /*!
- * ptemplatejs v1.0.0
+ * ptemplatejs v1.0.1
  * @author yandong
  *
  * https://github.com/ereddate/ptemplatejs
@@ -7,9 +7,7 @@
 'use strict';
 (function(win) {
 	var doc = win.document;
-	Array.prototype._eq = function(index) {
-		return index < 0 ? this[this.length + index] : this[index];
-	};
+
 	var triggerEvent = doc.createEvent ? function(element, eventName, args, data) {
 		var event = doc.createEvent("HTMLEvents");
 		event.data = data;
@@ -79,11 +77,11 @@
 			return key === undefined || hasOwn.call(obj, key);
 		},
 		isArray = function(obj) {
-			return (Array.isArray || _instanceOf(Array))(obj);
+			return (Array.isArray || _instanceOf(Array))(obj) && typeof obj !== "string";
 		},
 		each = function(a, b, c) {
 			var d, e = 0,
-				g = is("array", a),
+				g = isArray(a),
 				f = a && a.length || 0;
 			if (c) {
 				if (g) {
@@ -115,8 +113,96 @@
 			} else {
 				return a;
 			}
+		},
+		siblings = function(n, elem) {
+			var matched = [];
+			for (; n; n = n.nextSibling) {
+				if (n.nodeType === 1 && n !== elem) {
+					matched.push(n);
+				}
+			}
+			return matched;
 		};
+
+	extend(Array.prototype, {
+		_argsToArray: function(obj) {
+			if (obj) {
+				var arr = new Array(obj.length);
+				each(arr, (i, a) => {
+					arr[i] = obj[i];
+				});
+				return arr;
+			}
+			return [];
+		},
+		_eq: function(index) {
+			return index < 0 ? this[this.length + index] : this[index];
+		},
+		_each: function(b, c) {
+			each(this, b, c);
+			return this;
+		},
+		_empty: function() {
+			this.length = 0;
+			return this;
+		},
+		_forEach: function() {
+			var args = arguments,
+				len = args.length,
+				callbacks = $.Callbacks(),
+				that = this,
+				mod = {
+					error: {},
+					then: function(callback) {
+						var then = this;
+						callbacks.add(function(next) {
+							that._each(function(i, item) {
+								try {
+									callback && callback.call(item, that);
+									return true;
+								} catch (e) {
+									then.error = e;
+									then.failCallback.call(item, then.error, that);
+									console.log(e);
+									return false;
+								}
+							});
+							next();
+						});
+						return this;
+					},
+					fail: function(callback) {
+						callback && (this.failCallback = callback);
+						return this;
+					},
+					done: function(callback) {
+						callbacks.done(callback);
+					}
+				};
+			if (len > 0) {
+				[]._argsToArray(args)._each(function(i, item) {
+					mod.then(item);
+				});
+			}
+
+			return mod;
+		}
+	});
+
 	var pSubClass = {
+		_serialize() {
+			var rsubmitterTypes = /^(?:submit|button|image|reset|file)$/i,
+				rsubmittable = /^(?:input|select|textarea|keygen)/i,
+				rcheckableType = (/^(?:checkbox|radio)$/i);
+			var arr = this._map((elem, i) => {
+				var type = elem.type;
+				if (elem.name && !elem.disabled && rsubmittable.test(elem.nodeName) && !rsubmitterTypes.test(type) &&
+					(elem.checked || !rcheckableType.test(type))) {
+					return elem;
+				}
+			});
+			return $.param && $.param(arr) || null;
+		},
 		_replace(a, b) {
 			var node = a;
 			if (b.parentNode && node) {
@@ -140,7 +226,7 @@
 			var then = this,
 				result = [];
 			selector.split(' ').forEach((e) => {
-				result = result.concat(mod.findNode(then, e));
+				result = result.concat(mod.findNode(e, then));
 			});
 			return result;
 		},
@@ -166,24 +252,30 @@
 			return mod.parents(then, selector);
 		},
 		_parent() {
-			return this.parentNode && mod.mixElement(this.parentNode) || this;
+			return this.parentNode && mod.mixElement(this.parentNode);
 		},
 		_attr(name, value) {
 			var then = this;
-			if (typeof value !== "undefined")
-				typeof name !== "string" && name && [].slice.call(name).length && [].slice.call(name).length > 0 && [].slice.call(name).forEach((e) => {
-					then.setAttribute(e.name, e.value);
-					then[e.name] = e.value;
-				}) || typeof value !== "undefined" && ((then[name] = value), then.setAttribute(name, value));
-			else if (typeof value === "undefined" && mod.isPlainObject(name)) {
+			if (typeof value !== "undefined") {
+				if (typeof name !== "string" && name && [].slice.call(name).length && [].slice.call(name).length > 0) {
+					[].slice.call(name).forEach((e) => {
+						then.setAttribute(e.name, e.value);
+						then[e.name] = e.value;
+					});
+					return this;
+				} else if (typeof value !== "undefined") {
+					((then[name] = value), then.setAttribute(name, value));
+					return this;
+				}
+			} else if (typeof value === "undefined" && mod.isPlainObject(name)) {
 				for (var i in name) {
 					then.setAttribute(i, name[i]);
 					then[i] = name[i];
 				}
+				return this;
 			} else {
 				return then.getAttribute(name);
 			}
-			return this;
 		},
 		_children(selector) {
 			if (selector) {
@@ -202,6 +294,7 @@
 			typeof name === "string" && (name = name.split(' '));
 			name.forEach((n) => {
 				that.removeAttribute(n);
+				that[n] = "";
 			});
 			return this;
 		},
@@ -284,6 +377,7 @@
 			return this;
 		},
 		_append(element) {
+			var then = this;
 			if (mod.is(typeof element, "string")) {
 				var n = doc.createElement("div"),
 					f = doc.createDocumentFragment();
@@ -294,6 +388,10 @@
 				this.appendChild(f);
 			} else if (mod.is(typeof element, "function")) {
 				element(this);
+			} else if (mod.isArray(element)){
+				each(element, (i, elem) => {
+					then.appendChild(elem);
+				});
 			} else {
 				this.appendChild(element);
 			}
@@ -338,7 +436,7 @@
 						var f = [],
 							then = this;
 						name.split(' ').forEach((n) => {
-							f.push(then.style[n]);
+							f.push(then.style[n] || getComputedStyle(then, null).getPropertyValue(n));
 						});
 						return f.length > 1 ? f : f.join('');
 					} else if (mod.isPlainObject(name)) {
@@ -359,14 +457,22 @@
 			var then = this;
 			typeof name === "string" && name.split(' ').forEach((n) => {
 				then._removeClass(n);
-				then.className += " " + n;
+				if (then.classList) {
+					!then.classList.contains(n) && n !== "" && then.classList.add(n);
+				} else {
+					then.className += " " + n;
+				}
 			});
 			return this;
 		},
 		_removeClass(name) {
 			var then = this;
 			name.split(' ').forEach((n) => {
-				mod.has(then.className.split(' '), n) && (then.className = then.className.replace(new RegExp("\\s*" + n, "gim"), ""));
+				if (then.classList) {
+					then.classList.contains(n) && n !== "" && then.classList.remove(n);
+				} else {
+					mod.has(then.className.split(' '), n) && (then.className = then.className.replace(new RegExp("\\s*" + n, "gim"), ""));
+				}
 			});
 			return this;
 		},
@@ -416,6 +522,9 @@
 			return bool.length === 0 ? false : bool.length === 1 ? bool[0] : bool;
 		},
 		_width(value) {
+			if (mod.isDocument(this)) {
+				return !value ? (this.documentElement || this.body)['scrollWidth'] : (this.style.width = value) && this;
+			}
 			var getStyle = window.getComputedStyle(this, null);
 			if (value) {
 				return this.offsetWidth +
@@ -449,6 +558,9 @@
 			return this;
 		},
 		_height(value) {
+			if (mod.isDocument(this)) {
+				return !value ? (this.documentElement || this.body)['scrollHeight'] : (this.style.height = value) && this;
+			}
 			var getStyle = window.getComputedStyle(this, null);
 			if (value) {
 				return this.offsetHeight +
@@ -470,7 +582,7 @@
 			return this;
 		},
 		_tmpl(data) {
-			return mod.tmpl(this.innerHTML, data);
+			return mod.tmpl(this, data);
 		},
 		_offset() {
 			return {
@@ -493,21 +605,24 @@
 		_next() {
 			return this.nextElementSibling;
 		},
+		_siblings() {
+			return siblings((this.parentNode || {}).firstChild, this);
+		},
 		_has(a, b) {
 			return mod.has(a, b);
 		},
 		_scrollLeft(value) {
-			if (val === undefined) {
-				return this.window === this ? ("pageXOffset" in win) ? win["pageXOffset"] : this.document.documentElement["scrollTop"] : this["scrollLeft"];
+			if (value === undefined) {
+				return this.window === this ? ("pageXOffset" in win) ? win["pageXOffset"] : (this.document.documentElement || this.document.body)["scrollTop"] : this["scrollLeft"];
 			}
-			this["scrollLeft"] = val;
+			'scrollLeft' in this ? this["scrollLeft"] = value : this.scrollTo(value, this.scrollX);
 			return this;
 		},
 		_scrollTop(value) {
 			if (value === undefined) {
-				return this.window === this ? ("pageYOffset" in win) ? win["pageYOffset"] : this.document.documentElement["scrollTop"] : this["scrollTop"];
+				return this.window === this ? ("pageYOffset" in win) ? win["pageYOffset"] : (this.document.documentElement || this.document.body)["scrollTop"] : this["scrollTop"];
 			}
-			this["scrollTop"] = value;
+			'scrollTop' in this ? this["scrollTop"] = value : this.scrollTo(scrollX, value);
 			return this;
 		},
 		_query(selector) {
@@ -518,9 +633,9 @@
 	};
 
 	each(("blur focus focusin focusout resize scroll click dblclick " +
-			"change select submit keydown keypress keyup contextmenu input").split(" "), function(i, name){
+		"change select submit keydown keypress keyup contextmenu input").split(" "), function(i, name) {
 		extend(pSubClass, {
-			["_"+name]: function(callback){
+			["_" + name]: function(callback) {
 				typeof callback === "undefined" ? this._trigger(name) : this._on(name, callback);
 			}
 		});
@@ -668,7 +783,7 @@
 				v(resolve, reject);
 			}).then(function(r) {
 				then(r, args);
-			}).catch(function(error) {
+			}, function(error) {
 				console.log("error." + error);
 				then(null, args);
 			}) : then(v, args);
@@ -687,7 +802,7 @@
 				if (i > 2) childrens.push(r);
 			});
 			tag = /textnode/.test(tagName.toLowerCase()) ? doc.createTextNode("") : /docmentfragment/.test(tagName.toLowerCase()) ? doc.createDocumentFragment() : doc.createElement(tagName);
-			if (!/textnode|docmentfragment/.test(tagName.toLowerCase())) {
+			if (!/docmentfragment/.test(tagName.toLowerCase())) {
 				mod.mixElement(tag);
 				for (var name in attrs) {
 					var value = attrs[name];
@@ -701,7 +816,7 @@
 					var items = e();
 					tag.appendChild(items);
 				} else {
-					tag.appendChild(e);
+					e && tag.appendChild(e);
 				}
 			});
 			return tag;
@@ -747,14 +862,20 @@
 						var reg = new RegExp("{{\\s*" + name + "\\s*(\\|\\s*([^<>,}]+)\\s*|([^{}]+)\\s*)*}}", "gim");
 						if (typeof val !== "undefined") {
 							_object = _object.replace(reg, function(a, b) {
+								//console.log(a, b)
 								if (b) {
 									b = b.split(':');
 									if (typeof val === "function") {
 										val = val(a, b);
-									} else if (mod.isArray(val)) {
-										val = val.join('');
 									}
-									if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
+									/* else if (mod.isArray(val)) {
+																			val = val.join('');
+																		}*/
+									if (/\./.test(b[0])) {
+										try {
+											a = new Function(name, "return " + a.replace(/[{}\s]+/gim, "") + ";")(val);
+										} catch (e) {}
+									} else if (mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")]) {
 										var c = mod.tmplThesaurus[b[0].replace(/\s*\|\s*/gim, "").replace(/\s+/gim, "")](val, b[1] && b[1].replace(/^\s+/gim, "") || undefined, name);
 										a = typeof c !== "undefined" ? c : a;
 									} else if (/[\?\:><\=\!\+\-\*\/]+/.test(a)) {
@@ -899,9 +1020,13 @@
 						}
 					})
 				}
-				obj.children && mod.each([].slice.call(obj.children), function(i, e) {
-					mod.tmpl(e, data);
-				});
+				if (obj.children && obj.children.length > 0) {
+					mod.each([].slice.call(obj.children), function(i, e) {
+						mod.tmpl(e, data);
+					});
+				} else if (/{{/.test(obj._html())) {
+					obj._html(mod.tmpl(obj._html(), data));
+				}
 
 			}
 			return obj;
@@ -909,7 +1034,7 @@
 		map: function(elems, callback, arg) {
 			var ret = [],
 				i = 0;
-			typeof elems === "array" && elems.forEach((e) => {
+			isArray(elems) && elems.forEach((e) => {
 				var result = callback(e, i, arg);
 				if (result) {
 					ret.push(result);
@@ -989,9 +1114,12 @@
 					if (/^#/.test(id) && item.id && item.id === id.replace("#", "")) {
 						parent = [item];
 						return false;
-					} else if (/^\./.test(id) && (new RegExp(id.replace(".", ""))).test(item.className)) {
-						parent = [item];
-						return false;
+					} else if (/^\./.test(id)) {
+						item.classList = item.className.split(' ');
+						if (item.classList.length > 0 && [].slice.call(item.classList).indexOf(id.replace(/\./gim, "")) > -1) {
+							parent = [item];
+							return false;
+						}
 					} else if (item._attr && item._attr(id.replace(".", "").replace("#", ""))) {
 						parent = [item];
 						return false;
@@ -1051,8 +1179,8 @@
 		},
 		setFontSize: function(num) {
 			var num = num || 16,
-				iWidth = document.documentElement.clientWidth,
-				iHeight = document.documentElement.clientHeight,
+				iWidth = (document.documentElement || document.body).clientWidth,
+				iHeight = (document.documentElement || document.body).clientHeight,
 				fontSize = window.orientation && (window.orientation === 90 || window.orientation === -90) || iHeight < iWidth ? iHeight / num : iWidth / num;
 			window.baseFontSize = fontSize;
 			document.getElementsByTagName('html')[0].style.fontSize = fontSize.toFixed(2) + 'px';
@@ -1091,9 +1219,9 @@
 					var reg = /([^\[\]]+)\s*\[([^\[\]]+)\]/.exec(selector);
 					if (reg) {
 						nodes = [];
-						[].slice.call(element.querySelectorAll(reg[1])).forEach((e) => {
-							var exp = new RegExp(reg[2].split('=')[1].replace(/\:/gim, "\\s*\\:\\s*"), "gim"),
-								is = exp.test(e.getAttribute(reg[2].split('=')[0]));
+						reg[1] && reg[2] && [].slice.call(element.querySelectorAll(reg[1])).forEach((e) => {
+							var exp = reg[2].split('=')[1] && new RegExp(reg[2].split('=')[1].replace(/\:/gim, "\\s*\\:\\s*"), "gim"),
+								is = exp && exp.test(e.getAttribute(reg[2].split('=')[0]));
 							if (is) {
 								nodes.push(e);
 							}
@@ -1104,7 +1232,7 @@
 					var reg = /([^\[\]]+)\s*\:\s*([^\[\]]+)/.exec(selector);
 					if (reg) {
 						var nodes = [];
-						[].slice.call(element.querySelectorAll(reg[1])).forEach((e) => {
+						reg[1] && reg[2] && [].slice.call(element.querySelectorAll(reg[1])).forEach((e) => {
 							var elems = e["_" + reg[2]] && e["_" + reg[2]]() || null;
 							if (elems && elems.nodeType) {
 								nodes.push(elems);
@@ -1123,7 +1251,142 @@
 				return selector;
 			}
 		},
+		isFunction: function(obj) {
+			return typeof obj === "function" && typeof obj.nodeType !== "number";
+		},
 		pSubClass: pSubClass
+	};
+
+	var jsonSql = {
+		query: function(sql, json) {
+			var jsonSql_Fields = sql.match(/^(select)\s+([a-z0-9_\,\.\s\*]+)\s+from\s+([a-z0-9_\.,]+)(?: where\s+\((.+)\))?\s*(?:order\sby\s+([a-z0-9_\,]+))?\s*(asc|desc|ascnum|descnum)?\s*(?:limit\s+([0-9_\,]+))?/i);
+			var ops = {
+				fields: jsonSql_Fields[2].replace(' ', '').split(','),
+				from: jsonSql_Fields[3].replace(' ', ''),
+				where: (jsonSql_Fields[4] == undefined) ? "" : jsonSql_Fields[4],
+				orderby: (jsonSql_Fields[5] == undefined) ? [] : jsonSql_Fields[5].replace(' ', '').split(','),
+				order: (jsonSql_Fields[6] == undefined) ? "asc" : jsonSql_Fields[6],
+				limit: (jsonSql_Fields[7] == undefined) ? [] : jsonSql_Fields[7].replace(' ', '').split(',')
+			};
+			return this.parse(json, ops);
+		},
+		parse: function(json, ops) {
+			var o = mod.extend({
+				fields: ["*"],
+				from: "json",
+				where: "",
+				orderby: [],
+				order: "asc",
+				limit: []
+			}, ops);
+			var result = [];
+			result = this.jsonSql_Filter(json, o);
+			result = this.jsonSql_OrderBy(result, o.orderby, o.order);
+			result = this.jsonSql_Limit(result, o.limit);
+			return result;
+		},
+		jsonSql_Filter: function(json, jsonsql_o) {
+			var that = this;
+			var jsonsql_result = [];
+			var jsonsql_rc = 0;
+			jsonsql_o.from.split(',')._each(function(n, from) {
+				var jsonsql_scope = new Function(from, "return " + from)(json[from]);
+				if (jsonsql_o.where != "") {
+					jsonsql_o.where = jsonsql_o.where.replace(/\s+\=\s+/gim, "==").replace(/\s+and\s+/gim, " && ").replace(/\s+or\s+/gim, " || ");
+					var jowArr = jsonsql_o.where.split(/\s+\|\|\s+/.test(jsonsql_o.where) && ' || ' || /\s+\&\&\s+/.test(jsonsql_o.where) && ' && ');
+					jowArr._each(function(i, jow) {
+						var jowSArr = jow.split(/\s+\|\|\s+/.test(jow) && ' || ' || /\s+\&\&\s+/.test(jow) && ' && ')
+						if (jowSArr.length === 1) {
+							if (/in/.test(jowSArr[0])) {
+								var owhere = /([^|&\s]+)\s+in\s+\((.+)\)/.exec(jowSArr[0]),
+									sowhere = [];
+								if (/^\(/.test(owhere[1])) {
+									sowhere.push('(');
+								}
+								owhere[2].split(',')._each(function(i, ow) {
+									sowhere.push("\/" + ow.replace(/'/gim, "").replace(/\)$/, "") + "\/.test(" + owhere[1].replace(/^\(/gim, "").replace(/\)$/gim, "") + ")");
+									if (/\)$/.test(ow)) {
+										sowhere.push(')');
+									}
+								});
+								if (/\)$/.test(owhere[1])) {
+									sowhere.push(')');
+								}
+								jowArr[i] = sowhere.join(' || ');
+							}
+						} else {
+							jowSArr._each(function(x, jowItem) {
+								if (/in/.test(jowItem)) {
+									var owhere = /([^|&\s]+)\s+in\s+\((.+)\)/.exec(jowItem),
+										sowhere = [];
+									if (/^\(/.test(owhere[1])) {
+										sowhere.push('(');
+									}
+									owhere[2].split(',')._each(function(i, ow) {
+										sowhere.push("\/" + ow.replace(/'/gim, "").replace(/\)$/, "") + "\/.test(" + owhere[1].replace(/^\(/gim, "").replace(/\)$/, "") + ")");
+										if (/\)$/.test(ow)) {
+											sowhere.push(')');
+										}
+									});
+									if (/\)$/.test(owhere[1])) {
+										sowhere.push(')');
+									}
+									jowSArr[x] = sowhere.join(/\|\|/.test(jowItem) && ' || ' || /\&\&/.test(jowItem) && ' && ' || '');
+								}
+							});
+							jowArr[i] = jowSArr.join(/\|\|/.test(jow) && ' || ' || /\&\&/.test(jow) && ' && ' || /\s+and\s+/.test(jow) && ' && ' || /\s+or\s+/.test(jow) && ' || ' || "");
+						}
+					});
+					jsonsql_o.where = jowArr.join(/\|\|/.test(jsonsql_o.where) && ' || ' || /\&\&/.test(jsonsql_o.where) && ' && ');
+				} else {
+					jsonsql_o.where = 'true';
+				}
+				//console.log(jsonsql_o.where)
+				var fn = new Function("json", "var a =" + jsonsql_o.where + ";return a;");
+				if (fn(jsonsql_scope)) {
+					jsonsql_result.push(that.jsonSql_Fields(jsonsql_scope, jsonsql_o.fields));
+				}
+			});
+			return jsonsql_result;
+		},
+		jsonSql_Fields: function(scope, fields) {
+			if (fields.length == 0)
+				fields = ["*"];
+			if (fields[0] == "*")
+				return scope;
+			var returnobj = {};
+			for (var i in fields) {
+				scope[fields[i]] && (returnobj[fields[i]] = scope[fields[i]]);
+			}
+			return returnobj;
+		},
+		jsonSql_OrderBy: function(result, orderby, order) {
+			if (orderby.length == 0)
+				return result;
+			result.sort(function(a, b) {
+				switch (order.toLowerCase()) {
+					case "desc":
+						return (eval('a.' + orderby[0] + ' < b.' + orderby[0])) ? 1 : -1;
+					case "asc":
+						return (eval('a.' + orderby[0] + ' > b.' + orderby[0])) ? 1 : -1;
+					case "descnum":
+						return (eval('a.' + orderby[0] + ' - b.' + orderby[0]));
+					case "ascnum":
+						return (eval('b.' + orderby[0] + ' - a.' + orderby[0]));
+				}
+			});
+			return result;
+		},
+		jsonSql_Limit: function(result, limit) {
+			switch (limit.length) {
+				case 0:
+					return result;
+				case 1:
+					return result.splice(0, limit[0]);
+				case 2:
+					return result.splice(limit[0] - 1, limit[1]);
+			}
+		}
 	};
 
 	class Store {
@@ -1165,6 +1428,10 @@
 			} else {
 				return mod._stores[that.name].data;
 			}
+		}
+		find(selector) {
+			var that = this;
+			return jsonSql.query(selector, mod._stores[that.name].data);
 		}
 		clear() {
 			mod._stores[this.name].data = {};
@@ -1295,7 +1562,7 @@
 			mod.templates[to] = toTmpl;
 			return this;
 		},
-		createStyle: function(style) {
+		createStyle: function(style, id) {
 			if (mod.isPlainObject(style)) {
 				for (let name in style) {
 					if (name in mod.Styles)
@@ -1307,9 +1574,11 @@
 				}
 				return mod.extend(mod.Styles, style);
 			} else if (typeof style === "string") {
-				return this.createDom("style", {
+				return this.createDom("style", $.extend({
 					html: style
-				});
+				}, id ? {
+					id: id
+				} : {}));
 			}
 		},
 		store: function(name, data) {
@@ -1333,7 +1602,7 @@
 			var template = args && args.content || mod.findNode("template:" + name),
 				ops = {
 					parent: undefined,
-					content: typeof template === "string" ? template : template.length > 0 ? template[0].innerHTML : "",
+					content: typeof template === "string" ? template : template.length > 0 ? template[0].innerHTML : template.nodeType ? template.innerHTML : "",
 					data: {}
 				};
 			!mod.templates[name] && (mod.templates[name] = args ? mod.extend(bool ? ops : ops.data, args) && ops : ops);
@@ -1407,7 +1676,7 @@
 						}
 						if (parent && parent.length > 0 && parent[0]) {
 							var next = function(data, args) {
-								if (data.commit) {
+								if (data && data.commit) {
 									data = data.get();
 								}
 								mod.mixElement(parent[0]);
@@ -1445,13 +1714,13 @@
 											})
 										});
 										parent[0]._attr("v-id", name);
-										var html = mod.tmpl(mod.templates[name].content, data || {});
+										var html = mod.tmpl(mod.templates[name].content, data.props || data || {});
 										parent[0].nodeType === 11 ? parent[0].appendChild($.createDom("div", {
 											html: html
 										})) : parent[0].tagName.toLowerCase() === "body" ? parent[0]._append($.createDom("div", {
 											html: html
 										}).children[0]) : (parent[0].innerHTML = html);
-										mod.tmpl(parent[0], data);
+										mod.tmpl(parent[0], data.props || data);
 										parent[0]._query("img").forEach(function(e) {
 											mod.lazyload && e._attr("p-lazyload") && mod.lazyload(e);
 										});
@@ -1464,18 +1733,19 @@
 											if ($.Callbacks) {
 												parent[0]._html('');
 												var callbacks = $.Callbacks(),
+													//components = data.components;
+													/*if (mod.isPlainObject(components) && "data" in components) {
+														$.extend(data, components.data);
+														components = components.components;
+													}*/
 													components = data.components;
-												if (mod.isPlainObject(components) && "data" in components) {
-													$.extend(data, components.data);
-													components = components.components;
-												}
 												data = mod.filter(data, "components");
 												callbacks.add(function(next) {
 													nextFn(data, next, args);
 												});
-												mod.each(components, function(i, component) {
+												mod.each(components.components, function(i, component) {
 													callbacks.add(function(next) {
-														$.render(component, data, $.createDom("div", {}), function(elem) {
+														$.render(component, components.data || data, $.createDom("div", {}), function(elem) {
 															parent[0]._append(elem.children[0] || elem);
 															next();
 														});
@@ -1511,5 +1781,61 @@
 			return this;
 		}
 	};
+
+	!pTemplate.DOM && (pTemplate.DOM = {});
+	mod.each("a div p span h1 h2 h3 h4 h5 h6 article aside address ul li header footer ol menu data datalist dd dt dl form input textarea label nav meta link script select option section strong style table tbody th tr td caption tfoot thead title video audio img em button template textnode".split(' '), (i, name) => {
+		!pTemplate.DOM[name] && (pTemplate.DOM[name] = function() {
+			var args = arguments;
+			args = []._argsToArray(args);
+			args.splice(0, 0, name);
+			return mod.mixElement(pTemplate.createDom.apply(pTemplate, args));
+		});
+	});
+
+	var createDom = (json, type, typeJson) => {
+		var dom = type.nodeType && type || $.DOM[type](typeJson || {});
+		$.each(json, (n, v) => {
+			var nv = $.extend({}, v);
+			delete nv.children;
+			if (v.children) {
+				var item = $.DOM[n](nv);
+				$.each(v.children, (i, vs) => {
+					item = createDom(vs, item);
+				});
+				dom._append(item);
+			} else {
+				dom._append($.DOM[n](nv));
+			}
+		});
+		return dom
+	};
+	mod.extend(pTemplate.DOM, {
+		custom: (name, args, children) => {
+			return createDom(children, name, args);
+		}
+	});
+
 	win.$ = win.pTemplate = pTemplate;
+
+	var _pTemplate = win.pTemplate,
+		_$ = win.$;
+
+	pTemplate.noConflict = function(deep) {
+		if (win.$ === pTemplate) {
+			win.$ = _$;
+		}
+
+		if (deep && win.pTemplate === pTemplate) {
+			win.pTemplate = _pTemplate;
+		}
+
+		return pTemplate;
+	};
+
+	if (typeof define === "function") {
+		define("ptemplate", [], function(require, exports, module) {
+			exports.pTemplate = pTemplate;
+		});
+	}
+
 })(window);

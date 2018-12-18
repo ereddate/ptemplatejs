@@ -218,41 +218,20 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			});
 			return this;
 		},
-		"3dtouch": function(selector, callback){
-			var dom = $.query(selector)[0],
-				start,
-				end, deltaX, deltaY, startTime, endTime, doubleTime;
+		"longTap": function(selector, time, callback){
+			var dom = $.query(selector)[0];
 			dom._on("touchstart", function(e) {
 				var touches = event.touches[0];
-				startTime = new Date();
-				start = {
-					x: touches.pageX,
-					y: touches.pageY
-				};
-				end = {
-					x: 0,
-					y: 0
-				};
-				deltaX = 0;
-				deltaY = 0;
-				endTime = null;
+				this.longTapTimeout && clearTimeout(this.longTapTimeout);
+				this.longTapTimeout = setTimeout(()=> {
+					callback && callback();
+				}, time, 800);
 			})._on("touchmove", function(e) {
-				var touches = event.touches[0];
-				end = {
-					x: touches.pageX,
-					y: touches.pageY
-				};
+				this.longTapTimeout && clearTimeout(this.longTapTimeout);
+				return false;
 			})._on("touchend", function(e) {
-				var top = document.documentElement.scrollTop || document.body.scrollTop;
-				endTime = new Date();
-				deltaX = end.x - start.x;
-				deltaY = end.y - start.y;
-				if (deltaX <= 10 && deltaY <= 10 && endTime - startTime > 900) {
-					callback && callback.call(this, e, {x: start.x, y: start.y-top});
-					doubleTime = null;
-				} else {
-					doubleTime = endTime;
-				}
+				this.longTapTimeout && clearTimeout(this.longTapTimeout);
+				return false;
 			});
 			return this;
 		}

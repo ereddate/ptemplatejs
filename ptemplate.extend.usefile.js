@@ -2,10 +2,28 @@
  * ptemplatejs v1.0.0
  * @author yandong
  *
+	$.useConfig({
+		alias:{
+			test: 'test.0.0.1.js'
+		},
+		base: '//localhost/js/'
+	});
+
+	define((require, exports, module) => {
+		$.use('test', () => {
+			var test = require('test');
+			test.done();	
+		})
+	});
+
  * https://github.com/ereddate/ptemplatejs
  */
 'use strict';
 typeof window.pTemplate != "undefined" && (function(win, $) {
+	var useData = {
+		alias: {},
+		base: "./"
+	};
 	$.extend($.__mod__, {
 		use: function(url, callback, ops) {
 			var type = /\.(js|css)\?*/.exec(url),
@@ -22,6 +40,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					callback && callback.call(this, e);
 				});
 				$.query("head")[0]._append(elem);
+			}else{
+				var elem = $.DOM.img({src:url, id: "randomMarker", style: "display:none"});
+				$.query("head")[0]._append(elem);
 			}
 		}
 	});
@@ -32,10 +53,25 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				url = typeof url == "string" ? url.split(' ') : url;
 				$.each(url, function(i, item) {
 					callbacks.add(function(next) {
-						$.useData && $.useData.alias[item] ? (item = $.useData.base + $.useData.alias[item]) : item;
-						$.__mod__.use(item, function() {
+						if (useData && useData.alias[item] && useData.alias[item].status > 0) {
 							next();
-						}, ops);
+						} else {
+							var itemUrl = useData && useData.alias[item] ? useData.base + useData.alias[item].url : item;
+							$.__mod__.use(itemUrl, function() {
+								if (useData) {
+									useData.alias[item] && $.extend(useData.alias[item], {
+										status: 1
+									}) || $.extend((useData.alias[item] = {
+										url: item,
+										status: 0,
+										result: undefined
+									}), {
+										status: 2
+									});
+								}
+								next();
+							}, ops);
+						}
 					});
 				});
 				callbacks.done(function() {
@@ -45,21 +81,32 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return this;
 		},
 		useConfig: function(options) {
-			typeof $.useData == "undefined" && ($.useData = {
+			typeof useData == "undefined" && (useData = {
 				alias: {},
 				base: "./"
 			});
-			options && $.extend($.useData, options);
+			if (!options) {
+				return useData;
+			}
+			if (options.alias) {
+				$.each(options.alias, function(name, value) {
+					!useData.alias[name] && (useData.alias[name] = $.extend({}, {
+						url: value,
+						status: 0,
+						result: undefined
+					}));
+				});
+			}
+			options.base && (useData.base = options.base);
 			return this;
 		}
 	});
 
-	$.define_data = {};
 	win.define = function() {
 		var args = arguments,
 			len = args.length,
 			require = function(name) {
-				return $.define_data[name] || null;
+				return useData.alias && useData.alias[name].result || null;
 			},
 			exports = {},
 			module = {};
@@ -70,9 +117,9 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				} else {
 					var a = {};
 					$.each(args[0], function(i, b) {
-						$.each($.define_data, function(n, v) {
+						$.each(useData.alias, function(n, v) {
 							args[1][i] === n && $.extend(a, {
-								[n]: v
+								[n]: v.result
 							});
 							return false;
 						});
@@ -84,8 +131,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			case 3:
 				var a = {};
 				$.each(args[1], function(i, b) {
-					$.each($.define_data, function(n, v) {
-						args[1][i] === n && $.extend(a, v);
+					$.each(useData.alias, function(n, v) {
+						args[1][i] === n && $.extend(a, v.result);
 						return false;
 					});
 				});
@@ -96,7 +143,13 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				args[0](require, exports, module);
 				break;
 		}
-		typeof args[0] === "string" && $.extend($.define_data[args[0]] || ($.define_data[args[0]] = {}), $.__mod__.isPlainObject(exports) && exports || $.__mod__.isPlainObject(module) && module);
+		typeof args[0] === "string" && $.extend(useData.alias[args[0]] && useData.alias[args[0]].result || (!useData.alias[args[0]] && (useData.alias[args[0]] = {
+			url: '',
+			status: 0,
+			result: {}
+		}) && useData.alias[args[0]].result) || (useData.alias[args[0]].result = {}), $.__mod__.isPlainObject(exports) && exports || $.__mod__.isPlainObject(module) && module) && $.extend(useData.alias[args[0]], {
+			status: 2
+		});
 	}
 
 })(window, pTemplate);

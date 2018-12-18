@@ -58,7 +58,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						[name]: data,
 						count: data.length
 					}, $.query("#" + id));
-				}).catch(function(err) {
+				}, function(err) {
 					console.log(err);
 				});
 			} else {
@@ -79,7 +79,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				data.handle && data.handle[d.resolve].call(obj, result, function(elem) {
 					elem.parentNode && elem.parentNode.replaceChild(elem, obj);
 				});
-			}).catch(function(err) {
+			}, function(err) {
 				data.handle && data.handle[d.reject].call(obj, err);
 			});
 		}
@@ -112,7 +112,39 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			range.select();
 		}
 	}
+
+	var qrcodeMod = {
+		big:{
+			width:320,
+			height:320
+		},
+		more: {
+			width:240,
+			height:240
+		},
+		inside: {
+			width:160,
+			height:160
+		},
+		less:{
+			width:120,
+			height:120
+		},
+		small: {
+			width:80,
+			height:80
+		}
+	};
+
 	$.__mod__.tmplAttributes && $.extend($.__mod__.tmplAttributes, {
+		qrcode: function(obj, type, a, data, _parent){
+			$.qrcode(obj, $.extend({correctLevel:0,text:a.value}, qrcodeMod[type]));
+			obj._removeAttr(a.name);
+		},
+		fickle: function(obj, type, a, data, _parent) {
+			obj._attr(type, a.value + (/\?/.test(a.value) ? "&" : "?") + "ptemplate_t=" + (Math.random(10000) + "").replace(/\./gim, ""));
+			obj._removeAttr(a.name);
+		},
 		model: function(obj, type, a, data, _parent) {
 			var mod = obj._parents("v-id"),
 				v = mod._attr("v-id");
@@ -225,16 +257,49 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					var cmd = a.value.split(' '),
 						then = function(result) {
 							var html = obj._removeAttr("p-express:" + type).outerHTML,
-								name = /\./.test(cmd[2]) ? cmd[2].split('.')[0] : cmd[2],
-								f = pTemplate.createDom("docmentfragment", {}),
-								t = 'var html =[];if(' + cmd[2] + '){var len = ' + cmd[2] + '.length;for (var ' + cmd[0] + '=0;' + cmd[0] + '<len;' + cmd[0] + '++){var x_data = ' + cmd[2] + '[' + cmd[0] + ']; html.push(pTemplate.tmpl(\'' + html.replace(/"/gim, "\\\"").replace(/'/gim, "\\\'").replace(/\r|\n/gim, "") + '\', x_data))}}return html;',
-								r = new Function(name, t)(result[name] || {});
-							if (_parent) {
-								_parent.innerHTML = r.join('');
-								$.__mod__.each([].slice.call(_parent.children), function(i, e) {
-									$.query(e)[0]._attr("p-index", i + 1);
-								});
-								pTemplate.tmpl(_parent, data);
+								name = /(.+)\[\{*.+\}*\]/.test(cmd[2]) ? /(.+)\[.+\]/.exec(cmd[2])[1] : /\./.test(cmd[2]) ? cmd[2].split('.')[0] : cmd[2],
+								n = /\[index\]/.test(cmd[2]) ? cmd[2] : cmd[2]+"[index]",
+								h = html.replace(/"/gim, "\\\"").replace(/'/gim, "\\\'").replace(/\r|\n/gim, ""),
+								t = 'var html =[];if ($.__mod__.isArray('+name+')){$.each('+cmd[2]+', (index, '+name+'item) => {if(' + n + '){if ($.__mod__.isArray('+n+')) {$.each('+n+', ('+cmd[0]+', item) => {var x_data = $.extend(item, {index:'+cmd[0]+'});html.push(pTemplate.tmpl(\'' + h + '\', x_data));})}else if($.__mod__.isPlainObject('+n+')){var x_data = $.extend('+n+', {index:index});html.push(pTemplate.tmpl(\'' + h + '\', x_data));}}});}else{if(' + cmd[2] + '){$.each('+cmd[2]+', ('+cmd[0]+', item) => {html.push(pTemplate.tmpl(\'' + h + '\', item))})}}return html;';
+
+							/*
+							 'var html =[];
+							 if ($.__mod__.isArray('+name+')){
+							 	$.each('+name+', (index, '+name+'item) => {
+							 		if(' + n + '){
+							 			if ($.__mod__.isArray('+n+')) {
+							 				$.each('+n+', ('+cmd[0]+', item) => {
+												var x_data = $.extend(item, {index:'+cmd[0]+'});
+							 					html.push(pTemplate.tmpl(\'' + h + '\', x_data));
+							 				})
+							 			}else if($.__mod__.isPlainObject('+n+')){
+							 				var x_data = $.extend('+n+', {index:index});
+							 				html.push(pTemplate.tmpl(\'' + h + '\', x_data));
+							 			}
+							 		}
+							 	});
+							 }else{
+							 	if(' + cmd[2] + '){
+							 		$.each('+cmd[2]+', ('+cmd[0]+', item) => {
+							 			html.push(pTemplate.tmpl(\'' + h + '\', item))
+							 		})
+							 	}
+							 }
+							 return html;'
+							*/
+							try{
+								//console.log(t, result[name], name, cmd);
+								var r = new Function(name, t)(result[name] || {});
+								//console.log(r, _parent);
+								if (_parent) {
+									_parent.innerHTML = r.join('');
+									$.__mod__.each([].slice.call(_parent.children), function(i, e) {
+										$.query(e)[0]._attr("p-index", i + 1);
+									});
+									pTemplate.tmpl(_parent, data);
+								}
+							}catch(e){
+								//console.log(e);
 							}
 						},
 						findSubObject = function(obj, selector) {
@@ -266,8 +331,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 					var index = parseInt(obj._attr("p-index")) || 0,
 						result = isExpress(a, /index/.test(a.value) ? index : data, /index/.test(a.value) ? "index" : "data");
 					if (!result) {
-						result = new RegExp(a.value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5\uf900-\ufa2d<>\*\+\-\/\.]/gim, function(c){
-							return /\s+/.test(c) ? c : "\\"+c;
+						result = new RegExp(a.value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5\uf900-\ufa2d<>\*\+\-\/\.]/gim, function(c) {
+							return /\s+/.test(c) ? c : "\\" + c;
 						})).test(obj._html());
 					}
 					if (!result) {

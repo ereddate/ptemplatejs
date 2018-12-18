@@ -55,10 +55,11 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						controls = dom.getAttribute("controls") || "false",
 						loop = dom.getAttribute("loop") || "false";
 					src = src.split(' ');
-					dom.innerHTML = '<video id="videoplay" width="' + width + '" height="' + height + '" ' + (controls == "false" ? "" : "controls") + ' ' + (autoplay == "false" ? "" : "autoplay") + ' ' + (loop == "false" ? "" : "loop") + '></video><span id="videostatus" class="videostatus"></span><span id="status" class="netstate"></span>';
+					dom.innerHTML = '<video id="videoplay" width="' + width + '" height="' + height + '" ' + (controls == "false" ? "" : "controls") + ' ' + (autoplay == "false" ? "" : "autoplay") + ' ' + (loop == "false" ? "" : "loop") + '></video><span id="videostatus" class="videostatus"></span><span id="status" class="netstate"></span><span id="progressstate" class="progressstate"></span>';
 					var video = dom.getElementsByTagName("video")[0],
 						videostatus = $.query("#videostatus", dom)[0],
 						netstate = $.query("#status", dom)[0],
+						progressstate = $.query("#progressstate", dom)[0],
 						oldVolume = 1,
 						keys = {
 							play: "播放",
@@ -68,28 +69,33 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 							netstate: ["", "正常", "下载数据", "未找到资源"],
 							error: "错误",
 							progress: "缓冲中，推荐暂停一会再播放",
-							stalled: "网速过慢，播放器将暂停缓冲后再播放"
+							stalled: "网速过慢，暂停并缓冲后再播放"
 						};
 					video.onloadstart = video.onprogress = video.onsuspend = video.onabort = video.onerror = video.onstalled = video.onplay = video.onpause = video.onloadedmetadata = video.onloadeddata = video.onwaiting = video.onplaying = video.oncanplay = video.oncanplaythrough = video.onseeking = video.onseeked = video.ontimeupdate = video.onended = video.onratechange = video.ondurationchange = video.oncontextmenu = video.onvolumechange = video.onfullscreenchange = function(e) {
 						var netState = video.networkState;
 						netstate.innerHTML = "网络:" + keys.netstate[netState];
 						switch (e.type) {
 							case "progress":
-								videostatus.innerHTML = keys[e.type];
+								progressstate.innerHTML = keys[e.type];
+								break;
 							case "error":
 								videostatus.innerHTML = keys[e.type];
 								break;
 							case "play":
 								var a = window.localStorage.getItem("timeupdate");
 								videostatus.innerHTML = keys[e.type] + (a ? "从上次看到的" + xvideo.getTime(a, this.duration) + "开始..." : "");
-								if (a) video.currentTime = a;
+								if (a) {
+									if (parseFloat(a).toFixed(0) === this.duration.toFixed(0)) a = -1;
+									video.currentTime = a;
+								}
 								break;
 							case "stalled":
-								videostatus.innerHTML = keys[e.type];
+								progressstate.innerHTML = keys[e.type];
 								break;
 							case "pause":
 								videostatus.innerHTML = keys[e.type];
 								window.localStorage.setItem("timeupdate", this.currentTime.toFixed(2));
+								progressstate.innerHTML = "";
 								break;
 							case "volumechange":
 								videostatus.innerHTML = video.volume === 0 ? "静音" : video.volume === 1 ? "音量最大" : keys[e.type] + (video.volume < oldVolume ? "缩小" : "放大");

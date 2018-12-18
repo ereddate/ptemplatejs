@@ -44,12 +44,17 @@ module.exports = {
               tagName = "",
               b = new htmlparser.Parser({
                 onopentag: function(name, attr) {
+                  var a = file.split('/');
                   tagName = name;
                   if (/template|script|style/.test(name)) {
                     isWrite = true;
                     if (Reflect.has(attr, 'p-template')) {
                       tags[name] = {
                         name: attr["p-template"]
+                      }
+                    } else {
+                      tags[name] = {
+                        name: a[a.length - 1].replace(/\./gim, "")
                       }
                     }
 
@@ -62,7 +67,7 @@ module.exports = {
                     if (typeof text != "undefined" && /style/.test(tagName)) {
                       html.push(text);
                     } else if (typeof text != "undefined") {
-                      html.push(text.replace(/[\r\n\t]+/gim, ""));
+                      html.push(/script/.test(tagName) ? text : text.replace(/[\r\n\t]+/gim, ""));
                     }
                   }
                 },
@@ -70,7 +75,9 @@ module.exports = {
                   if (/template|script|style/.test(name)) {
                     isWrite = false;
                     if (/template/.test(name)) {
+                      var n = tags[name].name;
                       tags[name] = "$.createTemplate('" + tags[name].name + "', {content: \"" + html.join('') + "\"}, true);";
+                      tags.name = n;
                     } else {
                       tags[name] = html.join('');
                     }
@@ -84,7 +91,7 @@ module.exports = {
                   grunt.log.error('error. ' + error);
                 }
               });
-              objName = objName[1] || file;
+            objName = objName[1] || file;
 
             b.write(result);
             b.end();

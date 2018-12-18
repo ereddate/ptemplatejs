@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<title>ptemplatejs demo</title>
+		<script src="ptemplate.js"></script>
+		<script src="ptemplate.extend.tmplattrs.js"></script>
+		<script src="ptemplate.extend.tmplfilter.js"></script>
+		<script src="ptemplate.extend.tmpltags.js"></script>
+		<script src="ptemplate.extend.callbacks.js"></script>
+		<script src="ptemplate.extend.promise.js"></script>
+		<script src="ptemplate.extend.usefile.js"></script>
+		<script src="ptemplate.extend.jsonp.js"></script>
+		<script src="ptemplate.extend.ua.js"></script>
+	</head>
+	<body>
+		<script>
+			var myStore = $.store("my-store", {});
+			myStore.commit({
+				props:{
+					title: 'title',
+					count: 3,
+					items:[{
+						title: 'subTitle1',
+						count: 1,
+						items:[{
+							title: 'subItemTitle'
+						}]
+					},{
+						title: 'subTitle2',
+						count: 1,
+						items:[{
+							title: 'subItemTitle2'
+						}]
+					}],
+					data:[{
+						title: 'title',
+						count: 3,
+						items:[{
+							title: 'subTitle3',
+							count: 1,
+							items:[{
+								title: 'subItemTitle'
+							}]
+						},{
+							title: 'subTitle3',
+							count: 1,
+							items:[{
+								title: 'subItemTitle'
+							}]
+						},{
+							title: 'subTitle3',
+							count: 1,
+							items:[{
+								title: 'subItemTitle'
+							}]
+						}]
+					}],
+					sitems:[{
+						title: 'subTitle4',
+						count: 1,
+						items:[{
+							title: 'subItemTitle6'
+						}]
+					},{
+						title: 'subTitle5',
+						count: 1,
+						items:[{
+							title: 'subItemTitle7'
+						}]
+					}]
+				},
+				state:{
+					title: 'subtitle',
+					count: 2,
+					items:[{
+						title: 'subTitle1',
+						count: 1,
+						items:[{
+							title: 'subItemTitle'
+						}]
+					},{
+						title: 'subTitle2',
+						count: 1,
+						items:[{
+							title: 'subItemTitle2'
+						}]
+					}],
+					data:[{
+						title: 'title',
+						count: 1,
+						items:[{
+							title: 'subTitle3',
+							count: 1,
+							items:[{
+								title: 'subItemTitle'
+							}]
+						}]
+					}],
+					sitems:[{
+						title: 'subTitle4',
+						count: 1,
+						items:[{
+							title: 'subItemTitle6'
+						}]
+					},{
+						title: 'subTitle5',
+						count: 1,
+						items:[{
+							title: 'subItemTitle7'
+						}]
+					}]
+				}
+			});
+			var data = myStore.get('props');
+			console.log(data)
+			var result = myStore.find("select items from props,state");
+			console.log(result)
+			var result = myStore.find("select data from props where (json.title in ('sub','tle'))");
+			console.log(result)
+			var result = myStore.find("select items from props where (json.items[0].title in ('sub','tle'))");
+			console.log(result)
+			var result = myStore.find("select items,title from props,state where (json.items[0].title = 'title' || json.items[1].title in ('sub'))");
+			console.log(result)
+			var result = myStore.find("select items,title from props,state where (json.items[0].title = 'title' or json.items[1].title in ('sub'))");
+			console.log(result)
+			var result = myStore.find("select items,title from props,state where (json.items[0].count = 1 and json.items[1].count >= 1)");
+			console.log(result)
+			var result = myStore.find("select * from props,state where (json.count > 2)");
+			console.log(result)
+			var result = myStore.find("select * from props,state where (json.count <= 2)");
+			console.log(result)
+			var result = myStore.find("select title from props,state where ((json.items[0].title = 'title' or json.items[0].title = 'subtitle2') && json.items[1].title in ('sub'))");
+			console.log(result)
+			var result = myStore.find("select * from props,state where ((json.items[0].title = 'title' or json.items[0].title = 'subtitle2') or json.items[1].title in ('sub'))");
+			console.log(result)
+			var result = myStore.find("select * from props,state where ((json.items[0].title = 'title' or json.items[0].title = 'subtitle2') || (json.items[1].title in ('sub') and json.items[0].title = 'subtitle2'))");
+			console.log(result)
+			var result = myStore.find("select * from props,state where ((json.items[0].title = 'title' or json.items[0].title = 'subtitle2') or (json.items[0].title = 'subtitle2' and json.items[1].title in ('sub')) and (json.items[0].title = 'subtitle2' and json.items[1].title in ('sub')))");
+			console.log(result)
+		</script>
+	</body>
+</html>

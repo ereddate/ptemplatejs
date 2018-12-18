@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+		<script src="ptemplate.js"></script>
+		<script src="ptemplate.extend.tmplattrs.js"></script>
+		<script src="ptemplate.extend.tmplfilter.js"></script>
+		<script src="ptemplate.extend.tmpltags.js"></script>
+		<script src="ptemplate.extend.callbacks.js"></script>
+		<script src="ptemplate.extend.promise.js"></script>
+		<script src="ptemplate.extend.usefile.js"></script>
+		<script src="ptemplate.extend.jsonp.js"></script>
+		<script src="ptemplate.extend.ua.js"></script>
+		<script src="ptemplate.extend.waterfall.js"></script>
+		<style>
+			body{background:#efefef;}
+			body,ul,li,p,h1{margin:0;padding:0;list-style:none;}
+			.page{display:flex;max-width:1000px;margin:0 auto;}
+			.page div.column{width:33.333%;margin:5px;}
+			.page div.item{display:block;background:#fff;border-radius:5px;padding:10px;margin:10px 0;}
+			.page div.item div a{display:block;width:100%;background-color:#999;}
+			.page div.item div a img{width:100%;min-height:100px;display:block;}
+		</style>
+	</head>
+	<body>
+		<div class="page"></div>
+		<template id="template-li">
+			<div class="item">
+				<div>
+					<a href="{{url}}"><img src="{{img}}" alt="{{id}}"></a>
+				</div>
+				<article>
+					<header>
+						<h1>{{title}}</h1>
+						<p>{{desc}}</p>
+					</header>
+				</article>
+			</div>
+		</template>
+		<script>
+			var data = [{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948103507&di=e7edfcc6a000fa10f72b3cde88276aeb&imgtype=0&src=http%3A%2F%2Fpic11.nipic.com%2F20101215%2F4240631_124708588057_2.jpg",
+				title: "1",
+				desc: "1"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177612&di=7b465c02551346d8ee824b3cbcc3335a&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3D8c83ab890055b31988f48a362bc0e853%2Feac4b74543a98226ecbcccaf8082b9014a90eb3d.jpg",
+				title: "2",
+				desc: "2"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948153013&di=d0a5545376fb8d2f14a56dab1042355d&imgtype=0&src=http%3A%2F%2Fpic30.nipic.com%2F20130608%2F7447430_092225119000_2.jpg",
+				title: "3",
+				desc: "3"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177611&di=44ba6c2b4daa0fedf889a81fe9e23d34&imgtype=0&src=http%3A%2F%2Fpic30.nipic.com%2F20130605%2F7447430_160358019000_2.jpg",
+				title: "4",
+				desc: "4"
+			},{
+				img: "https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3702644557,3836406300&fm=200&gp=0.jpg",
+				title: "5",
+				desc: "5"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177610&di=12752e333ab78f1db5223c55a8573401&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3D91457c0479f08202399f997c23929198%2F5bafa40f4bfbfbed976aae5872f0f736afc31fe1.jpg",
+				title: "6",
+				desc: "6"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177609&di=1f2db9f3a9cae93a246cab86cdf88985&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3Decd937ee104c510fbac9ea5908304f58%2Fd8f9d72a6059252dbfb7f4223e9b033b5bb5b970.jpg",
+				title: "7",
+				desc: "7"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177603&di=38e0a4e331833e95c70681122291a947&imgtype=0&src=http%3A%2F%2Fimg1.sc115.com%2Fuploads%2Fsc%2Fjpg%2FHD%2F40%2F10917.jpg",
+				title: "8",
+				desc: "8"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177542&di=89e11626a75f84d84ce11ce7719459e4&imgtype=0&src=http%3A%2F%2Ffile06.16sucai.com%2F2015%2F1004%2Fd294254b3d0f726e1b43b374d10ccf4a.jpg",
+				title: "9",
+				desc: "9"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177542&di=732578106357af75fde0db9f75801654&imgtype=0&src=http%3A%2F%2Fpic24.nipic.com%2F20121027%2F2056425_104614712192_2.jpg",
+				title: "10",
+				desc: "10"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948103507&di=e7edfcc6a000fa10f72b3cde88276aeb&imgtype=0&src=http%3A%2F%2Fpic11.nipic.com%2F20101215%2F4240631_124708588057_2.jpg",
+				title: "1",
+				desc: "1"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177612&di=7b465c02551346d8ee824b3cbcc3335a&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3D8c83ab890055b31988f48a362bc0e853%2Feac4b74543a98226ecbcccaf8082b9014a90eb3d.jpg",
+				title: "2",
+				desc: "2"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948153013&di=d0a5545376fb8d2f14a56dab1042355d&imgtype=0&src=http%3A%2F%2Fpic30.nipic.com%2F20130608%2F7447430_092225119000_2.jpg",
+				title: "3",
+				desc: "3"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177611&di=44ba6c2b4daa0fedf889a81fe9e23d34&imgtype=0&src=http%3A%2F%2Fpic30.nipic.com%2F20130605%2F7447430_160358019000_2.jpg",
+				title: "4",
+				desc: "4"
+			},{
+				img: "https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3702644557,3836406300&fm=200&gp=0.jpg",
+				title: "5",
+				desc: "5"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177610&di=12752e333ab78f1db5223c55a8573401&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3D91457c0479f08202399f997c23929198%2F5bafa40f4bfbfbed976aae5872f0f736afc31fe1.jpg",
+				title: "6",
+				desc: "6"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177609&di=1f2db9f3a9cae93a246cab86cdf88985&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3Decd937ee104c510fbac9ea5908304f58%2Fd8f9d72a6059252dbfb7f4223e9b033b5bb5b970.jpg",
+				title: "7",
+				desc: "7"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177603&di=38e0a4e331833e95c70681122291a947&imgtype=0&src=http%3A%2F%2Fimg1.sc115.com%2Fuploads%2Fsc%2Fjpg%2FHD%2F40%2F10917.jpg",
+				title: "8",
+				desc: "8"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177542&di=89e11626a75f84d84ce11ce7719459e4&imgtype=0&src=http%3A%2F%2Ffile06.16sucai.com%2F2015%2F1004%2Fd294254b3d0f726e1b43b374d10ccf4a.jpg",
+				title: "9",
+				desc: "9"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177542&di=732578106357af75fde0db9f75801654&imgtype=0&src=http%3A%2F%2Fpic24.nipic.com%2F20121027%2F2056425_104614712192_2.jpg",
+				title: "10",
+				desc: "10"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948103507&di=e7edfcc6a000fa10f72b3cde88276aeb&imgtype=0&src=http%3A%2F%2Fpic11.nipic.com%2F20101215%2F4240631_124708588057_2.jpg",
+				title: "1",
+				desc: "1"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177612&di=7b465c02551346d8ee824b3cbcc3335a&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3D8c83ab890055b31988f48a362bc0e853%2Feac4b74543a98226ecbcccaf8082b9014a90eb3d.jpg",
+				title: "2",
+				desc: "2"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948153013&di=d0a5545376fb8d2f14a56dab1042355d&imgtype=0&src=http%3A%2F%2Fpic30.nipic.com%2F20130608%2F7447430_092225119000_2.jpg",
+				title: "3",
+				desc: "3"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177611&di=44ba6c2b4daa0fedf889a81fe9e23d34&imgtype=0&src=http%3A%2F%2Fpic30.nipic.com%2F20130605%2F7447430_160358019000_2.jpg",
+				title: "4",
+				desc: "4"
+			},{
+				img: "https://ss3.bdstatic.com/70cFv8Sh_Q1YnxGkpoWK1HF6hhy/it/u=3702644557,3836406300&fm=200&gp=0.jpg",
+				title: "5",
+				desc: "5"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177610&di=12752e333ab78f1db5223c55a8573401&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3D91457c0479f08202399f997c23929198%2F5bafa40f4bfbfbed976aae5872f0f736afc31fe1.jpg",
+				title: "6",
+				desc: "6"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177609&di=1f2db9f3a9cae93a246cab86cdf88985&imgtype=0&src=http%3A%2F%2Fimgsrc.baidu.com%2Fimage%2Fc0%253Dshijue1%252C0%252C0%252C294%252C40%2Fsign%3Decd937ee104c510fbac9ea5908304f58%2Fd8f9d72a6059252dbfb7f4223e9b033b5bb5b970.jpg",
+				title: "7",
+				desc: "7"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177603&di=38e0a4e331833e95c70681122291a947&imgtype=0&src=http%3A%2F%2Fimg1.sc115.com%2Fuploads%2Fsc%2Fjpg%2FHD%2F40%2F10917.jpg",
+				title: "8",
+				desc: "8"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177542&di=89e11626a75f84d84ce11ce7719459e4&imgtype=0&src=http%3A%2F%2Ffile06.16sucai.com%2F2015%2F1004%2Fd294254b3d0f726e1b43b374d10ccf4a.jpg",
+				title: "9",
+				desc: "9"
+			},{
+				img: "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1542948177542&di=732578106357af75fde0db9f75801654&imgtype=0&src=http%3A%2F%2Fpic24.nipic.com%2F20121027%2F2056425_104614712192_2.jpg",
+				title: "10",
+				desc: "10"
+			}];
+
+			var wf = $.waterfall(".page", {
+				data: data,
+				template: $.query("#template-li")[0],
+				sort: "reverse",
+				maxColumn: 4
+			});
+			$.extend(wf, {
+				extendWaterFall: function(){
+					console.log("extendWaterFall", data)
+				}
+			});
+			console.log(wf);
+			wf.render();
+			wf.extendWaterFall();
+		</script>
+	</body>
+</html>
