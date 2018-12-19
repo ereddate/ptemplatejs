@@ -39,11 +39,11 @@
         },
         ftp_push: {
           options: {
-            host: "",
+            host: "10.4.101.5",
             port: 21,
-            username: "",
-            password: "",
-            dest: pkg.configs.ftpbase
+            username: "ui",
+            password: "icZRNkrZxsMRg7K",
+            dest: pkg.configs.ftpbase || "/img/2016/"
           }
         }
       },
@@ -302,7 +302,7 @@
 
       var h = [];
 
-      function readContent(r, projectName, file, bool) {
+      function readContent(r, projectName, file, app, bool) {
         var content = [];
         r = r.replace(/{{\s*require\(['"]([^{}'"\(\)]+)['"]\)\s*}}|import\s*(.+)\s*from\s*['"]([^'"]+)['"]|import\s*['"]([^'"]+)['"]/gim, function(a, b, c, d, e) {
           //console.log(a, b, c, d, e)
@@ -312,13 +312,13 @@
             b.forEach(function(m) {
               var l = m.split('.');
               if (l.length === 1) {
-                templates.modules[m] && (!isCssFile ? g.push((templates.modules[m].style || "") + (templates.modules[m].template || "") + (templates.modules[m].script && x.parsePJSX(templates.modules[m].script) || "")) : (h.push(templates.modules[m].style || ""), g.push((templates.modules[m].template || "") + (templates.modules[m].script && x.parsePJSX(templates.modules[m].script) || ""))));
+                templates.modules[m] && (!isCssFile ? g.push((templates.modules[m].style || "") + (templates.modules[m].template || "") + (app.build.parsePJSX ? (templates.modules[m].script && x.parsePJSX(templates.modules[m].script) || "") : (templates.modules[m].script || ""))) : (h.push(templates.modules[m].style || ""), g.push((templates.modules[m].template || "") + (app.build.parsePJSX ? (templates.modules[m].script && x.parsePJSX(templates.modules[m].script) || "") : (templates.modules[m].script|| "")))));
               } else {
                 if (templates.modules[l[0]] && templates.modules[l[0]][l[1]]) {
                   if (l[1] == "style" && !isCssFile || l[1] != "style") {
                     g.push(templates.modules[l[0]][l[1]]);
                   } else {
-                    h.push(l[1] === "script" ? x.parsePJSX(templates.modules[l[0]][l[1]]) : templates.modules[l[0]][l[1]]);
+                    h.push(app.build.parsePJSX && l[1] === "script" ? x.parsePJSX(templates.modules[l[0]][l[1]]) : templates.modules[l[0]][l[1]]);
                   }
                 }
               }
@@ -336,13 +336,13 @@
                 g.push("/* " + m.join('.') + " start */");
               }
               if (m.length === 1) {
-                templates.modules[m[0]] && (!isCssFile ? g.push((templates.modules[m[0]].style || "") + (templates.modules[m[0]].template || "") + (templates.modules[m[0]].script && x.parsePJSX(templates.modules[m[0]].script) || "")) : (h.push(templates.modules[m[0]].style || ""), g.push((templates.modules[m[0]].template || "") + (templates.modules[m[0]].script && x.parsePJSX(templates.modules[m[0]].script) || ""))));
+                templates.modules[m[0]] && (!isCssFile ? g.push((templates.modules[m[0]].style || "") + (templates.modules[m[0]].template || "") + (app.build.parsePJSX ? (templates.modules[m[0]].script && x.parsePJSX(templates.modules[m[0]].script) || "") : (templates.modules[m[0]].script || ""))) : (h.push(templates.modules[m[0]].style || ""), g.push((templates.modules[m[0]].template || "") + (app.build.parsePJSX ? (templates.modules[m[0]].script && x.parsePJSX(templates.modules[m[0]].script) || "") : (templates.modules[m[0]].script || "")))));
               } else {
                 if (templates.modules[m[0]] && templates.modules[m[0]][m[1]]) {
                   if (m[1] == "style" && !isCssFile || m[1] != "style") {
                     g.push(templates.modules[m[0]][m[1]]);
                   } else {
-                    h.push(m[1] === "script" ? x.parsePJSX(templates.modules[m[0]][m[1]]) : templates.modules[m[0]][m[1]]);
+                    h.push(app.build.parsePJSX && m[1] === "script" ? x.parsePJSX(templates.modules[m[0]][m[1]]) : templates.modules[m[0]][m[1]]);
                   }
                 }
               }
@@ -351,7 +351,7 @@
                 g.push("/* " + m.join('.') + " end */");
               }
             });
-            for (var i = 0; i < g.length; i++) g[i] = readContent(g[i], projectName, file, true).join('');
+            for (var i = 0; i < g.length; i++) g[i] = readContent(g[i], projectName, file, app, true).join('');
             a = g.join('');
           }
           return a;
@@ -401,8 +401,8 @@
                 var r = grunt.file.read(path.resolve(f[n]));
                 var file = pkg.configs.build.path + projectName + "/js/" + dirVer + "/**/" + n + ".js";
                 h = [];
-                r = x.parsePJSX(r);
-                var content = readContent(r, projectName, file);
+                c.build.parsePJSX && (r = x.parsePJSX(r));
+                var content = readContent(r, projectName, file, c);
                 content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, " + (pkg.configs.ptemplatejs.alias || "$") + "){"));
                 content.push("})(window, typeof pTemplate !== 'undefined' && pTemplate || {});");
                 savefile(file, content.join(''));
@@ -414,8 +414,8 @@
               var r = grunt.file.read(path.resolve(f));
               var file = f.replace(basePath, pkg.configs.build.path).replace(v + "/js/", v + "/js/" + dirVer + "/");
               h = [];
-              r = x.parsePJSX(r);
-              var content = readContent(r, projectName, file);
+              c.build.parsePJSX && (r = x.parsePJSX(r));
+              var content = readContent(r, projectName, file, c);
               content.splice(0, 0, ((!pconfig.uglifyjs ? "/* " + projectName + "/" + grunt.template.today('yyyy-mm-dd hh:mm:ss') + " */" : "") + "'use strict';(function(win, " + (pkg.configs.ptemplatejs.alias || "$") + "){"));
               content.push("})(window, typeof pTemplate !== 'undefined' && pTemplate || {});");
               savefile(file, content.join(''));
