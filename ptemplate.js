@@ -1674,6 +1674,9 @@
 						} else if (!mod.isArray(parent) && parent.nodeType) {
 							parent = [parent];
 						}
+						if (!name){
+							name = "DOM_"+(Math.random(10000)+"").replace(/\./gim, "");
+						}
 						if (parent && parent.length > 0 && parent[0]) {
 							var next = function(data, args) {
 								if (data && data.commit) {
