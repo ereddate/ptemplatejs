@@ -1,9 +1,6 @@
 # pTemplateJs
 pTemplateJs方便快捷的javascript开发框架。
 
-[![输入图片说明](https://travis-ci.org/ereddate/ptemplatejs.svg?branch=master "在这里输入图片标题")](https://travis-ci.org/ereddate/ptemplatejs/jobs/274873714)
-
-
 ```
 github: https://github.com/ereddate/ptemplatejs 
 oschina: http://git.oschina.net/ereddate2017/ptemplatejs (快速更新)
