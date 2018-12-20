@@ -39,11 +39,11 @@
         },
         ftp_push: {
           options: {
-            host: "10.4.101.5",
+            host: "",
             port: 21,
-            username: "ui",
-            password: "icZRNkrZxsMRg7K",
-            dest: pkg.configs.ftpbase || "/img/2016/"
+            username: "",
+            password: "",
+            dest: pkg.configs.ftpbase || "/"
           }
         }
       },
