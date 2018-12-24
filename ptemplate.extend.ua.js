@@ -39,7 +39,20 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 				isHUAWEI: /huawei/.test(ua),
 				isOPPO: /oppo/.test(ua),
 				isMEIZU: /meizu/.test(ua),
-				isXIAOMI: /xiaomi/.test(ua) || /miuibrowser\//.test(ua)				
+				isXIAOMI: /xiaomi/.test(ua) || /miuibrowser\//.test(ua) || /mi/.test(ua),
+				isVIVO: /vivo/.test(ua),
+				isREDMI: /redmi/.test(ua),
+				isHONORBLN: /honorbln/.test(ua),
+				isSAMSUNG: /sm\-/.test(ua) || /samsung/.test(ua),
+				isLE: /Le\s+/.test(ua),
+				isONEPLUS: /oneplus/.test(ua),
+				isDOOV: /doov/.test(ua),
+				isNBY: /nx[0-9]+/.test(ua),
+				isLG: /lg\-/.test(ua),
+				isOD: /od[0-9]+/.test(ua),
+				isANE: /ane\-/.test(ua),
+				isZUK: /zuk\s+/.test(ua),
+				isLenovo: /lenovo/.test(ua)
 			}
 		};
 	device.browser.isSafari = device.os.isiOS && ua.indexOf("safari/") > -1 && !device.browser.isqqbrowser;
