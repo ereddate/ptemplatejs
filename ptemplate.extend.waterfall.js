@@ -15,11 +15,15 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			return height;
 		}
 	});
+	var getScreenColumn = (maxColumn) => {
+		var width = $.query(document)[0]._width();
+		return width < 375 ? 1 : width >= 375 && width < 1024 ? width >=768 ? 3 : 2 : maxColumn;
+	};
 	var waterfallTimeout = null;
 	$.waterfall = function(selector, options) {
 		var node = typeof selector === "string" ? $.query(selector)[0] : selector,
 			maxColumn = options.maxColumn || 4,
-			column = screen.width < 500 ? 2 : maxColumn,
+			column = getScreenColumn(maxColumn),
 			sort = options.sort || "sort",
 			type = options.type || "normal",
 			reload = function() {
@@ -30,7 +34,10 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						columns = [],
 						columnsHeight = [];
 					for (var i = 0; i < column; i++) {
-						var columnItem = $.createDom("div", $.extend(column < maxColumn ? {
+						var columnItem = $.createDom("div", $.extend(column < 2 ? {
+							cls: "column",
+							style: "width:100%"
+						} : column < maxColumn ? {
 							cls: "column",
 							style: "width:50%"
 						} : {
@@ -42,7 +49,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						//columnItems.push(columnItem._height()||0);
 						columns.push(columnItem);
 						columnsHeight.push(columnItem._height(true) || 0);
-						node._append(columnItem);
+						node && node._append(columnItem);
 					}
 					var data = [];
 					if (sort === "reverse") {
@@ -72,12 +79,14 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 								var index = columnsHeight.indexOf(b);
 								index = index < 0 ? 0 : index;
 								var item = node._children()._eq(index);
-								item._append(a);
+								item && item._append(a);
 								a._findNode("img")[0]._on("load error", function(e) {
 									a._css({
 										opacity: 1
 									});
-									columnsHeight.splice(index, 1, type === "normal" ? item._childRenHeight(true) : item._height(true));
+									if (item) {
+										columnsHeight.splice(index, 1, type === "normal" ? item._childRenHeight(true) : item._height(true));
+									}
 									next();
 								});
 							} else {
@@ -86,14 +95,13 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						});
 					});
 					cbs.done();
-				}, 100);
+				}, 500);
 			};
 		if (node) {
 			return {
 				render: function() {
 					$.query(window)._on("resize", function() {
-						column = screen.width < 500 ? 2 : maxColumn;
-						reload();
+						location.reload()
 					});
 					reload();
 				}
