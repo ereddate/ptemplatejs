@@ -178,22 +178,27 @@
     var libFiles = grunt.file.expand(pkg.configs.ptemplatejs.path + "*.js");
 
     app.configs.forEach(function(c) {
+      var concats = [];
       var libConcats = [];
       libFiles.length > 0 && (libConcats.push(pkg.configs.ptemplatejs.path + pkg.name.replace("js", "") + ".js"), libFiles.forEach(function(f) {
         if (/\.extend\./.test(f) && !(new RegExp("\\.(" + (c.ptemplatejs && c.ptemplatejs.ignore || []).join('|') + ")\\.").test(f))) {
           libConcats.push(f)
         }
       }));
-      libConcats.length > 0 && concats.push({
+      /*libConcats.length > 0 && concats.push({
         src: libConcats,
         dest: "./" + distPath + c.projectName + "/libs/" + c.version + "/" + pkg.name + "." + c.version + ".js"
       });
+      console.log(concats);*/
       gruntConfigs.concat[c.projectName] = {
         options: {
           footer: '\n/*! time:<%= grunt.template.today("yyyy-mm-dd") %> end \*\/',
           banner: '\n/*! ' + c.projectName + ' start\*\/'
         },
-        files: concats
+        files: [{
+          src: libConcats,
+          dest: "./" + distPath + c.projectName + "/libs/" + c.version + "/" + pkg.name + "." + c.version + ".js"
+        }]
       };
       var tasks = ["pjsloader:" + c.projectName, "lessToStyle:" + c.projectName, "pjsbuild:" + c.projectName, "concat:" + c.projectName, "tmpl:" + c.projectName, "copy:" + c.projectName];
       tasks.push("babel:" + c.projectName);
@@ -312,7 +317,7 @@
             b.forEach(function(m) {
               var l = m.split('.');
               if (l.length === 1) {
-                templates.modules[m] && (!isCssFile ? g.push((templates.modules[m].style || "") + (templates.modules[m].template || "") + (app.build.parsePJSX ? (templates.modules[m].script && x.parsePJSX(templates.modules[m].script) || "") : (templates.modules[m].script || ""))) : (h.push(templates.modules[m].style || ""), g.push((templates.modules[m].template || "") + (app.build.parsePJSX ? (templates.modules[m].script && x.parsePJSX(templates.modules[m].script) || "") : (templates.modules[m].script|| "")))));
+                templates.modules[m] && (!isCssFile ? g.push((templates.modules[m].style || "") + (templates.modules[m].template || "") + (app.build.parsePJSX ? (templates.modules[m].script && x.parsePJSX(templates.modules[m].script) || "") : (templates.modules[m].script || ""))) : (h.push(templates.modules[m].style || ""), g.push((templates.modules[m].template || "") + (app.build.parsePJSX ? (templates.modules[m].script && x.parsePJSX(templates.modules[m].script) || "") : (templates.modules[m].script || "")))));
               } else {
                 if (templates.modules[l[0]] && templates.modules[l[0]][l[1]]) {
                   if (l[1] == "style" && !isCssFile || l[1] != "style") {
