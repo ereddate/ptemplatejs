@@ -1257,7 +1257,7 @@
 		pSubClass: pSubClass
 	};
 
-	var jsonSql = {
+/*	var jsonSql = {
 		query: function(sql, json) {
 			var jsonSql_Fields = sql.match(/^(select)\s+([a-z0-9_\,\.\s\*]+)\s+from\s+([a-z0-9_\.,]+)(?: where\s+\((.+)\))?\s*(?:order\sby\s+([a-z0-9_\,]+))?\s*(asc|desc|ascnum|descnum)?\s*(?:limit\s+([0-9_\,]+))?/i);
 			var ops = {
@@ -1476,7 +1476,7 @@
 			return this;
 		}
 	}
-
+*/
 	var pTemplate = {
 		__mod__: mod,
 		query: function(selector, parent) {
@@ -1581,7 +1581,7 @@
 				} : {}));
 			}
 		},
-		store: function(name, data) {
+		/*store: function(name, data) {
 			var args = arguments,
 				len = args.length,
 				that = this;
@@ -1591,7 +1591,7 @@
 				return new Store(name, data);
 			}
 			return data;
-		},
+		},*/
 		getStyle: function(name) {
 			return typeof mod.Styles[name] !== "undefined" && mod.Styles[name];
 		},
