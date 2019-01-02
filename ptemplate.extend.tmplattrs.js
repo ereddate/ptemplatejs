@@ -433,13 +433,13 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						obj._removeAttr(a.name);
 					}
 					break;
-				case "3dtouch":
+				case "longTap":
 				case "tap":
 				case "pinched":
 				case "swipe":
 					if ($.__mod__.touch && $.__mod__.touch[type[0]]) {
 						switch (type[0]) {
-							case "3dtouch":
+							case "longTap":
 							case "tap":
 							case "pinched":
 							case "swipe":
