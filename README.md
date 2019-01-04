@@ -1,6 +1,7 @@
 # pTemplateJs
 pTemplateJs方便快捷的javascript开发框架。
 
+【[技术文档](https://gitee.com/ereddate2017/ptemplatejs/wikis)】
 ```
 github: https://github.com/ereddate/ptemplatejs 
 oschina: http://git.oschina.net/ereddate2017/ptemplatejs (快速更新)
@@ -21,27 +22,45 @@ QQ群：9786575
 # 三步学会
 ```
 初次使用者，分三步学会使用。
-第一步，创建html：
-<div id="main"></div>
-<!-- 创建完的html将放到上面的div中 -->
+第一步，创建pjs单文件模板, main.pjs：
 <div p-template="test">
-  <div style="{{ style }}">{{ title }}</div>
+    <div class="page">
+        <div style="{{ style }}">{{ title }}</div>
+    </div>
 </div>
-第二步，写样式:
-var styles = pTemplate.createStyle({
-  default:{
-    color: "red"
-  }
+<script>
+    define("test", [], function(require, exports, module){
+        exports.done = function(data){
+            data = $.extend({style: "", title: ""}, data);
+            $.render("test", data, $.query("#app"));
+            return function(callback){
+                callback && callback(data);
+            }
+        };
+    });    
+</script>
+<style>
+    @base: 23.44/1rem;
+    .page{
+        div{
+            font-size:12/@base;
+        }
+    }
+</style>
+第二步，写JS引入:
+import "main";
+define(function(require, exports, module){
+    var test = require("test").done({
+        style: "display:block",
+        title: "这是标题测试"
+    });
+    test(function(data){
+        ...
+    });
 });
-第三步：写javascript:
-pTemplate.render(
-  "test", 
-  {style: styles.default, title: "这是测试标题"},
-  pTemplate.query("#main"),
-  function(elem){
-    console.log("创建完成");
-  }
-);
+第三步：生成代码:
+输入命令 “grunt build_项目名称” 回车完成代码的编译。
+
 ```
 # 其他
 ```
