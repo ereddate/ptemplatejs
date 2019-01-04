@@ -136,6 +136,71 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 		}
 	};
 
+	$.__mod__.tmplAttributesExpress = {
+		for: function(obj, type, a, data, _parent) {
+			var cmd = a.value.split(' '),
+				then = function(result) {
+					var html = obj._removeAttr("p-express:" + type).outerHTML,
+						name = /(.+)\[\{*.+\}*\]/.test(cmd[2]) ? /(.+)\[.+\]/.exec(cmd[2])[1] : /\./.test(cmd[2]) ? cmd[2].split('.')[0] : cmd[2],
+						n = /\[index\]/.test(cmd[2]) ? cmd[2] : cmd[2] + "[index]",
+						h = html.replace(/"/gim, "\\\"").replace(/'/gim, "\\\'").replace(/\r|\n/gim, ""),
+						t = 'var html =[];if ($.__mod__.isArray(' + name + ')){$.each(' + cmd[2] + ', function(index, ' + name + 'item) {if(' + n + '){if ($.__mod__.isArray(' + n + ')) {$.each(' + n + ', function(' + cmd[0] + ', item) {var x_data = $.extend(item, {index:' + cmd[0] + '});html.push(pTemplate.tmpl(\'' + h + '\', x_data));})}else if($.__mod__.isPlainObject(' + n + ')){var x_data = $.extend(' + n + ', {index:index});html.push(pTemplate.tmpl(\'' + h + '\', x_data));}}});}else{if(' + cmd[2] + '){$.each(' + cmd[2] + ', function(' + cmd[0] + ', item) {html.push(pTemplate.tmpl(\'' + h + '\', item))})}}return html;';
+
+					try {
+						//console.log(t, result[name], name, cmd);
+						var r = new Function(name, t)(result[name] || {});
+						//console.log(r, _parent);
+						if (_parent) {
+							_parent.innerHTML = r.join('');
+							$.__mod__.each([].slice.call(_parent.children), function(i, e) {
+								$.query(e)[0]._attr("p-index", i + 1);
+							});
+							pTemplate.tmpl(_parent, data);
+						}
+					} catch (e) {
+						//console.log(e);
+					}
+				},
+				findSubObject = function(obj, selector) {
+					var r = obj;
+					selector = selector.split('.');
+					selector.forEach(function(s) {
+						typeof r[s] != "undefined" && (r = r[s]);
+					});
+					return r;
+				};
+			var result = /\./.test(cmd[2]) ? findSubObject(data, cmd[2]) : data[cmd[2]];
+			if (result) {
+				if (typeof(result) == "function") {
+					var b = new Promise((resolve, reject) => {
+						data[cmd[2]](resolve, reject);
+					});
+					b.then(function(result) {
+						then(result);
+					}, function(error) {
+						console.log(error || "error");
+						then({});
+					});
+				} else {
+					then(data);
+				}
+			}
+		},
+		"if" : function(obj, type, a, data, _parent){
+			var index = parseInt(obj._attr("p-index")) || 0,
+				result = isExpress(a, /index/.test(a.value) ? index : data, /index/.test(a.value) ? "index" : "data");
+			if (!result) {
+				result = new RegExp(a.value.replace(/[^a-zA-Z0-9\u4E00-\u9FA5\uf900-\ufa2d<>\*\+\-\/\.]/gim, function(c) {
+					return /\s+/.test(c) ? c : "\\" + c;
+				})).test(obj._html());
+			}
+			if (!result) {
+				_parent && _parent._remove(obj);
+			} else {
+				obj._removeAttr(a.name);
+			}
+		}
+	};
 	$.__mod__.tmplAttributes && $.extend($.__mod__.tmplAttributes, {
 		qrcode: function(obj, type, a, data, _parent){
 			$.qrcode(obj, $.extend({correctLevel:0,text:a.value}, qrcodeMod[type]));
@@ -252,7 +317,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 			obj._removeAttr(a.name)
 		},
 		express: function(obj, type, a, data, _parent) {
-			switch (type) {
+			$.__mod__.tmplAttributesExpress[type] && $.__mod__.tmplAttributesExpress[type](obj, type, a, data, _parent);
+			/*switch (type) {
 				case "for":
 					var cmd = a.value.split(' '),
 						then = function(result) {
@@ -260,33 +326,8 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 								name = /(.+)\[\{*.+\}*\]/.test(cmd[2]) ? /(.+)\[.+\]/.exec(cmd[2])[1] : /\./.test(cmd[2]) ? cmd[2].split('.')[0] : cmd[2],
 								n = /\[index\]/.test(cmd[2]) ? cmd[2] : cmd[2]+"[index]",
 								h = html.replace(/"/gim, "\\\"").replace(/'/gim, "\\\'").replace(/\r|\n/gim, ""),
-								t = 'var html =[];if ($.__mod__.isArray('+name+')){$.each('+cmd[2]+', (index, '+name+'item) => {if(' + n + '){if ($.__mod__.isArray('+n+')) {$.each('+n+', ('+cmd[0]+', item) => {var x_data = $.extend(item, {index:'+cmd[0]+'});html.push(pTemplate.tmpl(\'' + h + '\', x_data));})}else if($.__mod__.isPlainObject('+n+')){var x_data = $.extend('+n+', {index:index});html.push(pTemplate.tmpl(\'' + h + '\', x_data));}}});}else{if(' + cmd[2] + '){$.each('+cmd[2]+', ('+cmd[0]+', item) => {html.push(pTemplate.tmpl(\'' + h + '\', item))})}}return html;';
+								t = 'var html =[];if ($.__mod__.isArray('+name+')){$.each('+cmd[2]+', function(index, '+name+'item) {if(' + n + '){if ($.__mod__.isArray('+n+')) {$.each('+n+', function('+cmd[0]+', item) {var x_data = $.extend(item, {index:'+cmd[0]+'});html.push(pTemplate.tmpl(\'' + h + '\', x_data));})}else if($.__mod__.isPlainObject('+n+')){var x_data = $.extend('+n+', {index:index});html.push(pTemplate.tmpl(\'' + h + '\', x_data));}}});}else{if(' + cmd[2] + '){$.each('+cmd[2]+', function('+cmd[0]+', item) {html.push(pTemplate.tmpl(\'' + h + '\', item))})}}return html;';
 
-							/*
-							 'var html =[];
-							 if ($.__mod__.isArray('+name+')){
-							 	$.each('+name+', (index, '+name+'item) => {
-							 		if(' + n + '){
-							 			if ($.__mod__.isArray('+n+')) {
-							 				$.each('+n+', ('+cmd[0]+', item) => {
-												var x_data = $.extend(item, {index:'+cmd[0]+'});
-							 					html.push(pTemplate.tmpl(\'' + h + '\', x_data));
-							 				})
-							 			}else if($.__mod__.isPlainObject('+n+')){
-							 				var x_data = $.extend('+n+', {index:index});
-							 				html.push(pTemplate.tmpl(\'' + h + '\', x_data));
-							 			}
-							 		}
-							 	});
-							 }else{
-							 	if(' + cmd[2] + '){
-							 		$.each('+cmd[2]+', ('+cmd[0]+', item) => {
-							 			html.push(pTemplate.tmpl(\'' + h + '\', item))
-							 		})
-							 	}
-							 }
-							 return html;'
-							*/
 							try{
 								//console.log(t, result[name], name, cmd);
 								var r = new Function(name, t)(result[name] || {});
@@ -341,7 +382,7 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						obj._removeAttr(a.name);
 					}
 					break;
-			}
+			}*/
 		},
 		custom: function(obj, type, a, data, _parent) {
 			var result = isExpress(a, data);
@@ -433,16 +474,16 @@ typeof window.pTemplate != "undefined" && (function(win, $) {
 						obj._removeAttr(a.name);
 					}
 					break;
-				case "3dtouch":
 				case "tap":
 				case "pinched":
 				case "swipe":
+				case "longTap":
 					if ($.__mod__.touch && $.__mod__.touch[type[0]]) {
 						switch (type[0]) {
-							case "3dtouch":
 							case "tap":
 							case "pinched":
 							case "swipe":
+							case "longTap":
 								obj._on("click", function(e) {
 									e.preventDefault();
 								});
